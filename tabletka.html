@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="tabletka (.NET 8) — desktop overlay and pill modules: Media pill, system monitors, hotkeys, and UI.">
+    <meta name="theme-color" content="#4f46e5">
+    <title>tabletka — .NET 8 Desktop Overlay</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23818cf8'/><stop offset='100%25' stop-color='%23c084fc'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='%230f172a'/><polygon points='18,3 8,18 15,18 14,29 24,14 17,14' fill='url(%23g)'/></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #020617;
+            color: #f1f5f9;
+            font-family: 'Unbounded', sans-serif;
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.15), transparent 40%);
+            transition: direction 0.3s ease;
+        }
+        html[dir="rtl"] body { font-family: 'Heebo', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        html[dir="rtl"] .mono { font-family: 'JetBrains Mono', monospace; direction: ltr; display: inline-block; }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .glass:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(99,102,241,0.15);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s linear infinite;
+        }
+        @keyframes gradientMove { to { background-position: 200% center; } }
+
+        .cta-btn { position: relative; background: #4f46e5; z-index: 1; }
+        .cta-btn::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #4f46e5, #9333ea, #4f46e5);
+            z-index: -1; border-radius: 1.1rem; background-size: 200%;
+            animation: gradientMove 3s linear infinite; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .cta-btn:hover::before { opacity: 1; }
+
+        .card-details {
+            max-height: 0; opacity: 0; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-details.open {
+            max-height: none; opacity: 1; overflow: visible; margin-top: 1rem; padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .chevron { transition: transform 0.3s ease; }
+        .open-btn.active .chevron { transform: rotate(180deg); }
+
+        .card-spotlight { position: absolute; pointer-events: none; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); transform: translate(-50%, -50%); transition: opacity 0.3s; opacity: 0; z-index: 0; top: 0; left: 0; }
+
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(15,23,42,0.95); border: 1px solid rgba(99,102,241,0.4); color: #e2e8f0; padding: 0.75rem 1.5rem; border-radius: 1rem; font-size: 0.85rem; z-index: 9999; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s; opacity: 0; backdrop-filter: blur(12px); white-space: nowrap; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        #term-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(8px); z-index: 9998; display: none; align-items: center; justify-content: center; }
+        #term-overlay.open { display: flex; }
+        #term-box { background: #0d1117; border: 1px solid rgba(99,102,241,0.4); border-radius: 1rem; width: 90%; max-width: 640px; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #c9d1d9; box-shadow: 0 0 60px rgba(99,102,241,0.2); max-height: 70vh; overflow-y: auto; }
+        #term-box .t-header { color: #6e7681; margin-bottom: 1rem; border-bottom: 1px solid #21262d; padding-bottom: 0.5rem; }
+        .t-prompt { color: #58a6ff; }
+        .t-out { color: #3fb950; white-space: pre; }
+        .t-err { color: #f85149; }
+        #t-input { background: none; border: none; outline: none; color: #c9d1d9; font-family: inherit; font-size: inherit; width: calc(100% - 10rem); caret-color: #58a6ff; }
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        #cursor-glow { position: fixed; pointer-events: none; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%); transform: translate(-50%, -50%); z-index: 0; transition: opacity 0.3s; opacity: 0; top: 0; left: 0; }
+        #features-panel {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            margin-top: 0;
+            transition: max-height 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin-top 0.4s ease;
+        }
+        #features-panel.open {
+            max-height: none;
+            opacity: 1;
+            overflow: visible;
+            margin-top: 1.5rem;
+        }
+        #features-toggle-btn .pill-chev {
+            transition: transform 0.3s ease;
+        }
+        #features-toggle-btn.active .pill-chev {
+            transform: rotate(180deg);
+        }
+        #img-lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        #img-lightbox.open { display: flex; }
+        #img-lightbox img {
+            max-width: 95vw;
+            max-height: 88vh;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75);
+            object-fit: contain;
+            background: #050a18;
+        }
+        /* SHOT_CSS_START */
+        .shot-box {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid rgba(129, 140, 248, 0.25);
+            background: #050a18;
+            cursor: zoom-in;
+            line-height: 0;
+            transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .shot-box:hover {
+            border-color: rgba(168, 85, 247, 0.65);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px -8px rgba(99, 102, 241, 0.35);
+        }
+        .shot-box img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .card-details .shot-box {
+            display: inline-block;
+            width: fit-content;
+            max-width: 100%;
+        }
+        .card-details .shot-box img {
+            display: block;
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            max-height: 220px;
+        }
+        .shot-zoom-badge {
+            position: absolute;
+            inset-inline-end: 0.45rem;
+            inset-block-end: 0.45rem;
+            line-height: 1.2;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #e2e8f0;
+            font-size: 10px;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+        }
+        /* SHOT_CSS_END */
+        .reveal:not(.visible) { opacity: 1 !important; transform: none !important; }
+    </style>
+</head>
+<body class="antialiased min-h-screen py-12 px-4 flex justify-center items-center">
+
+    <div class="max-w-5xl w-full space-y-6 relative">
+
+        <div class="absolute -top-12 md:-top-10 end-4 z-20">
+            <button onclick="toggleLangMenu()" class="md:hidden bg-slate-900/50 p-2 rounded-xl border border-white/5 backdrop-blur-md text-xs mono text-slate-300 hover:text-white transition-colors">
+                <i class="fas fa-globe me-1"></i><span id="current-lang">RU</span> <i class="fas fa-chevron-down ms-1 text-[10px]"></i>
+            </button>
+            <div id="lang-menu" class="hidden md:flex flex-wrap justify-end gap-1 text-xs md:text-sm mono bg-slate-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-md max-w-[90vw]">
+                <button onclick="setLang('en')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="en">EN</button>
+                <button onclick="setLang('de')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="de">DE</button>
+                <button onclick="setLang('fr')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="fr">FR</button>
+                <button onclick="setLang('es')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="es">ES</button>
+                <button onclick="setLang('ru')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="ru">RU</button>
+                <button onclick="setLang('he')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="he">HE</button>
+            </div>
+        </div>
+
+        <header class="reveal glass rounded-[2rem] p-6 md:p-10 relative overflow-hidden mt-6 md:mt-0 flex flex-col gap-6">
+            <div class="absolute -top-32 -end-32 w-96 h-96 bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div class="relative z-10 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex-1 space-y-4 min-w-0">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <div class="inline-flex items-center space-x-2 rtl:space-x-reverse bg-purple-500/10 px-4 py-1.5 rounded-full border border-purple-500/20">
+                            <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
+                            <span class="text-[10px] mono text-purple-300 uppercase tracking-widest font-bold"><span class="normal-case">tabletka</span> · .NET 8 · v0.9.8.1</span>
+                        </div>
+                        <span class="text-[10px] mono px-3 py-1.5 rounded-full bg-slate-800/80 text-slate-300 border border-white/10" data-i18n="header_meta_os">Windows x64</span>
+                        <span class="text-[10px] mono px-3 py-1.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20" data-i18n="header_meta_mode">Компактная пилюля и модули</span>
+                    </div>
+
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
+                        <span class="gradient-text">tabletka</span>
+                    </h1>
+
+                    <p class="text-slate-200 text-sm md:text-base max-w-3xl leading-relaxed" data-i18n="hero_subtitle"></p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-0.5">
+                        <div class="bg-slate-900/55 border border-white/10 rounded-xl p-3">
+                            <div class="text-xs font-bold text-indigo-300 mb-1" data-i18n="pill_box1_title">Форм-фактор таблетки</div>
+                            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="pill_box1_desc"></p>
+                        </div>
+                        <div class="bg-slate-900/55 border border-white/10 rounded-xl p-3">
+                            <div class="text-xs font-bold text-purple-300 mb-1" data-i18n="pill_box2_title">Плавность и отзывчивость</div>
+                            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="pill_box2_desc"></p>
+                        </div>
+                        <div class="bg-slate-900/55 border border-white/10 rounded-xl p-3">
+                            <div class="text-xs font-bold text-cyan-300 mb-1" data-i18n="pill_box3_title">Модули и управление</div>
+                            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="pill_box3_desc"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-80 lg:w-96 shrink-0 flex flex-col gap-3">
+                    <span class="shot-box w-full">
+                        <img src="backdrop-392x105-20261123-015717.png" alt="tabletka compact pill screenshot" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                    <span class="shot-box w-full">
+                        <img src="backdrop-491x250-20261123-015852.png" alt="tabletka expanded media player screenshot" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="relative z-10 w-full flex flex-wrap items-center gap-2.5 pt-4 border-t border-white/10">
+                <a id="tabletka-download-btn" onclick="tracktabletkaDownload()" href="https://699718.space/tabletka/tabletka_0.9.8.1_x64_Setup.exe" class="cta-btn inline-flex items-center justify-center px-4 py-2.5 text-white rounded-xl transition-all font-bold uppercase tracking-wide text-xs shrink-0">
+                    <i class="fas fa-download me-2"></i><span data-i18n="cta_download">Скачать v0.9.8.1</span>
+                </a>
+                <a id="tabletka-apk-stub-btn" href="#ecosystem" onclick="return handleApkStubClick(event)" class="inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/35 text-emerald-200 rounded-xl border border-emerald-400/30 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
+                    <i class="fab fa-android me-2"></i><span data-i18n="cta_apk_stub">Скачать APK (заглушка)</span>
+                </a>
+                <button id="features-toggle-btn" type="button" onclick="toggleFeaturesPanel(true)" aria-expanded="false" class="inline-flex items-center justify-center px-4 py-2.5 bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 rounded-xl border border-purple-400/30 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
+                    <i class="fas fa-layer-group me-2"></i><span data-i18n="cta_features">О функциях</span><i class="fas fa-chevron-down ms-2 text-xs pill-chev"></i>
+                </button>
+                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl border border-slate-600 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
+                    <i class="fab fa-github me-2"></i><span data-i18n="cta_github">GitHub</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-200 rounded-xl border border-indigo-400/30 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
+                    <i class="fab fa-telegram-plane me-2"></i><span data-i18n="cta_contact">Обратная связь</span>
+                </a>
+                <a href="index.html" class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-900/70 hover:bg-slate-800 text-slate-200 rounded-xl border border-white/10 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
+                    <i class="fas fa-arrow-left me-2"></i><span data-i18n="cta_home">На главную</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- БЛОК 1: ЧТО УМЕЕТ И ЧТО НОВОГО -->
+        <section id="whats-new" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] mono text-indigo-400 uppercase tracking-widest font-bold">RELEASE &amp; CORE</span>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="wn_title">Что умеет и что нового</h2>
+                </div>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">.NET 8 · WPF · 10 Langs</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-slate-100" data-i18n="wn_f1_title">Оверлей и виджеты на экране</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="wn_f1_desc">Компактные виджеты (новости, рыночные данные, быстрые действия, управление медиа), перетаскивание за края окна (edge-dragging) и аккуратное поведение поверх других окон.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-slate-100" data-i18n="wn_f2_title">Автоматизация и фоновый троттлинг</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="wn_f2_desc">Автокопирование скриншотов в буфер обмена в фоне, двухпоточная очередь загрузок и умное троттлингование фоновых модулей при играх, рендере и активной работе.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-slate-100" data-i18n="wn_f3_title">Локализация и установка</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="wn_f3_desc">Поддержка 10 языков локализации, нативный установщик Windows (x64 Setup) и предсказуемый цикл обновлений.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-slate-100" data-i18n="wn_f4_title">Связка с Android и Relay</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="wn_f4_desc">Модульный Android-компаньон: привязка по QR-коду, автономные функции на телефоне и синхронизация/команды ПК через relay.699718.space.</p>
+                </div>
+            </div>
+        </section>
+
+        
+        <!-- БЛОК 2: УДОБСТВО, ПРОИЗВОДИТЕЛЬНОСТЬ И PRIVACY-FIRST -->
+        <section id="ux-perf" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] mono text-cyan-400 uppercase tracking-widest font-bold">UX &amp; PERFORMANCE</span>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="ux_title">Удобство и производительность</h2>
+                </div>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Zero Bloat · Throttled</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-slate-100" data-i18n="ux_c1_title">Мгновенный отклик без шума</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="ux_c1_desc">Чёткая визуальная иерархия и быстрый вызов нужных виджетов поверх окон без перегруженных панелей и лишних кликов.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-slate-100" data-i18n="ux_c2_title">Экономия ресурсов ПК</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="ux_c2_desc">Нативный .NET 8 / WPF без «раздутых» фреймворков и умное троттлингование фоновых модулей во время игр, рендера и активной работы.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-slate-100" data-i18n="ux_c3_title">Настройка под себя</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="ux_c3_desc">Включайте только нужные модули — без навязанных облачных аккаунтов, подписок и сложных сценариев настройки.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="privacy-first" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5 border border-emerald-400/20">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] mono text-emerald-400 uppercase tracking-widest font-bold">PRIVACY-FIRST · 0 DATA RETENTION</span>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="priv_title">Безопасность и приватность (0 хранения данных)</h2>
+                </div>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Local-First · Transit Relay</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+                <div class="bg-slate-900/60 border border-emerald-500/15 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-emerald-200" data-i18n="priv_p1_title">Никакого сбора и хранения на сервере</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="priv_p1_desc">tabletka не ведёт поведенческую аналитику, не собирает телеметрию для профилирования и не сохраняет личные файлы, буфер обмена, скриншоты или историю действий в постоянных базах на сервере.</p>
+                </div>
+                <div class="bg-slate-900/60 border border-emerald-500/15 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-emerald-200" data-i18n="priv_p2_title">Локальная обработка по умолчанию</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="priv_p2_desc">Основная логика, состояние виджетов и пользовательские настройки хранятся и обрабатываются локально на вашем устройстве.</p>
+                </div>
+                <div class="bg-slate-900/60 border border-emerald-500/15 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-emerald-200" data-i18n="priv_p3_title">Транзитная передача без оседания</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="priv_p3_desc">При использовании синхронизации и релея трафик проходит транзитом для доставки сообщений между устройствами без записи содержимого пользовательских сессий в постоянное хранилище.</p>
+                </div>
+                <div class="bg-slate-900/60 border border-emerald-500/15 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-emerald-200" data-i18n="priv_p4_title">Полный контроль пользователя</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="priv_p4_desc">Вы сами решаете, какие модули активны, когда подключать Android-компаньон и как управлять сетевыми соединениями.</p>
+                </div>
+            </div>
+        </section>
+
+        
+        <!-- БЛОК 3: АРХИТЕКТУРА / ЭКОСИСТЕМА (WINDOWS + ANDROID + RELAY) -->
+        <section id="ecosystem" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] mono text-purple-400 uppercase tracking-widest font-bold">ECOSYSTEM &amp; ARCHITECTURE</span>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="eco_title">Архитектура / Экосистема: Windows + Android + Relay</h2>
+                </div>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">relay.699718.space · WSS</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-indigo-300" data-i18n="eco_w_title">1. Windows Desktop (.NET 8 / WPF)</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="eco_w_desc">Оверлей с 16 модулями, локальным хранением настроек, DPAPI-защитой токена релея и обработчиком команд/состояний (вода, курение, таймер, pc.*).</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-purple-300" data-i18n="eco_r_title">2. Релей relay.699718.space</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="eco_r_desc">Транзитный WebSocket/HTTP-релей за TLS/HAProxy: привязка по QR-коду, маршрутизация конвертов между устройствами без записи сессий в постоянные БД.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="font-bold text-cyan-300" data-i18n="eco_a_title">3. Android-компаньон</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="eco_a_desc">Модульное приложение для телефона: быстрый QR-паринг, автономные сценарии на устройстве, синхронизация воды/курения/таймера и удалённые команды ПК.</p>
+                </div>
+            </div>
+        </section>
+
+        
+        <!-- БЛОК 4: FAQ -->
+        <section id="faq" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] mono text-amber-300 uppercase tracking-widest font-bold">FAQ</span>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="faq_title">Частые вопросы</h2>
+                </div>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">Quick Answers</span>
+            </div>
+
+            <div class="space-y-3 text-xs md:text-sm">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1">
+                    <div class="font-bold text-slate-100" data-i18n="faq_q1">Нужен ли обязательный аккаунт или подключение к сети для работы?</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="faq_a1">Нет. Оверлей, виджеты и локальные настройки работают автономно на Windows (.NET 8 / WPF); синхронизация с Android и релей подключаются только по желанию.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1">
+                    <div class="font-bold text-slate-100" data-i18n="faq_q2">Хранятся ли мои данные, буфер обмена или скриншоты на сервере?</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="faq_a2">Нет. Данные обрабатываются локально, аналитика поведения для профилирования не ведётся, а через релей сообщения проходят транзитом без записи содержимого сессий в постоянные базы.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1">
+                    <div class="font-bold text-slate-100" data-i18n="faq_q3">Как работает фоновый троттлинг и нагрузка на ПК?</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="faq_a3">Фоновые модули снижают активность и частоту обновлений в периоды высокой нагрузки (игры, рендер, активная работа), сохраняя плавный отклик интерфейса без лишних ресурсов.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1">
+                    <div class="font-bold text-slate-100" data-i18n="faq_q4">Как привязать Android-компаньон к ПК?</div>
+                    <p class="text-slate-400 leading-relaxed" data-i18n="faq_a4">Откройте настройки tabletka на Windows, запустите привязку по QR-коду через relay.699718.space и отсканируйте код в Android-приложении — после этого станут доступны синхронизация модулей и команды ПК.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- СКРЫТЫЙ ПО УМОЛЧАНИЮ БЛОК ФУНКЦИЙ ТАБЛЕТОК -->
+                <div id="features-panel" class="space-y-6" aria-hidden="true">
+            <div id="spotlight" class="card-spotlight"></div>
+
+            <!-- 01 / МЕДИА -->
+            <section id="media-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20 shrink-0">
+                            <i class="fas fa-compact-disc text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-indigo-400 uppercase tracking-widest font-bold">01 / MEDIA · 1/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p1_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">MediaModule</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed flex-1" data-i18n="p1_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill1-details')" class="open-btn text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043410.png" alt="Collapsed Media pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill1-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                        <img src="backdrop-647x300-20261122-171058.png" alt="Expanded Media player pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p1_expanded_desc"></p>
+                            <div data-i18n="p1_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 02 / МОНИТОРЫ -->
+            <section id="monitors-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-400 border border-purple-500/20 shrink-0">
+                            <i class="fas fa-microchip text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-purple-400 uppercase tracking-widest font-bold">02 / MONITORS · 2/16</span>
+                            <h2 class="text-lg md:text-xl font-bold"><span data-i18n="p2_title"></span><span class="cursor-blink text-purple-400">_</span></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">HardwareHud</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed flex-1" data-i18n="p2_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill2-details')" class="open-btn text-xs font-bold text-purple-400 hover:text-purple-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043413.png" alt="Collapsed Monitors pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill2-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                        <img src="backdrop-647x300-20261122-171108.png" alt="Expanded Monitors pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p2_expanded_desc"></p>
+                            <div data-i18n="p2_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 03 / ЗАПИСЬ -->
+            <section id="record-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-cyan-500/20 rounded-2xl flex items-center justify-center text-cyan-400 border border-cyan-500/20 shrink-0">
+                            <i class="fas fa-record-vinyl text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-cyan-400 uppercase tracking-widest font-bold">03 / RECORD · 3/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p3_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Recorder</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed flex-1" data-i18n="p3_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill3-details')" class="open-btn text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043416.png" alt="Collapsed Record pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill3-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                        <img src="backdrop-647x300-20261122-171114.png" alt="Expanded Record pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p3_expanded_desc"></p>
+                            <div data-i18n="p3_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 04 / КУРСЫ И КРИПТА -->
+            <section id="markets-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-300 border border-amber-500/20 shrink-0">
+                            <i class="fas fa-chart-line text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-amber-300 uppercase tracking-widest font-bold">04 / MARKETS · 4/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p4_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">Rates &amp; Crypto</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p4_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill4-details')" class="open-btn text-xs font-bold text-amber-300 hover:text-amber-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043420.png" alt="Collapsed Markets pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill4-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171118.png" alt="Expanded Markets pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p4_expanded_desc"></p>
+                            <div data-i18n="p4_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 05 / НОВОСТИ -->
+            <section id="news-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-300 border border-emerald-500/20 shrink-0">
+                            <i class="fas fa-newspaper text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-emerald-300 uppercase tracking-widest font-bold">05 / NEWS · 5/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p5_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">NewsFeed</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p5_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill5-details')" class="open-btn text-xs font-bold text-emerald-300 hover:text-emerald-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043438.png" alt="Collapsed News pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill5-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171121.png" alt="Expanded News pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p5_expanded_desc"></p>
+                            <div data-i18n="p5_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 06 / ПРОБКИ -->
+            <section id="traffic-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-rose-500/20 rounded-2xl flex items-center justify-center text-rose-300 border border-rose-500/20 shrink-0">
+                            <i class="fas fa-route text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-rose-300 uppercase tracking-widest font-bold">06 / TRAFFIC · 6/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p6_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20">TrafficHud</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p6_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill6-details')" class="open-btn text-xs font-bold text-rose-300 hover:text-rose-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043442.png" alt="Collapsed Traffic pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill6-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171124.png" alt="Expanded Traffic pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p6_expanded_desc"></p>
+                            <div data-i18n="p6_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 07 / ЗАГРУЗЧИК -->
+            <section id="downloader-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-sky-500/20 rounded-2xl flex items-center justify-center text-sky-300 border border-sky-500/20 shrink-0">
+                            <i class="fas fa-cloud-arrow-down text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-sky-300 uppercase tracking-widest font-bold">07 / DOWNLOADER · 7/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p7_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/20">Downloader</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p7_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill7-details')" class="open-btn text-xs font-bold text-sky-300 hover:text-sky-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043445.png" alt="Collapsed Downloader pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill7-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171128.png" alt="Expanded Downloader pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p7_expanded_desc"></p>
+                            <div data-i18n="p7_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 08 / ТОРРЕНТЫ -->
+            <section id="torrents-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-violet-500/20 rounded-2xl flex items-center justify-center text-violet-300 border border-violet-500/20 shrink-0">
+                            <i class="fas fa-magnet text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-violet-300 uppercase tracking-widest font-bold">08 / TORRENTS · 8/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p8_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20">qBittorrent</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p8_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill8-details')" class="open-btn text-xs font-bold text-violet-300 hover:text-violet-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043509.png" alt="Collapsed Torrents pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill8-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171133.png" alt="Expanded Torrents pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p8_expanded_desc"></p>
+                            <div data-i18n="p8_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 09 / КАРМАН ФАЙЛОВ -->
+            <section id="pocket-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-teal-500/20 rounded-2xl flex items-center justify-center text-teal-300 border border-teal-500/20 shrink-0">
+                            <i class="fas fa-folder-open text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-teal-300 uppercase tracking-widest font-bold">09 / POCKET · 9/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p9_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-teal-500/10 text-teal-300 border border-teal-500/20">File Pocket</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p9_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill9-details')" class="open-btn text-xs font-bold text-teal-300 hover:text-teal-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043512.png" alt="Collapsed File Pocket pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill9-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171137.png" alt="Expanded File Pocket pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p9_expanded_desc"></p>
+                            <div data-i18n="p9_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10 / БУФЕР ОБМЕНА -->
+            <section id="clipboard-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-fuchsia-500/20 rounded-2xl flex items-center justify-center text-fuchsia-300 border border-fuchsia-500/20 shrink-0">
+                            <i class="fas fa-clipboard text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-fuchsia-300 uppercase tracking-widest font-bold">10 / CLIPBOARD · 10/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p10_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/20">Clipboard</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p10_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill10-details')" class="open-btn text-xs font-bold text-fuchsia-300 hover:text-fuchsia-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043518.png" alt="Collapsed Clipboard pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill10-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171140.png" alt="Expanded Clipboard pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p10_expanded_desc"></p>
+                            <div data-i18n="p10_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 11 / СНИППЕТЫ -->
+            <section id="snippets-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-lime-500/20 rounded-2xl flex items-center justify-center text-lime-300 border border-lime-500/20 shrink-0">
+                            <i class="fas fa-terminal text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-lime-300 uppercase tracking-widest font-bold">11 / SNIPPETS · 11/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p11_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-lime-500/10 text-lime-300 border border-lime-500/20">Snippets</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p11_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill11-details')" class="open-btn text-xs font-bold text-lime-300 hover:text-lime-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-647x300-20261122-171237.png" alt="Snippets pill preview" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill11-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171237.png" alt="Expanded Snippets pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p11_expanded_desc"></p>
+                            <div data-i18n="p11_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 12 / БЫСТРЫЕ ИНСТРУМЕНТЫ -->
+            <section id="tools-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-300 border border-indigo-500/20 shrink-0">
+                            <i class="fas fa-sliders text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-indigo-300 uppercase tracking-widest font-bold">12 / QUICK TOOLS · 12/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p12_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">Audio · Display · VPN</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p12_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill12-details')" class="open-btn text-xs font-bold text-indigo-300 hover:text-indigo-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-647x300-20261122-171247.png" alt="Quick tools pill preview" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill12-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171247.png" alt="Expanded Quick tools pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p12_expanded_desc"></p>
+                            <div data-i18n="p12_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 13 / ПУЛЬС СЕРВЕРА -->
+            <section id="server-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-cyan-500/20 rounded-2xl flex items-center justify-center text-cyan-300 border border-cyan-500/20 shrink-0">
+                            <i class="fas fa-server text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-cyan-300 uppercase tracking-widest font-bold">13 / SERVER PULSE · 13/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p13_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Nodes</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p13_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill13-details')" class="open-btn text-xs font-bold text-cyan-300 hover:text-cyan-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-647x300-20261122-171257.png" alt="Server pulse pill preview" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill13-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171257.png" alt="Expanded Server pulse pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p13_expanded_desc"></p>
+                            <div data-i18n="p13_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 14 / ТАЙМЕР -->
+            <section id="timer-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-300 border border-purple-500/20 shrink-0">
+                            <i class="fas fa-stopwatch text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-purple-300 uppercase tracking-widest font-bold">14 / TIMER · 14/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p14_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">Countdown</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p14_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill14-details')" class="open-btn text-xs font-bold text-purple-300 hover:text-purple-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043546.png" alt="Collapsed Timer pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill14-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171306.png" alt="Expanded Timer pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p14_expanded_desc"></p>
+                            <div data-i18n="p14_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 15 / ВОДНЫЙ БАЛАНС -->
+            <section id="water-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-sky-500/20 rounded-2xl flex items-center justify-center text-sky-300 border border-sky-500/20 shrink-0">
+                            <i class="fas fa-droplet text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-sky-300 uppercase tracking-widest font-bold">15 / WATER · 15/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p15_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/20">Hydration</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p15_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill15-details')" class="open-btn text-xs font-bold text-sky-300 hover:text-sky-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043549.png" alt="Collapsed Water pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill15-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171313.png" alt="Expanded Water pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p15_expanded_desc"></p>
+                            <div data-i18n="p15_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 16 / КУРЕНИЕ -->
+            <section id="smoking-pill" class="reveal glass rounded-[1.75rem] p-4 md:p-6 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-rose-500/20 rounded-2xl flex items-center justify-center text-rose-300 border border-rose-500/20 shrink-0">
+                            <i class="fas fa-smoking text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] mono text-rose-300 uppercase tracking-widest font-bold">16 / SMOKING · 16/16</span>
+                            <h2 class="text-lg md:text-xl font-bold" data-i18n="p16_title"></h2>
+                        </div>
+                    </div>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20">Habit Timer</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                    <div class="max-w-xl space-y-2.5 flex-1">
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed" data-i18n="p16_collapsed_desc"></p>
+                        <button type="button" onclick="toggleCard('pill16-details')" class="open-btn text-xs font-bold text-rose-300 hover:text-rose-200 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                            <span data-i18n="btn_pill_open"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                        </button>
+                    </div>
+                    <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
+                        <img src="backdrop-491x138-20261122-043603.png" alt="Collapsed Smoking pill" loading="lazy">
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                </div>
+
+                <div id="pill16-details" class="card-details text-xs md:text-sm text-slate-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        <div class="md:col-span-5">
+                            <span class="shot-box">
+                                <img src="backdrop-647x300-20261122-171317.png" alt="Expanded Smoking pill" loading="lazy">
+                                <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                            </span>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <p class="leading-relaxed text-slate-300" data-i18n="p16_expanded_desc"></p>
+                            <div data-i18n="p16_features"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            </div>
+
+    
+        <!-- ПОДВАЛ -->
+        <footer id="site-footer" class="reveal glass rounded-[2rem] p-6 md:px-8 md:py-6 text-xs text-slate-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+            <div class="space-y-1">
+                <div class="font-bold text-slate-200 mono" data-i18n="footer_brand">tabletka · .NET 8 / WPF · v0.9.8.1</div>
+                <div data-i18n="footer_meta">Local-first · Relay: relay.699718.space (0 persistent data storage)</div>
+            </div>
+            <div class="flex flex-wrap items-center gap-4 mono">
+                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">@eggrib</a>
+                <a href="index.html" class="hover:text-white transition-colors" data-i18n="cta_home">На главную</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="cursor-glow"></div>
+    <div class="toast" id="toast"></div>
+    <div id="term-overlay"><div id="term-box"><div class="t-header">eggrib@KompEgg:~/tabletka &nbsp; [press ` or ESC to close]</div><div id="t-out"></div><div><span class="t-prompt">eggrib@KompEgg:~$ </span><input id="t-input" spellcheck="false" placeholder="type 'help'"></div></div></div>
+
+    <div id="img-lightbox" onclick="closeLightbox(event)">
+        <img id="img-lightbox-pic" src="" alt="">
+    </div>
+    <script>
+                        const t = {
+            ru: {
+                cta_contact: "\u041e\u0431\u0440\u0430\u0442\u043d\u0430\u044f \u0441\u0432\u044f\u0437\u044c",
+                wn_title: "Что умеет и что нового",
+                wn_f1_title: "Оверлей и виджеты на экране",
+                wn_f1_desc: "Компактные виджеты (новости, рыночные данные, быстрые действия, управление медиа), перетаскивание за края окна (edge-dragging) и аккуратное поведение поверх других окон.",
+                wn_f2_title: "Автоматизация и фоновый троттлинг",
+                wn_f2_desc: "Автокопирование скриншотов в буфер обмена в фоне, двухпоточная очередь загрузок и умное троттлингование фоновых модулей при играх, рендере и активной работе.",
+                wn_f3_title: "Локализация и установка",
+                wn_f3_desc: "Поддержка 10 языков локализации, нативный установщик Windows (x64 Setup) и предсказуемый цикл обновлений.",
+                wn_f4_title: "Связка с Android и Relay",
+                wn_f4_desc: "Модульный Android-компаньон: привязка по QR-коду, автономные функции на телефоне и синхронизация/команды ПК через relay.699718.space.",
+                ux_title: "Удобство и производительность",
+                ux_c1_title: "Мгновенный отклик без шума",
+                ux_c1_desc: "Чёткая визуальная иерархия и быстрый вызов нужных виджетов поверх окон без перегруженных панелей и лишних кликов.",
+                ux_c2_title: "Экономия ресурсов ПК",
+                ux_c2_desc: "Нативный .NET 8 / WPF без «раздутых» фреймворков и умное троттлингование фоновых модулей во время игр, рендера и активной работы.",
+                ux_c3_title: "Настройка под себя",
+                ux_c3_desc: "Включайте только нужные модули — без навязанных облачных аккаунтов, подписок и сложных сценариев настройки.",
+                priv_title: "Безопасность и приватность (0 хранения данных)",
+                priv_p1_title: "Никакого сбора и хранения на сервере",
+                priv_p1_desc: "tabletka не ведёт поведенческую аналитику, не собирает телеметрию для профилирования и не сохраняет личные файлы, буфер обмена, скриншоты или историю действий в постоянных базах на сервере.",
+                priv_p2_title: "Локальная обработка по умолчанию",
+                priv_p2_desc: "Основная логика, состояние виджетов и пользовательские настройки хранятся и обрабатываются локально на вашем устройстве.",
+                priv_p3_title: "Транзитная передача без оседания",
+                priv_p3_desc: "При использовании синхронизации и релея трафик проходит транзитом для доставки сообщений между устройствами без записи содержимого пользовательских сессий в постоянное хранилище.",
+                priv_p4_title: "Полный контроль пользователя",
+                priv_p4_desc: "Вы сами решаете, какие модули активны, когда подключать Android-компаньон и как управлять сетевыми соединениями.",
+                eco_title: "Архитектура / Экосистема: Windows + Android + Relay",
+                eco_w_title: "1. Windows Desktop (.NET 8 / WPF)",
+                eco_w_desc: "Оверлей с 16 модулями, локальным хранением настроек, DPAPI-защитой токена релея и обработчиком команд/состояний (вода, курение, таймер, pc.*).",
+                eco_r_title: "2. Релей relay.699718.space",
+                eco_r_desc: "Транзитный WebSocket/HTTP-релей за TLS/HAProxy: привязка по QR-коду, маршрутизация конвертов между устройствами без записи сессий в постоянные БД.",
+                eco_a_title: "3. Android-компаньон",
+                eco_a_desc: "Модульное приложение для телефона: быстрый QR-паринг, автономные сценарии на устройстве, синхронизация воды/курения/таймера и удалённые команды ПК.",
+                faq_title: "Частые вопросы",
+                faq_q1: "Нужен ли обязательный аккаунт или подключение к сети для работы?",
+                faq_a1: "Нет. Оверлей, виджеты и локальные настройки работают автономно на Windows (.NET 8 / WPF); синхронизация с Android и релей подключаются только по желанию.",
+                faq_q2: "Хранятся ли мои данные, буфер обмена или скриншоты на сервере?",
+                faq_a2: "Нет. Данные обрабатываются локально, аналитика поведения для профилирования не ведётся, а через релей сообщения проходят транзитом без записи содержимого сессий в постоянные базы.",
+                faq_q3: "Как работает фоновый троттлинг и нагрузка на ПК?",
+                faq_a3: "Фоновые модули снижают активность и частоту обновлений в периоды высокой нагрузки (игры, рендер, активная работа), сохраняя плавный отклик интерфейса без лишних ресурсов.",
+                faq_q4: "Как привязать Android-компаньон к ПК?",
+                faq_a4: "Откройте настройки tabletka на Windows, запустите привязку по QR-коду через relay.699718.space и отсканируйте код в Android-приложении — после этого станут доступны синхронизация модулей и команды ПК.",
+                hero_subtitle: "tabletka — лёгкий нативный десктопный оверлей и виджет-центр для Windows (.NET 8 / WPF) с опциональной синхронизацией через Android-компаньон и релей relay.699718.space.",
+                hero_desc_extra: "Быстрый доступ к виджетам и действиям поверх окон: перетаскивание за края (edge-dragging), автокопирование скриншотов в буфер, двухпоточная очередь загрузок, троттлинг в фоне и 10 языков локализации.",
+                pill_box1_title: "Форм-фактор таблетки",
+                pill_box1_desc: "Компактная капсула и быстрый переход к модулям.",
+                pill_box2_title: "Плавность и отзывчивость",
+                pill_box2_desc: "Edge-dragging, очередь загрузок и фоновый троттлинг.",
+                pill_box3_title: "Модули и управление",
+                pill_box3_desc: "16 модулей, 10 языков и связка с Android.",
+                cta_features: "О функциях",
+                header_meta_os: "Windows x64",
+                header_meta_mode: "Компактная пилюля и модули",
+                cta_download: "Скачать v0.9.8.1",
+                cta_apk_stub: "Скачать APK (заглушка)",
+                toast_apk_stub: "APK-компаньон в разработке (заглушка) · уведомление отправлено",
+                cta_github: "GitHub",
+                cta_home: "На главную",
+                footer_brand: "tabletka · .NET 8 / WPF · v0.9.8.1",
+                footer_meta: "Local-first · Релей: relay.699718.space (0 хранения сессий на сервере)",
+                btn_pill_open: "Подробнее о таблетке",
+                p1_title: "Таблетка Медиа",
+                p1_collapsed_desc: "В сложенном виде отображает строку текущего трека (например «Cold Carti — дни горят»), индикатор активности, быстрый шаг трека и счётчик 1/16.",
+                p1_expanded_desc: "При раскрытии открывается окно МЕДИАПЛЕЕР с обложкой, источником (Telegram), полосой спектра, таймлайном, вертикальным регулятором громкости, кнопкой TXT и быстрой загрузкой MP3/FLAC.",
+                p1_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Компактная строка и бегущая строка:</b> пинг-понг прокрутка с паузами по краям и остановкой при наведении, без зависания ореола при анимации.</li><li><b>Спектр и таймлайн:</b> линейка столбиков спектра с безопасными границами отрисовки, шкала прогресса (00:07 / 02:44) и транспорт.</li><li><b>Громкость и быстрые действия:</b> вертикальный слайдер громкости (50%), источник трека, кнопки TXT, ↓ MP3, ↓ FLAC и переход к папке.</li></ul>",
+                p2_title: "Таблетка Мониторов",
+                p2_collapsed_desc: "В сложенном виде показывает сводку нагрузки CPU и RAM (например «CPU 28% • RAM 11,9ГБ») и счётчик 2/16.",
+                p2_expanded_desc: "При раскрытии открывается окно MONITORS с сеткой карточек CPU, GPU и температуры, RAM и сети DL/UL, закреплением плиток и центральной кнопкой очистки.",
+                p2_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>CPU и RAM:</b> процент загрузки процессора (25%) и объём памяти (13,2 / 16 ГБ) в компактной строке и плитках.</li><li><b>GPU и температура:</b> совместное отображение нагрузки и температуры видеокарты (41% • 50°C).</li><li><b>СЕТЬ (DL / UL), пины и очистка:</b> раздельные скорости приёма и отдачи (↓44K ↑250K), закрепление карточек и кнопка очистки в центре.</li></ul>",
+                p3_title: "Таблетка Записи",
+                p3_collapsed_desc: "В сложенном виде показывает активный режим/кнопку быстрого запуска (например «Open btn»), быстрые переключатели и счётчик 3/16.",
+                p3_expanded_desc: "При раскрытии открывается окно ЗАПИСЬ с режимами «Голос» и «Кружок», кнопками управления, параметрами захвата (647×393), переходом в «Архив» и карточкой результата «Drag / Открыть».",
+                p3_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Режимы «Голос» и «Кружок»:</b> быстрый выбор формата записи прямо в раскрытой таблетке.</li><li><b>Управление и параметры:</b> кнопки запуска/действий, отображение разрешения/аудио (647×393) и кнопка «Архив».</li><li><b>Карточка файла:</b> быстрый доступ к сохранённому кадру/записи через «Drag / Открыть» и закрепление окна.</li></ul>",
+                p4_title: "Таблетка Курсов и Крипты",
+                p4_collapsed_desc: "В сложенном виде выводит котировки (например «EUR 1,0975 $ (-0,5%) • BTC 59 994 $») и счётчик 4/16.",
+                p4_expanded_desc: "При раскрытии открывается окно КУРСЫ И КРИПТА с переключателями таймфреймов (1D, 1W, 1M, 1Y), карточками активов BTC, ETH и SOL, пинами и кнопкой отмены/обновления.",
+                p4_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Таймфреймы и изменение:</b> быстрый выбор 1D, 1W, 1M, 1Y и процент динамики за выбранный период.</li><li><b>Карточки BTC, ETH, SOL:</b> текущая цена, закрепление нужных активов пином и индикатор обновления.</li><li><b>Управление запросом:</b> статус «Обновление...» и кнопка «✕ Отмена».</li></ul>",
+                p5_title: "Таблетка Новостей",
+                p5_collapsed_desc: "В сложенном виде крутит строку свежего заголовка (например «...нняя Москва vm.ru] Стубб назвал...») и счётчик 5/16.",
+                p5_expanded_desc: "При раскрытии открывается окно НОВОСТИ со списком заметок, метками категорий (МОС, RU, МИР, IT) и быстрым просмотром ленты.",
+                p5_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Категории ленты:</b> цветные метки разделов (МОС, RU, МИР, IT) рядом с каждой строкой.</li><li><b>Компактный список:</b> быстрое чтение заголовков в оверлее без открытия браузера.</li><li><b>Закрепление окна:</b> кнопка pin в правом верхнем углу для удержания поверх окон.</li></ul>",
+                p6_title: "Таблетка Пробок",
+                p6_collapsed_desc: "В сложенном виде показывает краткую сводку пути (например «1 б. • 21 мин (15,0 км)») и счётчик 6/16.",
+                p6_expanded_desc: "При раскрытии открывается окно ПРОБКИ с оценкой баллов, временем в пути и дистанцией, источниками OSRM + Яндекс, кнопкой «Карта» и списком направлений.",
+                p6_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Сводка маршрута:</b> баллы, время в пути и расстояние (например «3 б. • 21 мин в пути (15,0 км)») на базе OSRM + Яндекс.</li><li><b>Быстрые действия:</b> кнопка обновления и переход «Карта» прямо из окна.</li><li><b>Контрольные точки:</b> список маршрутов/участков (например Невский проспект, Лахта Центр).</li></ul>",
+                p7_title: "Таблетка Загрузчика",
+                p7_collapsed_desc: "В сложенном виде показывает статус «Готово к загрузке» и счётчик 7/16.",
+                p7_expanded_desc: "При раскрытии открывается окно ЗАГРУЗЧИК с подсказкой по ссылке, кнопкой «↓ Скачать из буфера» и быстрым открытием папки загрузок.",
+                p7_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Загрузка из буфера:</b> одна кнопка «↓ Скачать из буфера» для скопированной ссылки.</li><li><b>Папка и подсказки:</b> быстрый переход в папку со скачанными файлами и подсказка по действиям.</li><li><b>Закрепление окна:</b> кнопка pin в верхнем правом углу.</li></ul>",
+                p8_title: "Таблетка Торрентов",
+                p8_collapsed_desc: "В сложенном виде выводит статус клиента (например «qBittorrent · Готово (15)») и счётчик 8/16.",
+                p8_expanded_desc: "При раскрытии открывается окно ТОРРЕНТЫ со скоростями отдачи/загрузки, суммой за день и месяц, кнопками папки и обновления, а также списком раздач.",
+                p8_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Скорости и трафик:</b> текущие скорости и счётчики объёма за день и месяц.</li><li><b>Список элементов:</b> прогресс, размер, скорость и кнопка паузы на каждой позиции.</li><li><b>Управление:</b> открытие папки, ручное обновление и закрепление окна.</li></ul>",
+                p9_title: "Таблетка Кармана Файлов",
+                p9_collapsed_desc: "В сложенном виде показывает количество файлов (например «В кармане: 8 шт.») и счётчик 9/16.",
+                p9_expanded_desc: "При раскрытии открывается окно КАРМАН ФАЙЛОВ со списком сохранённых объектов, перетаскиванием ЛКМ в Telegram или папку, удалением отдельных позиций и очисткой списка.",
+                p9_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Drag &amp; Drop:</b> зажмите файл ЛКМ и перетащите в Telegram или нужную папку.</li><li><b>Управление списком:</b> удаление отдельных элементов по кнопке «×» и кнопка «Очистить».</li><li><b>Быстрый доступ:</b> хранение медиа, скриншотов и файлов под рукой без лишних окон.</li></ul>",
+                p10_title: "Таблетка Буфера Обмена",
+                p10_collapsed_desc: "В сложенном виде отображает последнюю запись буфера (например команды PowerShell) и счётчик 10/16.",
+                p10_expanded_desc: "При раскрытии открывается окно БУФЕР ОБМЕНА с историей записей, копированием по клику и кнопкой очистки буфера.",
+                p10_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>История записей:</b> пронумерованный список скопированных фрагментов и команд.</li><li><b>Клик — скопировать:</b> быстрое возвращение нужной строки в буфер обмена в один клик.</li><li><b>Очистка:</b> кнопка «Очистить» и закрепление окна поверх других.</li></ul>",
+                p11_title: "Таблетка Сниппетов",
+                p11_collapsed_desc: "Быстрый доступ к сохранённым командам и шаблонам (11/16) с копированием в один клик.",
+                p11_expanded_desc: "При раскрытии открывается окно СНИППЕТЫ со списком команд (например Docker Up, Docker Logs, Restart Xray), управлением порядком и добавлением новых шаблонов.",
+                p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Копирование и порядок:</b> клик копирует команду, а перетаскивание или стрелки меняют порядок строк.</li><li><b>Редактирование и удаление:</b> удаление ненужных позиций по кнопке «×» и добавление через «+ Добавить».</li><li><b>Закрепление окна:</b> кнопка pin в верхнем правом углу.</li></ul>",
+                p12_title: "Таблетка Быстрых Инструментов",
+                p12_collapsed_desc: "Быстрые системные переключатели для звука, экранов и сети (12/16).",
+                p12_expanded_desc: "При раскрытии открывается окно БЫСТРЫЕ ИНСТРУМЕНТЫ с выбором аудиовыхода, переключением режимов экранов (Только ПК, Дублировать, Расширить, Второй экран) и статусом VPN-интерфейса.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Звук и выход:</b> отображение активного устройства и быстрая смена выхода.</li><li><b>Режимы экранов:</b> быстрое переключение конфигурации дисплеев без настроек Windows.</li><li><b>Статус VPN:</b> индикация активного интерфейса и внутреннего IP-адреса.</li></ul>",
+                p13_title: "Таблетка Пульса Сервера",
+                p13_collapsed_desc: "Контроль состояния нод и серверов прямо в оверлее (13/16).",
+                p13_expanded_desc: "При раскрытии открывается окно ПУЛЬС СЕРВЕРА со списком нод, временем последнего обновления, кнопкой ручного опроса и добавлением новой ноды.",
+                p13_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Список нод:</b> быстрый обзор состояния подключённых серверов.</li><li><b>Обновление и добавление:</b> кнопка обновления, отметка времени и «+ Нода».</li><li><b>Закрепление окна:</b> возможность удержать панель поверх окон.</li></ul>",
+                p14_title: "Таблетка Таймера",
+                p14_collapsed_desc: "В сложенном виде показывает обратный отсчёт, состояние паузы и счётчик 14/16.",
+                p14_expanded_desc: "При раскрытии открывается окно ТАЙМЕР с крупным циферблатом, настройкой минут по клику, паузой, сбросом и быстрыми пресетами (5, 15, 25, 45, 60 мин).",
+                p14_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Быстрые интервалы:</b> пресеты на 5, 15, 25, 45 и 60 минут в один клик.</li><li><b>Точная настройка:</b> настройка минут по клику на таймер, пауза и сброс.</li><li><b>Синхронизация со строкой:</b> текущее время и пауза видны и в свёрнутой таблетке.</li></ul>",
+                p15_title: "Таблетка Водного Баланса",
+                p15_collapsed_desc: "В сложенном виде отображает выпитый объём к цели (например «1,60 / 3,5 л») и счётчик 15/16.",
+                p15_expanded_desc: "При раскрытии открывается окно ВОДНЫЙ БАЛАНС со шкалой прогресса, быстрыми кнопками «+250 мл» и «+500 мл», откладыванием и расчётом нормы.",
+                p15_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Быстрый учёт воды:</b> кнопки «+250 мл», «+500 мл» и прогресс-бар к дневной цели.</li><li><b>Отложить и расчёт:</b> кнопка «Отложить» и «Расчет» дневной нормы.</li><li><b>Быстрый переход:</b> быстрое переключение на соседние модули из окна.</li></ul>",
+                p16_title: "Таблетка Курения",
+                p16_collapsed_desc: "В сложенном виде показывает счётчик и время до следующего перекура (например «16 · до перекура: 59:55») и счётчик 16/16.",
+                p16_expanded_desc: "При раскрытии открывается окно КУРЕНИЕ с таймерами «КУРИЛ НАЗАД» и «До след.:», статистикой за день и целью интервала, кнопкой сброса таймера и началом нового дня.",
+                p16_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Таймеры и цель:</b> время с последнего раза, отсчёт до следующего интервала и число за день.</li><li><b>Сброс и новый день:</b> кнопка «Покурил (сбросить таймер)» и «Новый день».</li><li><b>Закрепление окна:</b> удержание карточки поверх окон при необходимости.</li></ul>"
+            },
+            en: {
+                
+                cta_contact: "Feedback",
+                wn_title: "Features & What's New",
+                wn_f1_title: "On-Screen Overlay & Widgets",
+                wn_f1_desc: "Compact widgets (news, markets, quick actions, media controls), edge-dragging window movement, and clean top-most behavior.",
+                wn_f2_title: "Automation & Background Throttling",
+                wn_f2_desc: "Background screenshot auto-copy to clipboard, two-thread download queue, and smart background throttling during games, rendering, and heavy work.",
+                wn_f3_title: "Localization & Packaging",
+                wn_f3_desc: "10-language localization support, native Windows x64 Setup installer, and a predictable release cycle.",
+                wn_f4_title: "Android Companion & Relay",
+                wn_f4_desc: "Modular Android companion app: QR pairing, standalone on-device features, and sync/PC commands via relay.699718.space.",
+                ux_title: "Usability & Performance",
+                ux_c1_title: "Instant Response, Zero Clutter",
+                ux_c1_desc: "Clear visual hierarchy and quick widget access above windows without bloated sidebars or extra clicks.",
+                ux_c2_title: "Light on PC Resources",
+                ux_c2_desc: "Native .NET 8 / WPF with no heavy runtime bloat and smart background throttling during gaming, rendering, or active workloads.",
+                ux_c3_title: "Tailored to Your Workflow",
+                ux_c3_desc: "Enable only the modules you need — no forced cloud accounts, subscriptions, or complex setup flows.",
+                priv_title: "Security & Privacy (0 Data Retention)",
+                priv_p1_title: "No Collection or Server Storage",
+                priv_p1_desc: "tabletka runs no behavioral profiling analytics, collects no profiling telemetry, and never stores personal files, clipboard items, screenshots, or action history in persistent server databases.",
+                priv_p2_title: "Local-First by Default",
+                priv_p2_desc: "Core logic, widget states, and user settings stay and run locally on your device.",
+                priv_p3_title: "Transit Relay Without Persistence",
+                priv_p3_desc: "When sync and relay are used, traffic passes in transit to deliver messages between devices without writing user session payloads to persistent storage.",
+                priv_p4_title: "Full User Control",
+                priv_p4_desc: "You decide which modules stay active, when to link the Android companion, and how network connections behave.",
+                eco_title: "Architecture / Ecosystem: Windows + Android + Relay",
+                eco_w_title: "1. Windows Desktop (.NET 8 / WPF)",
+                eco_w_desc: "16-module overlay, local settings, DPAPI-protected relay token storage, and state/RPC router (water, smoke, timer, pc.*).",
+                eco_r_title: "2. Relay relay.699718.space",
+                eco_r_desc: "Transit WebSocket/HTTP relay behind TLS/HAProxy: QR pairing and message routing between peers without persisting session data.",
+                eco_a_title: "3. Android Companion",
+                eco_a_desc: "Modular mobile app: fast QR pairing, standalone device tools, water/smoke/timer sync, and remote PC actions.",
+                faq_title: "Frequently Asked Questions",
+                faq_q1: "Do I need an account or internet connection to use tabletka?",
+                faq_a1: "No. The overlay, widgets, and local settings work offline on Windows (.NET 8 / WPF); Android sync and the relay are optional.",
+                faq_q2: "Are my data, clipboard history, or screenshots stored on a server?",
+                faq_a2: "No. Everything runs locally by default, no behavioral profiling analytics are collected, and the relay routes messages in transit without persisting session payloads.",
+                faq_q3: "How does background throttling affect PC performance?",
+                faq_a3: "Background modules scale back polling and work during heavy tasks like games or rendering while keeping the UI responsive.",
+                faq_q4: "How do I pair the Android companion with my PC?",
+                faq_a4: "Open tabletka settings on Windows, start QR pairing via relay.699718.space, and scan the code in the Android app to enable sync and PC commands.",
+                hero_subtitle: "tabletka is a .NET 8 Windows desktop overlay: it sits cleanly as a compact pill above windows and expands into detailed modules on demand.",
+                hero_desc_extra: "You can drag the pill by its edges, cycle states, inspect live modules, and trigger quick actions without heavy full-screen panels.",
+                pill_box1_title: "Pill Form Factor",
+                pill_box1_desc: "Compact top pill with edge dragging and instant expansion into full module views.",
+                pill_box2_title: "Smooth & Light",
+                pill_box2_desc: "Coordinated sizing and glow across open/close states with zero stale halos and throttled idle work.",
+                pill_box3_title: "Modules & Controls",
+                pill_box3_desc: "Media player with spectrum and quick actions, hardware telemetry, hotkeys, and 10-language localization.",
+                cta_features: "Features",
+                header_meta_os: "Windows x64",
+                header_meta_mode: "Compact Pill & Modules",
+                cta_download: "Download v0.9.8.1",
+                cta_apk_stub: "Download APK (Stub)",
+                toast_apk_stub: "Android APK stub (coming soon) · notification sent",
+                cta_github: "GitHub",
+                cta_home: "Back to Index",
+                footer_brand: "tabletka · .NET 8 / WPF · v0.9.8.1",
+                footer_meta: "Local-first · Relay: relay.699718.space (0 persistent session storage)",
+                btn_pill_open: "Pill Details & Expanded View",
+                p1_title: "Media Pill",
+                p1_collapsed_desc: "Collapsed view shows the active track line, pulse indicator, track step, and 1/16 counter.",
+                p1_expanded_desc: "Expanding opens the MEDIA PLAYER view with cover artwork, source label (Telegram), spectrum bars, timeline, vertical volume slider, TXT, and MP3/FLAC buttons.",
+                p1_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Compact bar &amp; marquee:</b> smooth ping-pong scrolling with edge pauses and pause-on-hover, with no lingering animation halo.</li><li><b>Spectrum &amp; timeline:</b> bounds-safe spectrum bars, progress bar (00:07 / 02:44), and playback controls.</li><li><b>Volume &amp; quick actions:</b> vertical volume slider (50%), source tag, TXT, ↓ MP3, ↓ FLAC, and folder button.</li></ul>",
+                p2_title: "Monitors Pill",
+                p2_collapsed_desc: "Collapsed view displays compact CPU and RAM summary (e.g. CPU 28% • RAM 11.9 GB) and 2/16 counter.",
+                p2_expanded_desc: "Expanding opens the MONITORS grid with CPU, GPU &amp; temperature, RAM, and network DL/UL tiles, tile pins, and a center cleanup button.",
+                p2_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>CPU &amp; RAM:</b> live processor load (25%) and memory usage (13.2 / 16 GB) across compact and expanded views.</li><li><b>GPU &amp; temperature:</b> combined graphics load and Celsius temperature in one tile (41% • 50°C).</li><li><b>Network (DL / UL), pins &amp; cleanup:</b> download/upload rates (↓44K ↑250K), per-tile pin toggles, and center cleanup trigger.</li></ul>",
+                p3_title: "Record Pill",
+                p3_collapsed_desc: "Collapsed view shows the quick launch state (e.g. Open btn), quick toggles, and 3/16 counter.",
+                p3_expanded_desc: "Expanding opens the RECORD view with Voice and Circle modes, control buttons, capture info (647×393), Archive button, and Drag / Open item card.",
+                p3_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Voice &amp; Circle modes:</b> quick mode selection right inside the expanded capture pill.</li><li><b>Controls &amp; capture info:</b> action triggers, resolution/audio indicator (647×393), and Archive access.</li><li><b>Output card:</b> quick Drag / Open interaction for captured items and window pinning.</li></ul>",
+                p4_title: "Markets & Crypto Pill",
+                p4_collapsed_desc: "Collapsed view shows live quotes (e.g. EUR 1.0975 $ (-0.5%) • BTC 59 994 $) and 4/16 counter.",
+                p4_expanded_desc: "Expanding opens MARKETS & CRYPTO with 1D, 1W, 1M, 1Y timeframe toggles, BTC, ETH, and SOL cards, pin buttons, and refresh/cancel controls.",
+                p4_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Timeframes &amp; delta:</b> switch across 1D, 1W, 1M, and 1Y with percentage change readouts.</li><li><b>BTC, ETH &amp; SOL cards:</b> current prices, per-card pin toggles, and sync status.</li><li><b>Request control:</b> live updating indicator and quick cancel action.</li></ul>",
+                p5_title: "News Pill",
+                p5_collapsed_desc: "Collapsed view scrolls the active headline and shows the 5/16 counter.",
+                p5_expanded_desc: "Expanding opens NEWS with a compact feed list, category tags, and quick headline scanning.",
+                p5_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Topic tags:</b> color-coded category badges next to each headline row.</li><li><b>Overlay feed:</b> scan recent headlines directly over active windows.</li><li><b>Pin toggle:</b> keep the news panel pinned on top when needed.</li></ul>",
+                p6_title: "Traffic Pill",
+                p6_collapsed_desc: "Collapsed view shows a compact trip summary (e.g. 1 pt • 21 min (15.0 km)) and 6/16 counter.",
+                p6_expanded_desc: "Expanding opens TRAFFIC with congestion points, travel time and distance, OSRM + Yandex sources, Map button, and route items.",
+                p6_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Route summary:</b> congestion score, travel time, and distance powered by OSRM + Yandex.</li><li><b>Quick actions:</b> instant refresh and Map button inside the expanded view.</li><li><b>Tracked routes:</b> quick list of monitored streets and landmarks.</li></ul>",
+                p7_title: "Downloader Pill",
+                p7_collapsed_desc: "Collapsed view shows ready status and the 7/16 counter.",
+                p7_expanded_desc: "Expanding opens DOWNLOADER with link guidance, Download from clipboard button, and quick folder access.",
+                p7_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Clipboard download:</b> one-click download trigger for links in the clipboard.</li><li><b>Folder access:</b> open the target downloads directory directly from the panel.</li><li><b>Pin toggle:</b> pin the downloader card above windows.</li></ul>",
+                p8_title: "Torrents Pill",
+                p8_collapsed_desc: "Collapsed view shows client status (e.g. qBittorrent · Ready (15)) and 8/16 counter.",
+                p8_expanded_desc: "Expanding opens TORRENTS with transfer rates, daily/monthly totals, folder and refresh buttons, and active torrent items.",
+                p8_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Rates &amp; totals:</b> live transfer rates plus daily and monthly traffic counters.</li><li><b>Torrent list:</b> completion, size, rate, and pause/resume controls per item.</li><li><b>Actions:</b> open folder, manual refresh, and window pin toggle.</li></ul>",
+                p9_title: "File Pocket Pill",
+                p9_collapsed_desc: "Collapsed view shows stored item count (e.g. In pocket: 8) and 9/16 counter.",
+                p9_expanded_desc: "Expanding opens FILE POCKET with saved items, drag-and-drop with left click to Telegram or a folder, item removal, and clear.",
+                p9_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Drag &amp; Drop:</b> hold left mouse button to drag items into Telegram or any folder.</li><li><b>List controls:</b> remove individual entries or clear the whole pocket.</li><li><b>Quick staging:</b> keep screenshots, media, and files handy in one place.</li></ul>",
+                p10_title: "Clipboard Pill",
+                p10_collapsed_desc: "Collapsed view shows the latest clipboard entry (such as shell commands) and 10/16 counter.",
+                p10_expanded_desc: "Expanding opens CLIPBOARD with recent entries, click-to-copy behavior, and a clear button.",
+                p10_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Entry history:</b> numbered list of copied snippets and commands.</li><li><b>Click to copy:</b> restore any saved entry back to the clipboard with one click.</li><li><b>Clear &amp; pin:</b> clear entries or keep the clipboard window pinned.</li></ul>",
+                p11_title: "Snippets Pill",
+                p11_collapsed_desc: "Quick access to saved commands and templates (11/16) with one-click copy.",
+                p11_expanded_desc: "Expanding opens SNIPPETS with command rows (such as Docker Up, Docker Logs, Restart Xray), row reordering, and adding new snippets.",
+                p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Copy &amp; order:</b> click to copy a command, and reorder rows via drag or arrows.</li><li><b>Manage entries:</b> remove items or add new snippets with the + Add button.</li><li><b>Pin toggle:</b> pin the snippets window above other windows.</li></ul>",
+                p12_title: "Quick Tools Pill",
+                p12_collapsed_desc: "Quick toggles for audio output, display mode, and VPN status (12/16).",
+                p12_expanded_desc: "Expanding opens QUICK TOOLS with audio output switching, multi-monitor display modes, and active VPN tunnel info.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio output:</b> view the active sound device and switch output quickly.</li><li><b>Display modes:</b> switch PC-only, duplicate, extend, or second screen modes.</li><li><b>VPN status:</b> see active tunnel interface and assigned IP address.</li></ul>",
+                p13_title: "Server Pulse Pill",
+                p13_collapsed_desc: "Monitor server and node status right from the overlay (13/16).",
+                p13_expanded_desc: "Expanding opens SERVER PULSE with monitored nodes, last refresh timestamp, manual refresh, and adding a new node.",
+                p13_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Monitored nodes:</b> view configured server nodes in one overlay panel.</li><li><b>Refresh &amp; add:</b> manual refresh trigger, last update timestamp, and + Node.</li><li><b>Pin toggle:</b> keep the server pulse card pinned when needed.</li></ul>",
+                p14_title: "Timer Pill",
+                p14_collapsed_desc: "Collapsed view shows countdown time, pause state, and 14/16 counter.",
+                p14_expanded_desc: "Expanding opens TIMER with a large readout, click-to-set minutes, pause, reset, and quick presets (5, 15, 25, 45, 60 min).",
+                p14_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Quick presets:</b> one-click 5, 15, 25, 45, and 60 minute timers.</li><li><b>Custom minutes &amp; controls:</b> click timer to set minutes, pause, or reset.</li><li><b>Compact sync:</b> remaining time and pause state reflect on the pill bar.</li></ul>",
+                p15_title: "Water Balance Pill",
+                p15_collapsed_desc: "Collapsed view shows intake against daily goal (e.g. 1.60 / 3.5 L) and 15/16 counter.",
+                p15_expanded_desc: "Expanding opens WATER BALANCE with a progress bar, +250 ml and +500 ml buttons, snooze, and daily target calculation.",
+                p15_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Quick intake:</b> +250 ml and +500 ml buttons with a daily goal progress bar.</li><li><b>Snooze &amp; calculate:</b> snooze reminders or calculate your target intake.</li><li><b>Quick module jump:</b> switch to adjacent pills directly from the panel.</li></ul>",
+                p16_title: "Smoking Timer Pill",
+                p16_collapsed_desc: "Collapsed view shows count and time until next interval (16/16).",
+                p16_expanded_desc: "Expanding opens SMOKING with elapsed and next-interval timers, daily count and target interval, reset action, and New day.",
+                p16_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Interval timers:</b> time since last smoke, countdown to next interval, and daily count.</li><li><b>Reset &amp; new day:</b> reset timer on smoke or start a fresh daily cycle.</li><li><b>Pin toggle:</b> keep the card pinned above windows when needed.</li></ul>"
+            },
+            de: {
+                
+                cta_contact: "Feedback",
+                wn_title: "Funktionen & Was ist neu",
+                wn_f1_title: "On-Screen Overlay & Widgets",
+                wn_f1_desc: "Compact widgets (news, markets, quick actions, media controls), edge-dragging window movement, and clean top-most behavior.",
+                wn_f2_title: "Automation & Background Throttling",
+                wn_f2_desc: "Background screenshot auto-copy to clipboard, two-thread download queue, and smart background throttling during games, rendering, and heavy work.",
+                wn_f3_title: "Localization & Packaging",
+                wn_f3_desc: "10-language localization support, native Windows x64 Setup installer, and a predictable release cycle.",
+                wn_f4_title: "Android Companion & Relay",
+                wn_f4_desc: "Modular Android companion app: QR pairing, standalone on-device features, and sync/PC commands via relay.699718.space.",
+                ux_title: "Usability & Performance",
+                ux_c1_title: "Instant Response, Zero Clutter",
+                ux_c1_desc: "Clear visual hierarchy and quick widget access above windows without bloated sidebars or extra clicks.",
+                ux_c2_title: "Light on PC Resources",
+                ux_c2_desc: "Native .NET 8 / WPF with no heavy runtime bloat and smart background throttling during gaming, rendering, or active workloads.",
+                ux_c3_title: "Tailored to Your Workflow",
+                ux_c3_desc: "Enable only the modules you need — no forced cloud accounts, subscriptions, or complex setup flows.",
+                priv_title: "Security & Privacy (0 Data Retention)",
+                priv_p1_title: "No Collection or Server Storage",
+                priv_p1_desc: "tabletka runs no behavioral profiling analytics, collects no profiling telemetry, and never stores personal files, clipboard items, screenshots, or action history in persistent server databases.",
+                priv_p2_title: "Local-First by Default",
+                priv_p2_desc: "Core logic, widget states, and user settings stay and run locally on your device.",
+                priv_p3_title: "Transit Relay Without Persistence",
+                priv_p3_desc: "When sync and relay are used, traffic passes in transit to deliver messages between devices without writing user session payloads to persistent storage.",
+                priv_p4_title: "Full User Control",
+                priv_p4_desc: "You decide which modules stay active, when to link the Android companion, and how network connections behave.",
+                eco_title: "Architecture / Ecosystem: Windows + Android + Relay",
+                eco_w_title: "1. Windows Desktop (.NET 8 / WPF)",
+                eco_w_desc: "16-module overlay, local settings, DPAPI-protected relay token storage, and state/RPC router (water, smoke, timer, pc.*).",
+                eco_r_title: "2. Relay relay.699718.space",
+                eco_r_desc: "Transit WebSocket/HTTP relay behind TLS/HAProxy: QR pairing and message routing between peers without persisting session data.",
+                eco_a_title: "3. Android Companion",
+                eco_a_desc: "Modular mobile app: fast QR pairing, standalone device tools, water/smoke/timer sync, and remote PC actions.",
+                faq_title: "Frequently Asked Questions",
+                faq_q1: "Do I need an account or internet connection to use tabletka?",
+                faq_a1: "No. The overlay, widgets, and local settings work offline on Windows (.NET 8 / WPF); Android sync and the relay are optional.",
+                faq_q2: "Are my data, clipboard history, or screenshots stored on a server?",
+                faq_a2: "No. Everything runs locally by default, no behavioral profiling analytics are collected, and the relay routes messages in transit without persisting session payloads.",
+                faq_q3: "How does background throttling affect PC performance?",
+                faq_a3: "Background modules scale back polling and work during heavy tasks like games or rendering while keeping the UI responsive.",
+                faq_q4: "How do I pair the Android companion with my PC?",
+                faq_a4: "Open tabletka settings on Windows, start QR pairing via relay.699718.space, and scan the code in the Android app to enable sync and PC commands.",
+                hero_subtitle: "tabletka ist ein .NET-8-Desktop-Overlay für Windows: eingeklappt eine kompakte Pille über Fenstern, bei Bedarf erweiterbar zu vollen Modulen.",
+                hero_desc_extra: "Die Pille lässt sich an den Rändern ziehen, durch Zustände schalten und für schnelle Aktionen nutzen – ohne schwere Vollbild-Panels.",
+                pill_box1_title: "Pillen-Formfaktor",
+                pill_box1_desc: "Kompakte Pille am oberen Rand mit Ziehen an den Kanten und schnellem Ausklappen.",
+                pill_box2_title: "Flüssig & schonend",
+                pill_box2_desc: "Abgestimmte Größe und Beleuchtung ohne hängende Lichthöfe sowie gedrosselte Hintergrundlast.",
+                pill_box3_title: "Module & Steuerung",
+                pill_box3_desc: "Medienplayer mit Spektrum und Schnellaktionen, Systemmonitore, Hotkeys und 10 Sprachen.",
+                cta_features: "Funktionen",
+                header_meta_os: "Windows x64",
+                header_meta_mode: "Kompakte Pille & Module",
+                cta_download: "Download v0.9.8.1",
+                cta_apk_stub: "APK laden (Stub)",
+                toast_apk_stub: "Android-APK-Stub (bald verfügbar) · Benachrichtigung gesendet",
+                cta_github: "GitHub",
+                cta_home: "Zur Startseite",
+                btn_pill_open: "Details & erweiterte Ansicht",
+                p1_title: "Medien-Pille",
+                p1_collapsed_desc: "Eingeklappt zeigt sie den aktiven Titel, Statuspunkte, Titelwechsel und den Zähler 1/16.",
+                p1_expanded_desc: "Ausgeklappt erscheint der MEDIA-PLAYER mit Cover, Quelle (Telegram), Spektrum, Zeitleiste, vertikalem Lautstärkeregler, TXT sowie MP3/FLAC.",
+                p1_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Kompakte Leiste &amp; Laufschrift:</b> Ping-Pong-Scrollen mit Rand- und Hover-Pause ohne Nachzieheffekt.</li><li><b>Spektrum &amp; Zeitleiste:</b> sichere Spektrumgrenzen, Zeit (00:07 / 02:44) und Wiedergabetasten.</li><li><b>Lautstärke &amp; Aktionen:</b> vertikaler Regler (50%), Quelle, TXT, ↓ MP3, ↓ FLAC und Ordner.</li></ul>",
+                p2_title: "Monitore-Pille",
+                p2_collapsed_desc: "Eingeklappt zeigt sie CPU und RAM kompakt (z. B. CPU 28% • RAM 11,9 GB) sowie den Zähler 2/16.",
+                p2_expanded_desc: "Ausgeklappt öffnet sich MONITORS mit Kacheln für CPU, GPU &amp; Temperatur, RAM und Netzwerk DL/UL, Pin-Tasten und Schnellbereinigung.",
+                p2_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>CPU &amp; RAM:</b> Prozessorlast (25%) und Speicher (13,2 / 16 GB) in kompakter und offener Ansicht.</li><li><b>GPU &amp; Temperatur:</b> Grafiklast und Temperatur zusammen in einer Kachel (41% • 50°C).</li><li><b>Netzwerk (DL / UL), Pins &amp; Bereinigung:</b> Raten (↓44K ↑250K), Anpinnen pro Kachel und zentrale Bereinigung.</li></ul>",
+                p3_title: "Aufnahme-Pille",
+                p3_collapsed_desc: "Eingeklappt zeigt sie Schnellzugriff (z. B. Open btn), Schnelltasten und den Zähler 3/16.",
+                p3_expanded_desc: "Ausgeklappt erscheinen die Aufnahme-Modi (Sprache / Kreis), Steuertasten, Info (647×393), Archiv sowie Drag / Öffnen.",
+                p3_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Modi Sprache &amp; Kreis:</b> schnelle Auswahl des Aufnahmeformats direkt im Modul.</li><li><b>Steuerung &amp; Info:</b> Aktionen, Erfassungsdaten (647×393) und Archiv-Zugang.</li><li><b>Ergebniskarte:</b> Drag / Öffnen für erstellte Dateien und Anpinnen des Fensters.</li></ul>",
+                p4_title: "Kurse & Krypto-Pille",
+                p4_collapsed_desc: "Eingeklappt zeigt sie Kurse (z. B. EUR 1,0975 $ (-0,5%) • BTC 59 994 $) und den Zähler 4/16.",
+                p4_expanded_desc: "Ausgeklappt öffnet sich KURSE &amp; KRIPTO mit Zeiträumen (1D, 1W, 1M, 1Y), Karten für BTC, ETH und SOL, Pins sowie Aktualisieren/Abbrechen.",
+                p4_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Zeiträume &amp; Verlauf:</b> Wechsel zwischen 1D, 1W, 1M und 1Y inklusive Prozentwert.</li><li><b>BTC-, ETH- &amp; SOL-Karten:</b> aktuelle Kurse, Anpinnen einzelner Werte und Statusanzeige.</li><li><b>Anfragesteuerung:</b> Aktualisierungsstatus und Abbrechen-Taste.</li></ul>",
+                p5_title: "Nachrichten-Pille",
+                p5_collapsed_desc: "Eingeklappt zeigt sie die aktuelle Schlagzeile und den Zähler 5/16.",
+                p5_expanded_desc: "Ausgeklappt öffnet sich NACHRICHTEN mit Meldungsliste, Bereichs-Tags und schnellem Überblick.",
+                p5_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Bereichs-Tags:</b> farbliche Kennzeichnung der Rubriken an jeder Meldung.</li><li><b>Overlay-Feed:</b> Schlagzeilen direkt über offenen Fenstern lesen.</li><li><b>Anpinnen:</b> Pin-Schalter oben rechts zum Fixieren.</li></ul>",
+                p6_title: "Verkehrs-Pille",
+                p6_collapsed_desc: "Eingeklappt zeigt sie eine Kurzinfo zur Strecke (z. B. 21 min / 15,0 km) und den Zähler 6/16.",
+                p6_expanded_desc: "Ausgeklappt öffnet sich VERKEHR mit Stauwert, Fahrzeit und Strecke, OSRM + Yandex, Karte-Button und Routenpunkten.",
+                p6_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Streckenübersicht:</b> Stauindex, Fahrzeit und Distanz auf Basis von OSRM + Yandex.</li><li><b>Schnellaktionen:</b> Neu laden und direkter Karte-Button.</li><li><b>Routenpunkte:</b> Übersicht über beobachtete Abschnitte und Ziele.</li></ul>",
+                p7_title: "Downloader-Pille",
+                p7_collapsed_desc: "Eingeklappt zeigt sie den Bereit-Status und den Zähler 7/16.",
+                p7_expanded_desc: "Ausgeklappt öffnet sich DOWNLOADER mit Link-Hinweis, Download aus Zwischenablage und Ordnerzugriff.",
+                p7_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Aus Zwischenablage:</b> direkter Download kopierter Links per Klick.</li><li><b>Ordnerzugriff:</b> Zielordner direkt aus dem Modul öffnen.</li><li><b>Anpinnen:</b> Pin-Schalter zum Fixieren über anderen Fenstern.</li></ul>",
+                p8_title: "Torrent-Pille",
+                p8_collapsed_desc: "Eingeklappt zeigt sie den Client-Status (z. B. qBittorrent · Fertig (15)) und den Zähler 8/16.",
+                p8_expanded_desc: "Ausgeklappt öffnet sich TORRENTS mit Raten, Tages-/Monatswerten, Ordner- und Aktualisieren-Button sowie Einträgen.",
+                p8_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Raten &amp; Summen:</b> aktuelle Übertragungsraten sowie Tages- und Monatsvolumen.</li><li><b>Eintragsliste:</b> Fortschritt, Größe, Rate und Pause-Taste pro Torrent.</li><li><b>Aktionen:</b> Ordner öffnen, manuell aktualisieren und anpinnen.</li></ul>",
+                p9_title: "Datei-Tasche-Pille",
+                p9_collapsed_desc: "Eingeklappt zeigt sie die Anzahl gespeicherter Elemente und den Zähler 9/16.",
+                p9_expanded_desc: "Ausgeklappt öffnet sich DATEI-TASCHE mit abgelegten Dateien, Ziehen mit linker Maustaste in Telegram/Ordner, Löschen und Leeren.",
+                p9_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Drag &amp; Drop:</b> Elemente mit linker Maustaste in Telegram oder Ordner ziehen.</li><li><b>Listenverwaltung:</b> einzelne Einträge entfernen oder alles leeren.</li><li><b>Schnelle Ablage:</b> Screenshots, Medien und Dateien griffbereit halten.</li></ul>",
+                p10_title: "Zwischenablage-Pille",
+                p10_collapsed_desc: "Eingeklappt zeigt sie den letzten Eintrag (z. B. Befehle) und den Zähler 10/16.",
+                p10_expanded_desc: "Ausgeklappt öffnet sich ZWISCHENABLAGE mit Verlauf, Kopieren per Klick und Leeren-Button.",
+                p10_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Eintragsverlauf:</b> nummerierte Liste kopierter Texte und Befehle.</li><li><b>Klick zum Kopieren:</b> Einträge mit einem Klick wieder aktivieren.</li><li><b>Leeren &amp; Anpinnen:</b> Verlauf löschen oder Fenster fixieren.</li></ul>",
+                p11_title: "Snippets-Pille",
+                p11_collapsed_desc: "Schnellzugriff auf gespeicherte Befehle und Vorlagen (11/16) per Klick.",
+                p11_expanded_desc: "Ausgeklappt öffnet sich SNIPPETS mit Befehlszeilen, Sortierung und Hinzufügen neuer Einträge.",
+                p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Kopieren &amp; Reihenfolge:</b> Klick kopiert den Befehl, Zeilen lassen sich sortieren.</li><li><b>Verwaltung:</b> Einträge entfernen oder über + Hinzufügen ergänzen.</li><li><b>Anpinnen:</b> Pin-Schalter zum Fixieren über Fenstern.</li></ul>",
+                p12_title: "Schnellwerkzeuge-Pille",
+                p12_collapsed_desc: "Schnellschalter für Audioausgang, Bildschirme und VPN-Status (12/16).",
+                p12_expanded_desc: "Ausgeklappt öffnet sich SCHNELLWERKZEUGE mit Audioausgabe, Anzeigemodi und VPN-Tunnel-Info.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audioausgang:</b> aktives Gerät anzeigen und Ausgang wechseln.</li><li><b>Anzeigemodi:</b> schneller Wechsel zwischen PC, Duplizieren, Erweitern und Zweitbildschirm.</li><li><b>VPN-Status:</b> aktiver Tunnel und IP-Adresse im Blick.</li></ul>",
+                p13_title: "Server-Puls-Pille",
+                p13_collapsed_desc: "Überwachung von Server-Nodes direkt im Overlay (13/16).",
+                p13_expanded_desc: "Ausgeklappt öffnet sich SERVER-PULS mit Nodes, Zeitstempel, Aktualisieren-Button und + Node.",
+                p13_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Nodes im Blick:</b> konfigurierte Server-Nodes übersichtlich im Overlay.</li><li><b>Aktualisieren &amp; hinzufügen:</b> manueller Refresh, Zeitstempel und + Node.</li><li><b>Anpinnen:</b> Karte bei Bedarf im Vordergrund halten.</li></ul>",
+                p14_title: "Timer-Pille",
+                p14_collapsed_desc: "Eingeklappt zeigt sie Restzeit, Pause-Status und den Zähler 14/16.",
+                p14_expanded_desc: "Ausgeklappt öffnet sich TIMER mit großer Anzeige, Minutenwahl per Klick, Pause, Reset und Presets (5, 15, 25, 45, 60 Min.).",
+                p14_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Schnellpresets:</b> 5, 15, 25, 45 und 60 Minuten per Klick.</li><li><b>Minuten &amp; Steuerung:</b> Klick auf Zeit zum Einstellen, Pause und Reset.</li><li><b>Kompakte Anzeige:</b> Restzeit und Pause erscheinen auch in der Pille.</li></ul>",
+                p15_title: "Wasserhaushalt-Pille",
+                p15_collapsed_desc: "Eingeklappt zeigt sie die Menge zum Tagesziel (z. B. 1,60 / 3,5 L) und den Zähler 15/16.",
+                p15_expanded_desc: "Ausgeklappt öffnet sich WASSERHAUSHALT mit Fortschrittsbalken, +250 ml, +500 ml, Verschieben und Berechnung.",
+                p15_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Schnelle Erfassung:</b> +250 ml und +500 ml Buttons mit Tagesziel-Balken.</li><li><b>Verschieben &amp; Berechnung:</b> Erinnerung verschieben oder Tagesbedarf berechnen.</li><li><b>Modulwechsel:</b> direkter Sprung zu benachbarten Pillen.</li></ul>",
+                p16_title: "Rauch-Timer-Pille",
+                p16_collapsed_desc: "Eingeklappt zeigt sie Zähler und Zeit bis zum nächsten Intervall (16/16).",
+                p16_expanded_desc: "Ausgeklappt öffnet sich RAUCHEN mit Zeit seit letztem Mal, Countdown bis zum nächsten Intervall, Tageswert, Reset und Neuer Tag.",
+                p16_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Intervall-Timer:</b> Zeit seit letzter Einheit, Countdown und Tageszähler.</li><li><b>Reset &amp; Neuer Tag:</b> Timer zurücksetzen oder neuen Tag starten.</li><li><b>Anpinnen:</b> Ansicht bei Bedarf oben fixieren.</li></ul>"
+            },
+            fr: {
+                cta_contact: "Contact",
+                wn_title: "Fonctions & Nouveautés",
+                wn_f1_title: "Overlay et widgets à l'écran",
+                wn_f1_desc: "Widgets compacts (actualités, cours, actions rapides, contrôle média), déplacement par les bords (edge-dragging) et affichage propre au-dessus des fenêtres.",
+                wn_f2_title: "Automatisation et régulation en arrière-plan",
+                wn_f2_desc: "Copie auto des captures d'écran dans le presse-papiers en arrière-plan, file à deux threads et régulation intelligente pendant les jeux, le rendu ou l'activité intense.",
+                wn_f3_title: "Localisation et installation",
+                wn_f3_desc: "Prise en charge de 10 langues, installateur natif Windows (x64 Setup) et cycle de mises à jour régulier.",
+                wn_f4_title: "Compagnon Android et Relay",
+                wn_f4_desc: "Application compagnon Android modulaire : appairage par QR code, fonctions autonomes et synchronisation/commandes PC via relay.699718.space.",
+                ux_title: "Ergonomie et performances",
+                ux_c1_title: "Réactivité immédiate sans surcharge",
+                ux_c1_desc: "Hiérarchie visuelle claire et accès rapide aux widgets au-dessus des fenêtres sans panneaux lourds ni clics superflus.",
+                ux_c2_title: "Économie des ressources PC",
+                ux_c2_desc: ".NET 8 / WPF natif sans framework massif et régulation en arrière-plan lors des jeux, du rendu ou des tâches actives.",
+                ux_c3_title: "Adapté à votre usage",
+                ux_c3_desc: "Activez uniquement les modules utiles — sans compte cloud imposé, abonnement ni configuration complexe.",
+                priv_title: "Sécurité et confidentialité (0 stockage de données)",
+                priv_p1_title: "Aucune collecte ni stockage serveur",
+                priv_p1_desc: "tabletka ne fait pas d'analytique comportementale de profilage, ne collecte pas de télémétrie de profilage et n'enregistre ni fichiers, ni presse-papiers, ni captures, ni historique dans des bases persistantes côté serveur.",
+                priv_p2_title: "Traitement local par défaut",
+                priv_p2_desc: "La logique principale, l'état des widgets et les réglages restent et s'exécutent localement sur votre poste.",
+                priv_p3_title: "Relais en transit sans persistance",
+                priv_p3_desc: "Lors de l'utilisation du relais, le trafic passe en transit pour acheminer les messages entre appareils sans enregistrer le contenu des sessions dans un stockage permanent.",
+                priv_p4_title: "Contrôle total de l'utilisateur",
+                priv_p4_desc: "Vous choisissez les modules actifs, le moment d'associer l'application Android et la gestion des connexions réseau.",
+                eco_title: "Architecture / Écosystème : Windows + Android + Relay",
+                eco_w_title: "1. Windows Desktop (.NET 8 / WPF)",
+                eco_w_desc: "Overlay à 16 modules, réglages locaux, jeton de relais protégé par DPAPI et routeur d'états/commandes (eau, tabac, minuteur, pc.*).",
+                eco_r_title: "2. Relais relay.699718.space",
+                eco_r_desc: "Relais WebSocket/HTTP en transit derrière TLS/HAProxy : appairage QR et routage des messages sans stockage persistant des sessions.",
+                eco_a_title: "3. Compagnon Android",
+                eco_a_desc: "Application mobile modulaire : appairage QR rapide, outils autonomes, synchronisation eau/tabac/minuteur et commandes PC à distance.",
+                faq_title: "Questions fréquentes",
+                faq_q1: "Un compte ou une connexion réseau est-il obligatoire ?",
+                faq_a1: "Non. L'overlay, les widgets et les réglages locaux fonctionnent hors ligne sous Windows (.NET 8 / WPF) ; la synchro Android et le relais sont optionnels.",
+                faq_q2: "Mes données, mon presse-papiers ou mes captures sont-ils stockés sur un serveur ?",
+                faq_a2: "Non. Le traitement est local par défaut, sans profilage comportemental, et le relais achemine les messages en transit sans stockage permanent.",
+                faq_q3: "Quel est l'impact de la régulation en arrière-plan sur le PC ?",
+                faq_a3: "Les modules en arrière-plan réduisent leur cadence lors des pics de charge (jeux, rendu) tout en gardant une interface réactive.",
+                faq_q4: "Comment associer le compagnon Android au PC ?",
+                faq_a4: "Ouvrez les paramètres tabletka sous Windows, lancez l'appairage QR via relay.699718.space et scannez le code dans l'application Android.",
+                hero_subtitle: "tabletka est un overlay bureau .NET 8 sous Windows : pilule compacte au-dessus des fenêtres, extensible en modules complets à la demande.",
+                hero_desc_extra: "Déplaçable par ses bords, avec cycles d'état, modules actifs et actions rapides sans alourdir l'écran.",
+                pill_box1_title: "Format pilule",
+                pill_box1_desc: "Pilule compacte en haut de l'écran avec glisser par les bords et ouverture rapide.",
+                pill_box2_title: "Fluide & léger",
+                pill_box2_desc: "Taille et halo synchronisés à l'ouverture/fermeture sans traînée ni charge superflue.",
+                pill_box3_title: "Modules & contrôles",
+                pill_box3_desc: "Lecteur média avec spectre et actions rapides, télémétrie, raccourcis et 10 langues.",
+                cta_features: "Fonctions",
+                header_meta_os: "Windows x64",
+                header_meta_mode: "Pilule & Modules",
+                cta_download: "Télécharger v0.9.8.1",
+                cta_github: "GitHub",
+                cta_home: "Accueil",
+                btn_pill_open: "Détails & vue étendue",
+                p1_title: "Pilule Média",
+                p1_collapsed_desc: "Repliée, elle affiche la piste en cours, l'indicateur d'activité, le pas et le compteur 1/16.",
+                p1_expanded_desc: "Dépliée, elle ouvre le lecteur avec pochette, source (Telegram), spectre, chronologie, volume vertical, TXT et MP3/FLAC.",
+                p1_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Barre compacte &amp; défilement :</b> aller-retour fluide avec pauses aux bords et au survol, sans halo résiduel.</li><li><b>Spectre &amp; chronologie :</b> bornes sécurisées, durée (00:07 / 02:44) et commandes de lecture.</li><li><b>Volume &amp; actions :</b> curseur vertical (50%), source, TXT, ↓ MP3, ↓ FLAC et dossier.</li></ul>",
+                p2_title: "Pilule Moniteurs",
+                p2_collapsed_desc: "Repliée, elle affiche CPU et RAM en résumé (ex. CPU 28% • RAM 11,9 Go) et le compteur 2/16.",
+                p2_expanded_desc: "Dépliée, elle affiche MONITORS avec cartes CPU, GPU &amp; température, RAM et réseau DL/UL, épingles et nettoyage central.",
+                p2_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>CPU &amp; RAM :</b> charge processeur (25%) et mémoire (13,2 / 16 Go) en mode compact et étendu.</li><li><b>GPU &amp; température :</b> charge et température réunies sur une carte (41% • 50°C).</li><li><b>Réseau (DL / UL), épingles &amp; nettoyage :</b> débits (↓44K ↑250K), épinglage et bouton central.</li></ul>",
+                p3_title: "Pilule Enregistrement",
+                p3_collapsed_desc: "Repliée, elle affiche l'accès rapide (ex. Open btn), commandes rapides et compteur 3/16.",
+                p3_expanded_desc: "Dépliée, elle affiche les modes Voix et Cercle, boutons d'action, infos (647×393), Archive et carte Drag / Ouvrir.",
+                p3_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Modes Voix &amp; Cercle :</b> choix rapide du format d'enregistrement dans la pilule.</li><li><b>Contrôles &amp; infos :</b> actions, indication 647×393 et accès à l'Archive.</li><li><b>Carte fichier :</b> glisser/ouvrir rapide (Drag / Ouvrir) et épinglage.</li></ul>",
+                p4_title: "Pilule Cours & Crypto",
+                p4_collapsed_desc: "Repliée, elle affiche les cours (ex. EUR 1,0975 $ (-0,5%) • BTC 59 994 $) et le compteur 4/16.",
+                p4_expanded_desc: "Dépliée, elle ouvre COURS &amp; CRYPTO avec périodes (1D, 1W, 1M, 1Y), cartes BTC, ETH et SOL, épingles et actualisation/annulation.",
+                p4_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Périodes &amp; variation :</b> bascule 1D, 1W, 1M, 1Y avec pourcentage d'évolution.</li><li><b>Cartes BTC, ETH, SOL :</b> prix actuels, épinglage individuel et état de mise à jour.</li><li><b>Contrôle requête :</b> indicateur de mise à jour et bouton Annuler.</li></ul>",
+                p5_title: "Pilule Actualités",
+                p5_collapsed_desc: "Repliée, elle affiche le titre en cours et le compteur 5/16.",
+                p5_expanded_desc: "Dépliée, elle ouvre ACTUALITÉS avec liste des dépêches, tags de rubrique et lecture rapide.",
+                p5_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Tags de rubrique :</b> badges de catégorie devant chaque ligne d'actualité.</li><li><b>Flux en overlay :</b> lecture rapide des titres sans quitter votre fenêtre.</li><li><b>Épinglage :</b> bouton pin en haut à droite pour garder la vue active.</li></ul>",
+                p6_title: "Pilule Trafic",
+                p6_collapsed_desc: "Repliée, elle affiche un résumé trajet (ex. 21 min / 15,0 km) et le compteur 6/16.",
+                p6_expanded_desc: "Dépliée, elle ouvre TRAFIC avec niveau, durée et distance, sources OSRM + Yandex, bouton Carte et points de suivi.",
+                p6_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Résumé trajet :</b> score trafic, temps et distance via OSRM + Yandex.</li><li><b>Actions rapides :</b> actualisation et accès direct à la Carte.</li><li><b>Points suivis :</b> liste des axes et repères surveillés.</li></ul>",
+                p7_title: "Pilule Téléchargeur",
+                p7_collapsed_desc: "Repliée, elle affiche l'état prêt et le compteur 7/16.",
+                p7_expanded_desc: "Dépliée, elle ouvre TÉLÉCHARGEUR avec aide lien, téléchargement depuis le presse-papiers et accès dossier.",
+                p7_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Presse-papiers :</b> lancement rapide du téléchargement d'un lien copié.</li><li><b>Dossier :</b> ouverture directe du dossier de téléchargement.</li><li><b>Épinglage :</b> maintien de la fenêtre au premier plan.</li></ul>",
+                p8_title: "Pilule Torrents",
+                p8_collapsed_desc: "Repliée, elle affiche l'état client (ex. qBittorrent · Prêt (15)) et le compteur 8/16.",
+                p8_expanded_desc: "Dépliée, elle ouvre TORRENTS avec débits, totaux jour/mois, boutons dossier/actualisation et liste des torrents.",
+                p8_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Débits &amp; volumes :</b> vitesses en direct et cumuls journalier et mensuel.</li><li><b>Liste des torrents :</b> progression, taille, débit et pause par élément.</li><li><b>Actions :</b> ouvrir le dossier, actualiser et épingler.</li></ul>",
+                p9_title: "Pilule Poche Fichiers",
+                p9_collapsed_desc: "Repliée, elle affiche le nombre d'éléments enregistrés et le compteur 9/16.",
+                p9_expanded_desc: "Dépliée, elle ouvre POCHE FICHIERS avec liste, glisser-déposer clic gauche vers Telegram/dossier, suppression et vider.",
+                p9_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Glisser-déposer :</b> clic gauche maintenu pour déposer vers Telegram ou un dossier.</li><li><b>Gestion de liste :</b> retirer un élément ou vider l'ensemble.</li><li><b>Accès rapide :</b> captures, médias et fichiers toujours à portée.</li></ul>",
+                p10_title: "Pilule Presse-papiers",
+                p10_collapsed_desc: "Repliée, elle affiche la dernière entrée (ex. commandes) et le compteur 10/16.",
+                p10_expanded_desc: "Dépliée, elle ouvre PRESSE-PAPIERS avec historique, copie au clic et bouton vider.",
+                p10_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Historique :</b> liste numérotée des extraits et commandes copiés.</li><li><b>Clic pour copier :</b> réinjecter un élément dans le presse-papiers en un clic.</li><li><b>Vider &amp; épingler :</b> effacer l'historique ou épingler la vue.</li></ul>",
+                p11_title: "Pilule Snippets",
+                p11_collapsed_desc: "Accès rapide aux commandes et modèles enregistrés (11/16) avec copie en un clic.",
+                p11_expanded_desc: "Dépliée, elle ouvre SNIPPETS avec commandes, tri des lignes et ajout de nouveaux extraits.",
+                p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Copie &amp; ordre :</b> clic pour copier et réorganisation des lignes.</li><li><b>Gestion :</b> suppression d'entrées et bouton + Ajouter.</li><li><b>Épinglage :</b> maintien de la fenêtre au premier plan.</li></ul>",
+                p12_title: "Pilule Outils Rapides",
+                p12_collapsed_desc: "Raccourcis pour la sortie audio, l'affichage et l'état VPN (12/16).",
+                p12_expanded_desc: "Dépliée, elle ouvre OUTILS RAPIDES avec sélection audio, modes d'écran et état du tunnel VPN.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio :</b> périphérique actif et changement rapide de sortie.</li><li><b>Écrans :</b> bascule rapide entre PC seul, dupliquer, étendre et second écran.</li><li><b>VPN :</b> interface active et adresse IP affichées clairement.</li></ul>",
+                p13_title: "Pilule Pouls Serveur",
+                p13_collapsed_desc: "Suivi des nœuds et serveurs directement dans l'overlay (13/16).",
+                p13_expanded_desc: "Dépliée, elle ouvre POULS SERVEUR avec liste des nœuds, horodatage, actualisation et + Nœud.",
+                p13_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Nœuds :</b> aperçu des nœuds configurés dans l'overlay.</li><li><b>Actualisation &amp; ajout :</b> rafraîchissement, horodatage et + Nœud.</li><li><b>Épinglage :</b> garder la carte visible au-dessus des fenêtres.</li></ul>",
+                p14_title: "Pilule Minuteur",
+                p14_collapsed_desc: "Repliée, elle affiche le décompte, la pause et le compteur 14/16.",
+                p14_expanded_desc: "Dépliée, elle ouvre MINUTEUR avec grand affichage, réglage des minutes au clic, pause, réinitialisation et préréglages (5, 15, 25, 45, 60 min).",
+                p14_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Préréglages :</b> accès direct à 5, 15, 25, 45 et 60 minutes.</li><li><b>Réglage &amp; contrôles :</b> clic sur le temps pour régler les minutes, pause et reset.</li><li><b>Synchro pilule :</b> temps restant et pause visibles sur la barre compacte.</li></ul>",
+                p15_title: "Pilule Hydratation",
+                p15_collapsed_desc: "Repliée, elle affiche le volume vers l'objectif (ex. 1,60 / 3,5 L) et le compteur 15/16.",
+                p15_expanded_desc: "Dépliée, elle ouvre HYDRATATION avec barre de progression, +250 ml, +500 ml, reporter et calcul de l'objectif.",
+                p15_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Ajout rapide :</b> boutons +250 ml et +500 ml avec progression journalière.</li><li><b>Reporter &amp; calcul :</b> reporter le rappel ou calculer l'objectif.</li><li><b>Accès modules :</b> passage rapide vers les pilules voisines.</li></ul>",
+                p16_title: "Pilule Pause Tabac",
+                p16_collapsed_desc: "Repliée, elle affiche le compteur et le temps avant l'intervalle suivant (16/16).",
+                p16_expanded_desc: "Dépliée, elle ouvre le suivi avec temps écoulé, compte à rebours, total du jour, réinitialisation et Nouveau jour.",
+                p16_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Intervalles :</b> temps écoulé, compte à rebours et compteur journalier.</li><li><b>Reset &amp; nouveau jour :</b> réinitialiser le minuteur ou démarrer une nouvelle journée.</li><li><b>Épinglage :</b> épingler la fenêtre si nécessaire.</li></ul>"
+            },
+            es: {
+                cta_contact: "Contacto",
+                wn_title: "Funciones y novedades",
+                wn_f1_title: "Overlay y widgets en pantalla",
+                wn_f1_desc: "Widgets compactos (noticias, mercados, acciones rápidas, control multimedia), arrastre por bordes (edge-dragging) y comportamiento limpio sobre ventanas.",
+                wn_f2_title: "Automatización y control en segundo plano",
+                wn_f2_desc: "Copia automática de capturas al portapapeles en segundo plano, cola de descargas de dos hilos y ajuste en segundo plano durante juegos, renderizado o trabajo intenso.",
+                wn_f3_title: "Idiomas e instalación",
+                wn_f3_desc: "Soporte para 10 idiomas, instalador nativo para Windows (x64 Setup) y ciclo de actualizaciones predecible.",
+                wn_f4_title: "Compañero Android y Relay",
+                wn_f4_desc: "App compañera modular para Android: vinculación por código QR, funciones autónomas y sincronización/comandos de PC mediante relay.699718.space.",
+                ux_title: "Usabilidad y rendimiento",
+                ux_c1_title: "Respuesta inmediata sin ruido",
+                ux_c1_desc: "Jerarquía visual clara y acceso rápido a widgets sobre tus ventanas sin paneles pesados ni clics de más.",
+                ux_c2_title: "Ahorro de recursos del PC",
+                ux_c2_desc: ".NET 8 / WPF nativo sin frameworks pesados y reducción en segundo plano durante juegos, renderizado o carga alta.",
+                ux_c3_title: "A tu medida",
+                ux_c3_desc: "Activa solo los módulos que uses: sin cuentas en la nube obligatorias, suscripciones ni configuraciones complejas.",
+                priv_title: "Seguridad y privacidad (0 almacenamiento de datos)",
+                priv_p1_title: "Sin recolección ni almacenamiento en servidor",
+                priv_p1_desc: "tabletka no realiza analítica de perfilado conductual, no recopila telemetría de perfilado ni guarda archivos personales, portapapeles, capturas o historial en bases persistentes del servidor.",
+                priv_p2_title: "Procesamiento local por defecto",
+                priv_p2_desc: "La lógica principal, el estado de los widgets y los ajustes se almacenan y procesan localmente en tu equipo.",
+                priv_p3_title: "Relé en tránsito sin retención",
+                priv_p3_desc: "Al usar sincronización y relé, el tráfico pasa en tránsito para entregar mensajes entre dispositivos sin registrar el contenido de las sesiones en almacenamiento persistente.",
+                priv_p4_title: "Control total del usuario",
+                priv_p4_desc: "Tú decides qué módulos están activos, cuándo vincular Android y cómo gestionar las conexiones de red.",
+                eco_title: "Arquitectura / Ecosistema: Windows + Android + Relay",
+                eco_w_title: "1. Windows Desktop (.NET 8 / WPF)",
+                eco_w_desc: "Overlay con 16 módulos, ajustes locales, token de relé protegido con DPAPI y enrutador de estados/comandos (agua, tabaco, temporizador, pc.*).",
+                eco_r_title: "2. Relé relay.699718.space",
+                eco_r_desc: "Relé WebSocket/HTTP en tránsito tras TLS/HAProxy: vinculación por QR y enrutamiento de mensajes sin guardar sesiones en bases persistentes.",
+                eco_a_title: "3. Compañero Android",
+                eco_a_desc: "App móvil modular: vinculación QR rápida, herramientas autónomas, sincronización de agua/tabaco/temporizador y comandos remotos para el PC.",
+                faq_title: "Preguntas frecuentes",
+                faq_q1: "¿Necesito una cuenta o conexión a internet para usar tabletka?",
+                faq_a1: "No. El overlay, los widgets y los ajustes locales funcionan sin conexión en Windows (.NET 8 / WPF); la sincronización con Android y el relé son opcionales.",
+                faq_q2: "¿Se guardan mis datos, portapapeles o capturas en un servidor?",
+                faq_a2: "No. Todo se procesa localmente por defecto, sin analítica de perfilado, y el relé envía mensajes en tránsito sin almacenamiento persistente.",
+                faq_q3: "¿Cómo afecta el ajuste en segundo plano al rendimiento del PC?",
+                faq_a3: "Los módulos en segundo plano reducen su actividad durante tareas exigentes como juegos o renderizado manteniendo una interfaz fluida.",
+                faq_q4: "¿Cómo vinculo la app de Android con el PC?",
+                faq_a4: "Abre los ajustes de tabletka en Windows, inicia la vinculación QR mediante relay.699718.space y escanea el código en la app de Android.",
+                hero_subtitle: "tabletka es un overlay de escritorio en .NET 8 para Windows: actúa como píldora compacta sobre las ventanas y se expande en módulos a demanda.",
+                hero_desc_extra: "Permite arrastrar por los bordes, alternar estados, ver módulos activos y lanzar acciones rápidas sin paneles pesados.",
+                pill_box1_title: "Formato píldora",
+                pill_box1_desc: "Cápsula compacta superior con arrastre por bordes y expansión rápida.",
+                pill_box2_title: "Fluido y ligero",
+                pill_box2_desc: "Geometría y resplandor sincronizados sin halos pegados y con ahorro en reposo.",
+                pill_box3_title: "Módulos y control",
+                pill_box3_desc: "Reproductor con espectro y acciones rápidas, monitores, atajos y 10 idiomas.",
+                cta_features: "Funciones",
+                header_meta_os: "Windows x64",
+                header_meta_mode: "Píldora y Módulos",
+                cta_download: "Descargar v0.9.8.1",
+                cta_github: "GitHub",
+                cta_home: "Inicio",
+                btn_pill_open: "Detalles y vista ampliada",
+                p1_title: "Píldora Media",
+                p1_collapsed_desc: "Contraída muestra la pista actual, indicador de estado, avance y contador 1/16.",
+                p1_expanded_desc: "Al expandir muestra el reproductor con carátula, origen (Telegram), espectro, línea de tiempo, volumen vertical, TXT y MP3/FLAC.",
+                p1_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Barra compacta y marquesina:</b> desplazamiento ping-pong con pausas en bordes y al pasar el cursor, sin estelas.</li><li><b>Espectro y tiempo:</b> límites seguros, duración (00:07 / 02:44) y controles.</li><li><b>Volumen y acciones:</b> control vertical (50%), origen, TXT, ↓ MP3, ↓ FLAC y carpeta.</li></ul>",
+                p2_title: "Píldora Monitores",
+                p2_collapsed_desc: "Contraída muestra resumen de CPU y RAM (ej. CPU 28% • RAM 11,9 GB) y contador 2/16.",
+                p2_expanded_desc: "Al expandir abre MONITORS con tarjetas de CPU, GPU y temperatura, RAM y red DL/UL, pines y limpieza central.",
+                p2_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>CPU y RAM:</b> carga de CPU (25%) y memoria (13,2 / 16 GB) en ambas vistas.</li><li><b>GPU y temperatura:</b> carga y temperatura en °C en una tarjeta (41% • 50°C).</li><li><b>Red (DL / UL), pines y limpieza:</b> tasas (↓44K ↑250K), fijar tarjetas y botón central.</li></ul>",
+                p3_title: "Píldora Grabación",
+                p3_collapsed_desc: "Contraída muestra el acceso rápido (ej. Open btn), controles rápidos y contador 3/16.",
+                p3_expanded_desc: "Al expandir muestra modos Voz y Círculo, botones de control, datos (647×393), Archivo y tarjeta Drag / Abrir.",
+                p3_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Modos Voz y Círculo:</b> selección rápida de formato de grabación.</li><li><b>Controles y datos:</b> acciones, detalle 647×393 y acceso a Archivo.</li><li><b>Tarjeta de salida:</b> Drag / Abrir rápido para capturas y fijar ventana.</li></ul>",
+                p4_title: "Píldora Mercados y Cripto",
+                p4_collapsed_desc: "Contraída muestra cotizaciones (ej. EUR 1,0975 $ (-0,5%) • BTC 59 994 $) y contador 4/16.",
+                p4_expanded_desc: "Al expandir abre MERCADOS Y CRIPTO con rangos 1D, 1W, 1M, 1Y, tarjetas BTC, ETH y SOL, pines y actualizar/cancelar.",
+                p4_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Rangos y variación:</b> selector 1D, 1W, 1M y 1Y con porcentaje de cambio.</li><li><b>Tarjetas BTC, ETH y SOL:</b> precio actual, fijar por tarjeta y estado de sincronía.</li><li><b>Control de consulta:</b> indicador de actualización y botón Cancelar.</li></ul>",
+                p5_title: "Píldora Noticias",
+                p5_collapsed_desc: "Contraída muestra el titular activo y el contador 5/16.",
+                p5_expanded_desc: "Al expandir abre NOTICIAS con lista de titulares, etiquetas de sección y lectura rápida.",
+                p5_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Etiquetas de sección:</b> insignias de categoría junto a cada titular.</li><li><b>Lectura en overlay:</b> consulta rápida de noticias sobre tus ventanas.</li><li><b>Fijar ventana:</b> botón pin superior para mantenerla visible.</li></ul>",
+                p6_title: "Píldora Tráfico",
+                p6_collapsed_desc: "Contraída muestra un resumen de ruta (ej. 21 min / 15,0 km) y contador 6/16.",
+                p6_expanded_desc: "Al expandir abre TRÁFICO con nivel, tiempo y distancia, fuentes OSRM + Yandex, botón Mapa y tramos.",
+                p6_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Resumen de ruta:</b> nivel, tiempo y distancia con OSRM + Yandex.</li><li><b>Acciones rápidas:</b> actualizar y abrir Mapa desde la ventana.</li><li><b>Puntos de ruta:</b> listado rápido de zonas y destinos.</li></ul>",
+                p7_title: "Píldora Descargador",
+                p7_collapsed_desc: "Contraída muestra el estado listo y el contador 7/16.",
+                p7_expanded_desc: "Al expandir abre DESCARGADOR con aviso de enlace, descargar desde portapapeles y acceso a carpeta.",
+                p7_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Desde portapapeles:</b> descarga directa del enlace copiado.</li><li><b>Carpeta:</b> apertura rápida de la carpeta de descargas.</li><li><b>Fijar ventana:</b> opción pin en la esquina superior.</li></ul>",
+                p8_title: "Píldora Torrents",
+                p8_collapsed_desc: "Contraída muestra el estado del cliente (ej. qBittorrent · Listo (15)) y contador 8/16.",
+                p8_expanded_desc: "Al expandir abre TORRENTS con velocidades, totales diario y mensual, carpeta/actualizar y lista de elementos.",
+                p8_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Velocidades y consumo:</b> tasas actuales y acumulados del día y del mes.</li><li><b>Lista de elementos:</b> progreso, tamaño, velocidad y pausa por fila.</li><li><b>Acciones:</b> abrir carpeta, actualizar y fijar ventana.</li></ul>",
+                p9_title: "Píldora Bolsillo de Archivos",
+                p9_collapsed_desc: "Contraída muestra la cantidad de archivos guardados y el contador 9/16.",
+                p9_expanded_desc: "Al expandir abre BOLSILLO DE ARCHIVOS con elementos, arrastrar con clic izquierdo a Telegram/carpeta, borrar y limpiar.",
+                p9_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Arrastrar y soltar:</b> mantén clic izquierdo para arrastrar a Telegram o carpeta.</li><li><b>Gestión de lista:</b> quitar un archivo o limpiar todo el bloque.</li><li><b>Acceso directo:</b> capturas, medios y archivos siempre a mano.</li></ul>",
+                p10_title: "Píldora Portapapeles",
+                p10_collapsed_desc: "Contraída muestra el último elemento (ej. comandos) y el contador 10/16.",
+                p10_expanded_desc: "Al expandir abre PORTAPAPELES con historial, copiar con un clic y botón limpiar.",
+                p10_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Historial:</b> lista numerada de fragmentos y comandos copiados.</li><li><b>Clic para copiar:</b> recupera cualquier entrada al portapapeles al instante.</li><li><b>Limpiar y fijar:</b> borra el historial o fija la ventana.</li></ul>",
+                p11_title: "Píldora Snippets",
+                p11_collapsed_desc: "Acceso rápido a comandos y plantillas guardadas (11/16) con copia en un clic.",
+                p11_expanded_desc: "Al expandir abre SNIPPETS con filas de comandos, ordenación y botón + Añadir.",
+                p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Copiar y ordenar:</b> clic para copiar y reordenar filas fácilmente.</li><li><b>Gestión:</b> borrar elementos o añadir nuevos desde + Añadir.</li><li><b>Fijar ventana:</b> opción pin en la esquina superior.</li></ul>",
+                p12_title: "Píldora Herramientas Rápidas",
+                p12_collapsed_desc: "Controles rápidos de salida de audio, pantallas y estado VPN (12/16).",
+                p12_expanded_desc: "Al expandir abre HERRAMIENTAS RÁPIDAS con salida de audio, modos de pantalla y estado de VPN.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio:</b> dispositivo activo y cambio rápido de salida.</li><li><b>Pantallas:</b> cambio rápido entre solo PC, duplicar, extender y segunda pantalla.</li><li><b>VPN:</b> interfaz activa e IP visibles al instante.</li></ul>",
+                p13_title: "Píldora Pulso del Servidor",
+                p13_collapsed_desc: "Supervisión de nodos y servidores directamente en el overlay (13/16).",
+                p13_expanded_desc: "Al expandir abre PULSO DEL SERVIDOR con nodos, hora de actualización, refresco y + Nodo.",
+                p13_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Nodos:</b> vista rápida del estado de nodos configurados.</li><li><b>Actualizar y añadir:</b> refresco manual, marca de tiempo y + Nodo.</li><li><b>Fijar ventana:</b> mantener el panel visible sobre ventanas.</li></ul>",
+                p14_title: "Píldora Temporizador",
+                p14_collapsed_desc: "Contraída muestra cuenta atrás, estado de pausa y contador 14/16.",
+                p14_expanded_desc: "Al expandir abre TEMPORIZADOR con lectura grande, ajuste de minutos al clic, pausa, reinicio y ajustes (5, 15, 25, 45, 60 min).",
+                p14_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Ajustes rápidos:</b> botones de 5, 15, 25, 45 y 60 minutos.</li><li><b>Minutos y control:</b> clic en el tiempo para ajustar minutos, pausa y reinicio.</li><li><b>Vista compacta:</b> el tiempo restante y pausa se reflejan en la píldora.</li></ul>",
+                p15_title: "Píldora Hidratación",
+                p15_collapsed_desc: "Contraída muestra el consumo frente a la meta (ej. 1,60 / 3,5 L) y contador 15/16.",
+                p15_expanded_desc: "Al expandir abre HIDRATACIÓN con barra de progreso, +250 ml, +500 ml, posponer y cálculo de objetivo.",
+                p15_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Registro rápido:</b> botones +250 ml y +500 ml con barra diaria.</li><li><b>Posponer y calcular:</b> pospone el aviso o calcula la meta diaria.</li><li><b>Acceso rápido:</b> salta a píldoras cercanas desde la ventana.</li></ul>",
+                p16_title: "Píldora Intervalo",
+                p16_collapsed_desc: "Contraída muestra el contador y el tiempo hasta el siguiente intervalo (16/16).",
+                p16_expanded_desc: "Al expandir abre el panel con tiempo transcurrido, cuenta atrás, conteo diario, reinicio y Nuevo día.",
+                p16_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Intervalos:</b> tiempo desde el último registro, cuenta atrás y conteo diario.</li><li><b>Reinicio y nuevo día:</b> reinicia el temporizador o inicia un nuevo día.</li><li><b>Fijar ventana:</b> fija la tarjeta sobre otras ventanas si lo necesitas.</li></ul>"
+            },
+            he: {
+                cta_contact: "\u05e6\u05d5\u05e8 \u05e7\u05e9\u05e8",
+                wn_title: "תכונות ומה חדש",
+                wn_f1_title: "אוברליי ווידג׳טים על המסך",
+                wn_f1_desc: "ווידג׳טים קומפקטיים (חדשות, שווקים, פעולות מהירות, שליטה במדיה), גרירה מהקצוות (edge-dragging) והתנהגות נקייה מעל חלונות.",
+                wn_f2_title: "אוטומציה וויסות ברקע",
+                wn_f2_desc: "העתקה אוטומטית של צילומי מסך ללוח ברקע, תור הורדות דו-חוטית וויסות חכם בזמן משחקים, רינדור או עומס גבוה.",
+                wn_f3_title: "שפות והתקנה",
+                wn_f3_desc: "תמיכה ב-10 שפות, מתקין Windows ייעודי (x64 Setup) ומחזור עדכונים מסודר.",
+                wn_f4_title: "אפליקציית אנדרואיד ו-Relay",
+                wn_f4_desc: "אפליקציית אנדרואיד מודולרית: צימוד ב-QR, כלים עצמאיים במכשיר וסנכרון/פקודות למחשב דרך relay.699718.space.",
+                ux_title: "נוחות וביצועים",
+                ux_c1_title: "תגובה מיידית בלי עומס ויזואלי",
+                ux_c1_desc: "היררכיה ברורה וגישה מהירה לווידג׳טים מעל חלונות בלי תפריטים כבדים או קליקים מיותרים.",
+                ux_c2_title: "חיסכון במשאבי המחשב",
+                ux_c2_desc: ".NET 8 / WPF טבעי ללא שכבות כבדות וויסות ברקע בזמן משחקים, רינדור או עבודה שוטפת.",
+                ux_c3_title: "מותאם אליך",
+                ux_c3_desc: "הפעילו רק את המודולים שצריכים — בלי חשבונות ענן כפויים, מנויים או הגדרות מסובכות.",
+                priv_title: "אבטחה ופרטיות (0 שמירת נתונים)",
+                priv_p1_title: "ללא איסוף או שמירה בשרת",
+                priv_p1_desc: "tabletka אינה מפעילה אנליטיקת פרופיל התנהגותי, אינה אוספת טלמטריה לפרופיל ואינה שומרת קבצים אישיים, לוח עריכה, צילומי מסך או היסטוריה במסדי נתונים קבועים בשרת.",
+                priv_p2_title: "עיבוד מקומי כברירת מחדל",
+                priv_p2_desc: "הלוגיקה המרכזית, מצב הווידג׳טים וההגדרות נשמרים ופועלים מקומית במכשיר שלכם.",
+                priv_p3_title: "העברה במעבר ללא שמירה קבועה",
+                priv_p3_desc: "בעת שימוש בסנכרון וברליי, התעבורה עוברת במעבר להעברת הודעות בין המכשירים ללא רישום תוכן הסשנים באחסון קבוע.",
+                priv_p4_title: "שליטה מלאה של המשתמש",
+                priv_p4_desc: "אתם בוחרים אילו מודולים פעילים, מתי לחבר את אנדרואיד וכיצד לנהל חיבורי רשת.",
+                eco_title: "ארכיטקטורה / אקוסיסטם: Windows + Android + Relay",
+                eco_w_title: "1. Windows Desktop (.NET 8 / WPF)",
+                eco_w_desc: "אוברליי עם 16 מודולים, הגדרות מקומיות, שמירת טוקן רליי ב-DPAPI ונתב מצבים/פקודות (מים, מרווח, טיימר, pc.*).",
+                eco_r_title: "2. רליי relay.699718.space",
+                eco_r_desc: "רליי WebSocket/HTTP במעבר מאחורי TLS/HAProxy: צימוד QR וניתוב הודעות ללא שמירת סשנים באחסון קבוע.",
+                eco_a_title: "3. אפליקציית אנדרואיד",
+                eco_a_desc: "אפליקציה מודולרית לנייד: צימוד QR מהיר, כלים עצמאיים, סנכרון מים/מרווח/טיימר ופקודות מרחוק למחשב.",
+                faq_title: "שאלות נפוצות",
+                faq_q1: "האם נדרש חשבון או חיבור רשת כדי להשתמש ב-tabletka?",
+                faq_a1: "לא. האוברליי, הווידג׳טים וההגדרות המקומיות פועלים אופליין ב-Windows (.NET 8 / WPF); סנכרון אנדרואיד והרליי הם אופציונליים.",
+                faq_q2: "האם הנתונים שלי, הלוח או צילומי המסך נשמרים בשרת?",
+                faq_a2: "לא. הכול פועל מקומית כברירת מחדל, ללא פרופיל התנהגותי, והרליי מעביר הודעות במעבר ללא שמירה קבועה.",
+                faq_q3: "איך ויסות הרקע משפיע על ביצועי המחשב?",
+                faq_a3: "מודולי הרקע מפחיתים פעילות בזמן עומס כמו משחקים או רינדור ושומרים על ממשק מגיב.",
+                faq_q4: "איך מצמדים את אפליקציית אנדרואיד למחשב?",
+                faq_a4: "פתחו את הגדרות tabletka ב-Windows, התחילו צימוד QR דרך relay.699718.space וסרקו את הקוד באפליקציית אנדרואיד.",
+                hero_subtitle: "tabletka הוא אוברליי שולחני ב-.NET 8 ל-Windows: פועל כגלולה קומפקטית מעל החלונות ונפתח למודולים מלאים לפי צורך.",
+                hero_desc_extra: "אפשר לגרור את הגלולה מהקצוות, לעבור בין מצבים ולהפעיל פעולות מהירות בלי חלונות כבדים.",
+                pill_box1_title: "מבנה גלולה",
+                pill_box1_desc: "גלולה עליונה קומפקטית עם גרירה מהקצוות ופתיחה מהירה של המודולים.",
+                pill_box2_title: "חלק וחסכוני",
+                pill_box2_desc: "התאמת מידות והילה בפתיחה וסגירה ללא שאריות זוהר ועם ויסות ברקע.",
+                pill_box3_title: "מודולים ושליטה",
+                pill_box3_desc: "נגן מדיה עם ספקטרום ופעולות מהירות, ניטור מערכת, קיצורים ו-10 שפות.",
+                cta_features: "תכונות",
+                header_meta_os: "Windows x64",
+                header_meta_mode: "גלולה ומודולים",
+                cta_download: "הורדה v0.9.8.1",
+                cta_github: "GitHub",
+                cta_home: "לעמוד הראשי",
+                btn_pill_open: "פרטים ותצוגה מורחבת",
+                p1_title: "גלולת מדיה",
+                p1_collapsed_desc: "במצב מכווץ מוצגת שורת הרצועה הפעילה, חיווי מצב, מעבר שיר ומונה 1/16.",
+                p1_expanded_desc: "בפתיחה מוצג הנגן עם עטיפה, מקור (Telegram), ספקטרום, ציר זמן, ווליום אנכי, TXT וכפתורי MP3/FLAC.",
+                p1_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>שורה קומפקטית וטקסט נע:</b> גלילה הלוך-ושוב עם השהיות בקצוות ועצירה בריחוף, ללא שאריות הילה.</li><li><b>ספקטרום וציר זמן:</b> הגנות גבולות בספקטרום, זמן (00:07 / 02:44) ובקרי ניגון.</li><li><b>ווליום ופעולות מהירות:</b> מחוון אנכי (50%), מקור, TXT, ↓ MP3, ↓ FLAC ותיקייה.</li></ul>",
+                p2_title: "גלולת מוניטורים",
+                p2_collapsed_desc: "במצב מכווץ מוצג סיכום CPU ו-RAM (למשל CPU 28% • RAM 11,9 GB) ומונה 2/16.",
+                p2_expanded_desc: "בפתיחה נפתח MONITORS עם כרטיסי CPU, GPU וטמפרטורה, RAM ורשת DL/UL, נעיצה וניקוי מרכזי.",
+                p2_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>CPU ו-RAM:</b> עומס מעבד (25%) וזיכרון (13,2 / 16 GB) במצב מכווץ ופתוח.</li><li><b>GPU וטמפרטורה:</b> עומס וטמפרטורה בכרטיס אחד (41% • 50°C).</li><li><b>רשת (DL / UL), נעיצה וניקוי:</b> קצבים (↓44K ↑250K), נעיצת כרטיסים וכפתור ניקוי במרכז.</li></ul>",
+                p3_title: "גלולת הקלטה",
+                p3_collapsed_desc: "במצב מכווץ מוצגת גישה מהירה (למשל Open btn), מתגים ומונה 3/16.",
+                p3_expanded_desc: "בפתיחה נפתחים מצבי קול ועיגול, כפתורי שליטה, פרטי לכידה (647×393), ארכיון וכרטיס Drag / פתיחה.",
+                p3_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>מצבי קול ועיגול:</b> בחירה מהירה של מצב ההקלטה בתוך הגלולה.</li><li><b>בקרה ונתונים:</b> כפתורי פעולה, חיווי 647×393 וגישה לארכיון.</li><li><b>כרטיס קובץ:</b> Drag / פתיחה מהירה לפריטים שנוצרו והצמדת חלון.</li></ul>",
+                p4_title: "גלולת שווקים וקריפטו",
+                p4_collapsed_desc: "במצב מכווץ מוצגים שערים (למשל EUR 1,0975 $ (-0,5%) • BTC 59 994 $) ומונה 4/16.",
+                p4_expanded_desc: "בפתיחה נפתח שווקים וקריפטו עם טווחי 1D, 1W, 1M, 1Y, כרטיסי BTC, ETH ו-SOL, נעיצה וכפתורי עדכון/ביטול.",
+                p4_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>טווחים ושינוי:</b> מעבר בין 1D, 1W, 1M ו-1Y עם אחוז שינוי.</li><li><b>כרטיסי BTC, ETH ו-SOL:</b> מחיר נוכחי, נעיצת כרטיס וחיווי עדכון.</li><li><b>שליטה בבקשה:</b> חיווי עדכון וביטול מהיר.</li></ul>",
+                p5_title: "גלולת חדשות",
+                p5_collapsed_desc: "במצב מכווץ מוצגת כותרת פעילה ומונה 5/16.",
+                p5_expanded_desc: "בפתיחה נפתח חדשות עם רשימת כותרות, תגיות קטגוריה וקריאה מהירה.",
+                p5_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>תגיות קטגוריה:</b> סימון נושאים ליד כל שורת חדשות.</li><li><b>תצוגת אוברליי:</b> קריאת כותרות מעל החלונות הפתוחים.</li><li><b>נעיצה:</b> כפתור נעץ בפינה להשארת החלון מעל אחרים.</li></ul>",
+                p6_title: "גלולת תנועה",
+                p6_collapsed_desc: "במצב מכווץ מוצג סיכום מסלול (למשל 21 דק׳ / 15.0 ק״מ) ומונה 6/16.",
+                p6_expanded_desc: "בפתיחה נפתח תנועה עם עומס, זמן ומרחק, מקורות OSRM + Yandex, כפתור מפה ונקודות מסלול.",
+                p6_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>סיכום מסלול:</b> מדד עומס, זמן נסיעה ומרחק מבוססי OSRM + Yandex.</li><li><b>פעולות מהירות:</b> רענון וגישה ישירה למפה.</li><li><b>נקודות מעקב:</b> רשימת כיוונים ויעדים פעילים.</li></ul>",
+                p7_title: "גלולת הורדות",
+                p7_collapsed_desc: "במצב מכווץ מוצג חיווי מוכנות ומונה 7/16.",
+                p7_expanded_desc: "בפתיחה נפתח הורדות עם הנחיית קישור, הורדה מהלוח וגישה מהירה לתיקייה.",
+                p7_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>מהלוח:</b> הורדה מהירה של קישור שהועתק ללוח.</li><li><b>תיקייה:</b> פתיחת תיקיית ההורדות בלחיצה.</li><li><b>נעיצה:</b> הצמדת החלון מעל חלונות אחרים.</li></ul>",
+                p8_title: "גלולת טורנטים",
+                p8_collapsed_desc: "במצב מכווץ מוצג מצב הלקוח ומונה 8/16.",
+                p8_expanded_desc: "בפתיחה נפתח טורנטים עם מהירויות, סיכומי יום וחודש, כפתורי תיקייה/רענון ורשימת פריטים.",
+                p8_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>מהירויות ונפח:</b> קצב העברה נוכחי וסיכומי יום וחודש.</li><li><b>רשימת פריטים:</b> התקדמות, גודל, קצב והשהיה לכל פריט.</li><li><b>פעולות:</b> פתיחת תיקייה, רענון ידני ונעיצה.</li></ul>",
+                p9_title: "גלולת כיס קבצים",
+                p9_collapsed_desc: "במצב מכווץ מוצגת כמות הפריטים בכיס ומונה 9/16.",
+                p9_expanded_desc: "בפתיחה נפתח כיס קבצים עם פריטים שמורים, גרירה בלחצן שמאלי לטלגרם/תיקייה, מחיקה וניקוי.",
+                p9_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>גרירה ושחרור:</b> גרירה בלחצן שמאלי לטלגרם או לתיקייה.</li><li><b>ניהול רשימה:</b> הסרת פריט בודד או ניקוי מלא.</li><li><b>גישה מהירה:</b> צילומי מסך, מדיה וקבצים בהישג יד.</li></ul>",
+                p10_title: "גלולת לוח עריכה",
+                p10_collapsed_desc: "במצב מכווץ מוצג הפריט האחרון בלוח ומונה 10/16.",
+                p10_expanded_desc: "בפתיחה נפתח לוח עריכה עם היסטוריה, העתקה בלחיצה וכפתור ניקוי.",
+                p10_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>היסטוריית פריטים:</b> רשימה ממוספרת של קטעים ופקודות שהועתקו.</li><li><b>לחיצה להעתקה:</b> החזרת פריט ללוח בלחיצה אחת.</li><li><b>ניקוי ונעיצה:</b> מחיקת היסטוריה או הצמדת החלון.</li></ul>",
+                p11_title: "גלולת סניפטים",
+                p11_collapsed_desc: "גישה מהירה לפקודות ותבניות שמורות (11/16) עם העתקה בלחיצה.",
+                p11_expanded_desc: "בפתיחה נפתח סניפטים עם שורות פקודות, שינוי סדר והוספת פריטים חדשים.",
+                p11_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>העתקה וסדר:</b> לחיצה מעתיקה פקודה וסידור מחדש של שורות.</li><li><b>ניהול:</b> הסרת שורות וכפתור + הוסף.</li><li><b>נעיצה:</b> הצמדת החלון מעל חלונות אחרים.</li></ul>",
+                p12_title: "גלולת כלים מהירים",
+                p12_collapsed_desc: "מתגים מהירים לשמע, מסכים ומצב VPN (12/16).",
+                p12_expanded_desc: "בפתיחה נפתח כלים מהירים עם בחירת יציאת שמע, מצבי תצוגה וסטטוס VPN.",
+                p12_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>שמע:</b> הצגת התקן פעיל והחלפת יציאה מהירה.</li><li><b>מסכים:</b> מעבר מהיר בין מסך מחשב, שכפול, הרחבה ומסך שני.</li><li><b>VPN:</b> חיווי ממשק פעיל וכתובת IP.</li></ul>",
+                p13_title: "גלולת דופק שרת",
+                p13_collapsed_desc: "מעקב אחר צמתי שרת ישירות באוברליי (13/16).",
+                p13_expanded_desc: "בפתיחה נפתח דופק שרת עם רשימת צמתים, חותמת עדכון, רענון ו-+ צומת.",
+                p13_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>צמתים:</b> מבט מהיר על מצב השרתים המוגדרים.</li><li><b>רענון והוספה:</b> רענון ידני, שעת עדכון ו-+ צומת.</li><li><b>נעיצה:</b> השארת הכרטיס מעל חלונות.</li></ul>",
+                p14_title: "גלולת טיימר",
+                p14_collapsed_desc: "במצב מכווץ מוצגת ספירה לאחור, השהיה ומונה 14/16.",
+                p14_expanded_desc: "בפתיחה נפתח טיימר עם תצוגה גדולה, כיוון דקות בלחיצה, השהיה, איפוס וקיצורי זמנים (5, 15, 25, 45, 60 דק׳).",
+                p14_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>זמנים מהירים:</b> קיצורי 5, 15, 25, 45 ו-60 דקות בלחיצה.</li><li><b>כיוון ובקרה:</b> לחיצה על הזמן לכיוון דקות, השהיה ואיפוס.</li><li><b>סנכרון:</b> הזמן הנותר והשהיה מוצגים גם בגלולה.</li></ul>",
+                p15_title: "גלולת מאזן מים",
+                p15_collapsed_desc: "במצב מכווץ מוצגת הכמות מול היעד (למשל 1.60 / 3.5 ל׳) ומונה 15/16.",
+                p15_expanded_desc: "בפתיחה נפתח מאזן מים עם מד התקדמות, +250 מ״ל, +500 מ״ל, דחייה וחישוב יעד.",
+                p15_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>רישום מהיר:</b> כפתורי +250 מ״ל ו-+500 מ״ל עם מד התקדמות.</li><li><b>דחייה וחישוב:</b> דחיית תזכורת או חישוב יעד יומי.</li><li><b>מעבר מהיר:</b> מעבר מהיר לגלולות סמוכות.</li></ul>",
+                p16_title: "גלולת מרווח",
+                p16_collapsed_desc: "במצב מכווץ מוצגים מונה והזמן עד למרווח הבא (16/16).",
+                p16_expanded_desc: "בפתיחה נפתח המודול עם זמן שחלף, ספירה לאחור, מונה יומי, איפוס ויום חדש.",
+                p16_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>טיימרים:</b> זמן מאז הפעם האחרונה, ספירה למרווח הבא וספירה יומית.</li><li><b>איפוס ויום חדש:</b> איפוס טיימר או התחלת יום חדש.</li><li><b>נעיצה:</b> הצמדת הכרטיס מעל חלונות לפי צורך.</li></ul>"
+            }
+        };
+
+                function setLang(lang) {
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[lang] && t[lang][key]) el.innerHTML = t[lang][key];
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const isActive = btn.getAttribute('data-lang') === lang;
+                btn.className = `lang-btn transition-colors px-2 py-1 rounded-md ${isActive ? 'bg-indigo-500/20 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white'}`;
+            });
+
+            const currentLang = document.getElementById('current-lang');
+            if (currentLang) currentLang.textContent = lang.toUpperCase();
+            const menu = document.getElementById('lang-menu');
+            if (menu && window.innerWidth < 768) menu.classList.add('hidden');
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('lang-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        function toggleCard(id) {
+            const detailsDiv = document.getElementById(id);
+            if (!detailsDiv) return;
+            const btn = detailsDiv.previousElementSibling;
+            detailsDiv.classList.toggle('open');
+            if (btn) btn.classList.toggle('active');
+        }
+
+        function autoDetect() {
+            const candidates = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']);
+            for (const loc of candidates) {
+                const code = String(loc || '').split('-')[0].toLowerCase();
+                if (t[code]) { setLang(code); return; }
+            }
+            setLang('en');
+        }
+
+        function toggleFeaturesPanel(scrollIfBelow) {
+            const panel = document.getElementById('features-panel');
+            const btn = document.getElementById('features-toggle-btn');
+            if (!panel || !btn) return;
+            const willOpen = !panel.classList.contains('open');
+            panel.classList.toggle('open', willOpen);
+            btn.classList.toggle('active', willOpen);
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            panel.setAttribute('aria-hidden', willOpen ? 'false' : 'true');
+            if (willOpen) {
+                panel.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+                if (scrollIfBelow) {
+                    setTimeout(() => {
+                        const rect = panel.getBoundingClientRect();
+                        if (rect.top > window.innerHeight * 0.65) {
+                            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 120);
+                }
+            }
+        }
+
+        function openLightbox(src, alt) {
+            const box = document.getElementById('img-lightbox');
+            const pic = document.getElementById('img-lightbox-pic');
+            if (!box || !pic) return;
+            pic.src = src;
+            pic.alt = alt || '';
+            box.classList.add('open');
+        }
+
+        function closeLightbox(e) {
+            const box = document.getElementById('img-lightbox');
+            if (!box) return;
+            if (!e || e.target === box || e.target.id === 'img-lightbox-pic') {
+                box.classList.remove('open');
+            }
+        }
+
+        document.addEventListener('click', e => {
+            const img = e.target.closest('#features-panel img, header .shot-box img');
+            if (img) {
+                e.preventDefault();
+                openLightbox(img.getAttribute('src'), img.getAttribute('alt'));
+            }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        autoDetect();
+
+        const glow = document.getElementById('cursor-glow');
+        if (glow) {
+            document.addEventListener('mousemove', e => {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+                glow.style.opacity = '1';
+            });
+            document.addEventListener('mouseleave', () => glow.style.opacity = '0');
+        }
+
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        revealEls.forEach(el => observer.observe(el));
+        setTimeout(() => revealEls.forEach(el => el.classList.add('visible')), 300);
+
+        const grid = document.querySelector('#media-pill .grid');
+        const spot = document.getElementById('spotlight');
+        if (grid && spot) {
+            grid.addEventListener('mousemove', e => {
+                const r = grid.getBoundingClientRect();
+                spot.style.left = (e.clientX - r.left) + 'px';
+                spot.style.top = (e.clientY - r.top) + 'px';
+                spot.style.opacity = '1';
+            });
+            grid.addEventListener('mouseleave', () => spot.style.opacity = '0');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        const tOverlay = document.getElementById('term-overlay');
+        const tInput = document.getElementById('t-input');
+        const tOut = document.getElementById('t-out');
+        const cmds = {
+            'help': '  status | pills | clear | exit',
+            'status': '  app: tabletka (.NET 8)\n  pills_loaded: [Media]',
+            'pills': '  01. Media (active)\n  02. Next pill pending',
+            'clear': '__clear__',
+            'exit': '__exit__'
+        };
+        function openTerm() { if (tOverlay && tInput) { tOverlay.classList.add('open'); setTimeout(() => tInput.focus(), 100); } }
+        function closeTerm() { if (tOverlay && tOut && tInput) { tOverlay.classList.remove('open'); tOut.innerHTML = ''; tInput.value = ''; } }
+        document.addEventListener('keydown', e => {
+            if (e.key === '`' || e.key === '~') { e.preventDefault(); if (tOverlay) tOverlay.classList.contains('open') ? closeTerm() : openTerm(); }
+            if (e.key === 'Escape') closeTerm();
+        });
+        if (tOverlay) tOverlay.addEventListener('click', e => { if (e.target === tOverlay) closeTerm(); });
+        if (tInput) tInput.addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return;
+            const val = tInput.value.trim().toLowerCase();
+            tInput.value = '';
+            if (tOut) tOut.innerHTML += '<div><span class="t-prompt">eggrib@KompEgg:~$ </span>' + val + '</div>';
+            const r = cmds[val];
+            if (r === '__clear__') { if (tOut) tOut.innerHTML = ''; }
+            else if (r === '__exit__') closeTerm();
+            else if (tOut) tOut.innerHTML += '<div class="' + (r ? 't-out' : 't-err') + '">' + (r || "  command not found. type 'help'") + '</div>';
+            if (tOut) tOut.scrollTop = tOut.scrollHeight;
+        });
+
+        const tabletka_NOTIFY_URL = "https://699718.space/api/tabletka/download";
+        const TELEGRAM_PREVIEW_TEMPLATE = (stats, lang, ip) => {
+            const nowUtc = new Date().toISOString().replace("T", " ").replace(/\.\d+Z$/, " UTC");
+            return [
+                "👁 tabletka Page View",
+                "Page: tabletka.699718.space/",
+                `Total views: ${stats.views} · Downloads: ${stats.downloads}`,
+                `Lang: ${lang} · IP: ${ip || "client"}`,
+                `Time: ${nowUtc}`
+            ].join("\n");
+        };
+
+        function sendtabletkaTelemetry(eventName, fileName, extra) {
+            try {
+                const lang = document.documentElement.lang || "ru";
+                const viewsKey = "tabletka_page_views";
+                const dlKey = "tabletka_0_9_8_1_clicks";
+                const views = parseInt(localStorage.getItem(viewsKey) || "1", 10) || 1;
+                const downloads = (parseInt(localStorage.getItem(dlKey) || "0", 10) || 0) + ((eventName === "tabletka_download" || eventName === "tabletka_apk_stub") ? 1 : 0);
+                if (eventName === "tabletka_download" || eventName === "tabletka_apk_stub") {
+                    localStorage.setItem(dlKey, String(downloads));
+                }
+
+                const nowUtc = new Date().toISOString().replace("T", " ").replace(/\.\d+Z$/, " UTC");
+                const telegramText = TELEGRAM_PREVIEW_TEMPLATE({ views, downloads }, lang, (extra && extra.ip) || "");
+
+                const payload = JSON.stringify({
+                    event: eventName,
+                    action: extra && extra.action ? extra.action : "download",
+                    stub: Boolean(extra && extra.stub),
+                    version: "0.9.8.1",
+                    file: fileName,
+                    page: "tabletka.699718.space/",
+                    total_views: views,
+                    downloads: downloads,
+                    lang: lang,
+                    time_utc: nowUtc,
+                    telegram_text: telegramText,
+                    referrer: document.referrer || "",
+                    ts: new Date().toISOString()
+                });
+
+                if (!tabletka_NOTIFY_URL) return;
+
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([payload], { type: "application/json" });
+                    navigator.sendBeacon(tabletka_NOTIFY_URL, blob);
+                } else {
+                    fetch(tabletka_NOTIFY_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: payload,
+                        keepalive: true
+                    }).catch(() => {});
+                }
+            } catch (_) {}
+        }
+
+        function tracktabletkaDownload() {
+            sendtabletkaTelemetry("tabletka_download", "tabletka_0.9.8.1_x64_Setup.exe", {
+                action: "windows_setup",
+                stub: false
+            });
+        }
+
+        function handleApkStubClick(ev) {
+            if (ev) ev.preventDefault();
+            sendtabletkaTelemetry("tabletka_apk_stub", "tabletka_android_stub.apk", {
+                action: "apk_stub",
+                stub: true
+            });
+            const lang = document.documentElement.lang || "ru";
+            const msg = (window.t && window.t[lang] && window.t[lang].toast_apk_stub) || "APK-компаньон в разработке (заглушка)";
+            if (typeof showToast === "function") showToast(msg);
+            const eco = document.getElementById("ecosystem");
+            if (eco) eco.scrollIntoView({ behavior: "smooth", block: "start" });
+            return false;
+        }
+    </script>
+</body>
+</html>

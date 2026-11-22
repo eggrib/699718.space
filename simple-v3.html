@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Простым и живым языком о том, как правила брака, семьи, еды и образа жизни меняли людей за 4 000 лет: понятные графики, картинки и сравнения по исследованию CIVDEM v0.8.3.">
+    <title>eggrib | 4 000 лет в генах: как семья и правила жизни меняли людей</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23818cf8'/><stop offset='100%25' stop-color='%23c084fc'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='%230f172a'/><polygon points='18,3 8,18 15,18 14,29 24,14 17,14' fill='url(%23g)'/></svg>">
+    <script defer src="https://stats.699718.space/script.js" data-website-id="e9088ac7-7a29-4f15-a61a-ac661564484b"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #020617;
+            color: #f1f5f9;
+            font-family: 'Unbounded', sans-serif;
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.16), transparent 42%),
+                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.16), transparent 42%);
+            overflow-x: hidden;
+        }
+        html[dir="rtl"] body { font-family: 'Heebo', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass {
+            background: rgba(15, 23, 42, 0.58);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #818cf8, #c084fc, #34d399, #818cf8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .story-text {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Heebo', sans-serif;
+        }
+        .chart-box {
+            position: relative;
+            width: 100%;
+            min-height: 250px;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen py-6 sm:py-10 px-3 sm:px-6 flex justify-center">
+    <div class="max-w-5xl w-full space-y-6">
+
+        <!-- Top Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap gap-2">
+                <a href="/" class="glass px-4 py-2.5 rounded-xl text-xs mono text-slate-300 hover:text-white hover:border-indigo-400/40 transition-all inline-flex items-center gap-2">
+                    <i class="fas fa-arrow-left rtl:rotate-180"></i>
+                    <span data-i18n="back_home">На главную</span>
+                </a>
+                <a href="research-v6.html" class="glass px-4 py-2.5 rounded-xl text-xs mono text-indigo-300 hover:text-white hover:border-indigo-400/40 transition-all inline-flex items-center gap-2">
+                    <i class="fas fa-microscope"></i>
+                    <span data-i18n="to_tech">Подробнее</span>
+                </a>
+            </div>
+            <div class="flex gap-1 text-xs mono bg-slate-900/60 p-1.5 rounded-xl border border-white/10">
+                <button onclick="setLang('ru')" class="lang-btn px-3 py-1 rounded-lg transition-colors" data-lang="ru">RU</button>
+                <button onclick="setLang('en')" class="lang-btn px-3 py-1 rounded-lg transition-colors" data-lang="en">EN</button>
+                <button onclick="setLang('he')" class="lang-btn px-3 py-1 rounded-lg transition-colors" data-lang="he">HE</button>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <header class="glass rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 md:p-12 relative overflow-hidden">
+            <div class="absolute -top-28 -end-28 w-80 h-80 bg-purple-500/20 blur-[110px] rounded-full pointer-events-none"></div>
+            <div class="relative z-10 space-y-5">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs mono">
+                    <i class="fas fa-sparkles"></i>
+                    <span data-i18n="hero_badge">БЕЗ СЛОЖНОГО ЖАРГОНА // ПРОСТЫМИ СЛОВАМИ</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">
+                    <span class="gradient-text" data-i18n="hero_title">Как брачные правила, семья и еда меняли людей за 4 000 лет</span>
+                </h1>
+                <p class="story-text text-slate-200 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl" data-i18n="hero_sub">
+                    Представьте, что мы запустили машину времени в компьютере на 4 000 лет — от древних времён до наших дней — и сверили её расчёты с реальной древней ДНК 10 703 человек. Оказалось, что правила «кому на ком можно жениться», устройство семьи и еда заметно влияют на то, какие качества чаще встречаются у потомков.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <div class="bg-slate-900/65 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-indigo-300 mono">~140</div>
+                        <div class="story-text text-xs text-slate-300 mt-1" data-i18n="card_gen">поколений сменилось за 4 000 лет (как эстафета из поколения в поколение)</div>
+                    </div>
+                    <div class="bg-slate-900/65 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-emerald-300 mono">10 703</div>
+                        <div class="story-text text-xs text-slate-300 mt-1" data-i18n="card_dna">древних генома использовали для проверки, не выдумывает ли модель сказки</div>
+                    </div>
+                    <div class="bg-slate-900/65 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-amber-300 mono">306 : 1</div>
+                        <div class="story-text text-xs text-slate-300 mt-1" data-i18n="card_odds">во столько раз правдоподобнее расчёты с учётом правил жизни, чем «просто случайность»</div>
+                    </div>
+                    <div class="bg-slate-900/65 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-purple-300 mono">6 сфер</div>
+                        <div class="story-text text-xs text-slate-300 mt-1" data-i18n="card_spheres">мышление, самоконтроль, умение ладить с людьми, питание, иммунитет и выносливость</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section 1: Simple Analogy (Deck of Cards) -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec1_title">1. В чём суть простыми словами: колода карт вместо «одинаковых клонов»</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">АНАЛОГИЯ</span>
+            </div>
+            <p class="story-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec1_p1">
+                Люди не похожи на штампованные детали: каждый ребёнок получает половинку «карт» от мамы и половинку от папы. А правила общества решают, как часто тасуют колоду и какие «карты» чаще передаются дальше.
+            </p>
+
+            <!-- Responsive Cards: Wide Mix vs Tight Circle -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div class="bg-slate-950/75 border border-indigo-400/35 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-1">
+                        <div class="text-[11px] mono text-indigo-300 uppercase font-bold" data-i18n="sc_a_tag">СЦЕНАРИЙ А: ШИРОКИЙ КРУГ (ЭКЗОГАМИЯ)</div>
+                        <div class="text-base sm:text-lg font-bold text-white leading-snug" data-i18n="sc_a_title">Свежие сочетания из разных семей</div>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 py-2">
+                        <span class="px-3 py-1.5 rounded-full bg-indigo-950 border border-indigo-400/50 text-indigo-200 text-xs mono" data-i18n="node_f1">Семья 1</span>
+                        <span class="text-indigo-400 text-xs mono">+</span>
+                        <span class="px-3 py-1.5 rounded-full bg-blue-950 border border-blue-400/50 text-blue-200 text-xs mono" data-i18n="node_f2">Семья 2</span>
+                        <span class="text-emerald-400 text-xs mono">→</span>
+                        <span class="px-3.5 py-1.5 rounded-full bg-emerald-950 border border-emerald-400/60 text-emerald-200 text-xs mono font-bold" data-i18n="node_offspring">Потомок</span>
+                    </div>
+                    <ul class="story-text text-xs sm:text-sm text-slate-300 space-y-1.5">
+                        <li data-i18n="sc_a_b1">• Меньше скрытых «поломок» от близкого родства (LROH падает)</li>
+                        <li class="text-emerald-200" data-i18n="sc_a_b2">• Быстрее собираются удачные сочетания для мышления и иммунитета</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-950/75 border border-rose-400/35 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-1">
+                        <div class="text-[11px] mono text-rose-300 uppercase font-bold" data-i18n="sc_b_tag">СЦЕНАРИЙ Б: УЗКИЙ КРУГ (РОДСТВО / КАСТЫ)</div>
+                        <div class="text-base sm:text-lg font-bold text-white leading-snug" data-i18n="sc_b_title">Те же ветви и жёсткие границы групп</div>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 py-2">
+                        <span class="px-3 py-1.5 rounded-full bg-rose-950 border border-rose-400/50 text-rose-200 text-xs mono" data-i18n="node_ba">Ветвь А</span>
+                        <span class="text-rose-400 text-xs mono">+</span>
+                        <span class="px-3 py-1.5 rounded-full bg-rose-950 border border-rose-400/50 text-rose-200 text-xs mono" data-i18n="node_ba2">Ветвь А</span>
+                        <span class="text-amber-400 text-xs mono">→</span>
+                        <span class="px-3.5 py-1.5 rounded-full bg-amber-950 border border-amber-400/60 text-amber-200 text-xs mono font-bold" data-i18n="node_offspring2">Потомок</span>
+                    </div>
+                    <ul class="story-text text-xs sm:text-sm text-slate-300 space-y-1.5">
+                        <li data-i18n="sc_b_b1">• Сильнее закрепляются групповые черты (самоконтроль, диета)</li>
+                        <li class="text-amber-200" data-i18n="sc_b_b2">• Выше риск одинаковых уязвимостей и медленнее обмен между группами</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5">
+                    <div class="text-indigo-300 font-bold text-sm mb-1.5" data-i18n="an1_t">Зачем сравнивали с «пустой моделью» (случайным дрейфом)?</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="an1_d">
+                        Чтобы не принять случайность за закономерность. Сначала запустили «пустой» вариант без влияния правил жизни — там почти ничего не сдвинулось. А когда включили правила семьи, брака, еды и болезней, расчёты совпали с древней ДНК в 306 раз убедительнее.
+                    </p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5">
+                    <div class="text-emerald-300 font-bold text-sm mb-1.5" data-i18n="an2_t">Что означают цифры «+0.89» или «+1.75»?</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="an2_d">
+                        Это шкала отклонений в стандартных шагах (SD): примерно как рост или выносливость относительно среднего уровня. Даже сдвиг на 0.5–1.0 шаг за 4 000 лет — заметное смещение всей картины, а не случайный скачок одного человека.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Visual Comparisons (One Chart Per Row) -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec2_title">2. Наглядные графики: кто и в чём сильнее всего изменился</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">ГРАФИКИ И СРАВНЕНИЯ</span>
+            </div>
+            <p class="story-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec2_p1">
+                Разные уклады жизни поощряли разные качества: где-то важнее была гибкость ума и открытость новым связям, где-то — умение терпеть, копить ресурсы и держаться клана или общины.
+            </p>
+
+            <div class="space-y-6">
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-indigo-200 mb-3" data-i18n="ch_a_title">Профиль 6 качеств по регионам (шаги SD за 4 000 лет)</h3>
+                    <div class="chart-box h-72"><canvas id="simpleProfileChart"></canvas></div>
+                </div>
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-emerald-200 mb-3" data-i18n="ch_b_title">Общий выигрыш приспособленности (%) и место над предками</h3>
+                    <div class="chart-box h-72"><canvas id="simpleGainChart"></canvas></div>
+                </div>
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-amber-200 mb-3" data-i18n="ch_c_title">Сравнение мышления (Z-PGS) и «сырого накопления» — где кроется ловушка цифр</h3>
+                    <div class="chart-box h-64"><canvas id="simpleTrapChart"></canvas></div>
+                    <p class="story-text text-xs text-slate-400 mt-3" data-i18n="ch_c_note">
+                        Важный нюанс: в симуляции важно отличать чистый сдвиг признака (0.89 SD в Западной Европе и 0.85 SD в Восточной Азии) от механического роста счётчиков при жёсткой изоляции — модель специально проверяет оба показателя, чтобы не обмануться цифрами.
+                    </p>
+                </div>
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-purple-200 mb-3" data-i18n="ch_d_title">График 4. Накопленный уровень 6 кластеров мутаций к 2000 г. н. э. (среднее по миру, %)</h3>
+                    <div class="chart-box h-72"><canvas id="simpleMutChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Everyday Comparison Cards -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec3_title">3. Сравнение укладов: у каждого своя «суперсила» и своя цена</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/25">СРАВНЕНИЯ</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="bg-slate-900/55 border border-amber-400/30 rounded-2xl p-5 sm:p-6 space-y-3">
+                    <div class="text-amber-300 font-bold text-sm sm:text-base" data-i18n="r_me_t">Ближний Восток — «Кланы и еда»</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="r_me_d">Лидер по питанию/метаболизму (+1.75 SD) и общему выигрышу (+2.47%, 85.1-й перцентиль над предками). Сильные родовые связи и многожёнство по-разному распределяли успех между мужчинами и женщинами.</p>
+                    <div class="story-text text-xs text-slate-300 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 space-y-1.5">
+                        <div><strong class="text-emerald-300" data-i18n="lbl_pro">Суперсила:</strong> <span data-i18n="r_me_pro">устойчивость обмена веществ к рациону (+1.75 SD) и высокий общий прирост (+2.47%).</span></div>
+                        <div><strong class="text-amber-300" data-i18n="lbl_con">Цена:</strong> <span data-i18n="r_me_con">сильнее выраженное расслоение репродуктивного успеха и зависимость от клановой структуры.</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/55 border border-indigo-400/30 rounded-2xl p-5 sm:p-6 space-y-3">
+                    <div class="text-indigo-300 font-bold text-sm sm:text-base" data-i18n="r_we_t">Западная Европа — «Открытый круг»</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="r_we_d">Первое место по мышлению (+0.89 SD) и почти самый низкий длинный инбридинг (0.041%). Запреты на близкие браки + исключения для верхушки дали ровный рост сразу по нескольким сферам.</p>
+                    <div class="story-text text-xs text-slate-300 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 space-y-1.5">
+                        <div><strong class="text-emerald-300" data-i18n="lbl_pro">Суперсила:</strong> <span data-i18n="r_we_pro">широкое перемешивание линий снижает длинный инбридинг (LROH) и ускоряет сборку когнитивных и иммунных сдвигов.</span></div>
+                        <div><strong class="text-amber-300" data-i18n="lbl_con">Цена:</strong> <span data-i18n="r_we_con">меньше «жёсткой» родовой сплочённости и более слабая выраженность отдельных узких пиков по сравнению с локальными специализациями.</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/55 border border-teal-400/30 rounded-2xl p-5 sm:p-6 space-y-3">
+                    <div class="text-teal-300 font-bold text-sm sm:text-base" data-i18n="r_ea_t">Восточная Азия — «Ум и иммунитет»</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="r_ea_d">Высокий иммунитет (+1.26 SD) и сильное мышление (+0.85 SD). Плотная жизнь, рисовое земледелие и социальный отбор через экзамены по-своему отточили устойчивость к болезням и умственную нагрузку.</p>
+                    <div class="story-text text-xs text-slate-300 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 space-y-1.5">
+                        <div><strong class="text-emerald-300" data-i18n="lbl_pro">Суперсила:</strong> <span data-i18n="r_ea_pro">адаптация к плотному расселению и болезням плюс отбор через экзаменационную мобильность и рисовое хозяйство.</span></div>
+                        <div><strong class="text-amber-300" data-i18n="lbl_con">Цена:</strong> <span data-i18n="r_ea_con">более сдержанный сдвиг по самоконтролю (+0.36 SD) и выносливости к голоду (+0.49 SD) относительно пиковых значений других регионов.</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/55 border border-purple-400/30 rounded-2xl p-5 sm:p-6 space-y-3">
+                    <div class="text-purple-300 font-bold text-sm sm:text-base" data-i18n="r_by_t">Византия и Вост. Европа — «Умение ладить»</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="r_by_d">Рекорд по просоциальности (+2.37 SD) — способности кооперироваться и жить в общих правилах. Умеренная открытость браков сочеталась с заметным вкладом в совместную работу.</p>
+                    <div class="story-text text-xs text-slate-300 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 space-y-1.5">
+                        <div><strong class="text-emerald-300" data-i18n="lbl_pro">Суперсила:</strong> <span data-i18n="r_by_pro">сильный акцент на кооперацию, общинные нормы и согласованность действий в группе.</span></div>
+                        <div><strong class="text-amber-300" data-i18n="lbl_con">Цена:</strong> <span data-i18n="r_by_con">небольшие сдвиги по мышлению (+0.27 SD), иммунитету (+0.15 SD) и выносливости (+0.06 SD) — фокус ушёл в социальную координацию.</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/55 border border-rose-400/30 rounded-2xl p-5 sm:p-6 space-y-3">
+                    <div class="text-rose-300 font-bold text-sm sm:text-base" data-i18n="r_sa_t">Южная Азия — «Выдержка и касты»</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="r_sa_d">Сильный рост самоконтроля (+1.24 SD), но более скромный общий прирост (+1.35%): замкнутость внутри каст-джати сдерживает перемешивание признаков между группами.</p>
+                    <div class="story-text text-xs text-slate-300 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 space-y-1.5">
+                        <div><strong class="text-emerald-300" data-i18n="lbl_pro">Суперсила:</strong> <span data-i18n="r_sa_pro">высокая дисциплина и самоконтроль внутри устойчивых групп джати.</span></div>
+                        <div><strong class="text-amber-300" data-i18n="lbl_con">Цена:</strong> <span data-i18n="r_sa_con">жёсткая эндогамия сдерживает перемешивание между группами, а сдвиг по выносливости уходит в минус (-0.12 SD).</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/55 border border-slate-600/40 rounded-2xl p-5 sm:p-6 space-y-3">
+                    <div class="text-slate-300 font-bold text-sm sm:text-base" data-i18n="r_m0_t">«Пустой мир» без отбора — «Почти ноль»</div>
+                    <p class="story-text text-slate-400 text-sm leading-relaxed" data-i18n="r_m0_d">Если убрать влияние правил и отбора (контроль M₀), сдвиги почти исчезают (+0.03 SD в среднем), а уровень остаётся около середины (51.0%). Это доказывает: история важна.</p>
+                    <div class="story-text text-xs text-slate-400 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 space-y-1.5">
+                        <div><strong class="text-slate-200" data-i18n="lbl_m0_why">Зачем нужен этот блок:</strong> <span data-i18n="r_m0_pro">показывает, как выглядит обычный случайный дрейф без правил брака, среды и отбора.</span></div>
+                        <div><strong class="text-slate-300" data-i18n="lbl_m0_out">Вывод:</strong> <span data-i18n="r_m0_con">реальные региональные различия не сводятся к пустой случайности (BF₁₀ = 306.85).</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3B: How Ancient DNA Check Works in Plain Words -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec3b_title">3Б. Как проверяли расчёты по 10 703 древним геномам</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/25">ПРОВЕРКА ПО ДНК</span>
+            </div>
+            <p class="story-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec3b_p1">
+                Мало придумать красивую компьютерную модель — нужно проверить, сходится ли она с реальным прошлым. В работе взяли 10 703 древних генома из базы AADR v66.p1 и сравнили, насколько точно модель с учётом правил жизни (M₁) совпадает с данными по сравнению со случайным дрейфом (M₀).
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-cyan-300 font-bold text-sm" data-i18n="b3_1_t">Следы близкого родства (LROH)</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="b3_1_d">Длинные одинаковые участки ДНК показывают, насколько часто в роду случались близкие браки. Открытые союзы снижают их долю, а замкнутые круги — поднимают.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-purple-300 font-bold text-sm" data-i18n="b3_2_t">Перемешивание и неравенство</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="b3_2_d">Модель смотрит на разнообразие предковых линий (PAI) и на то, насколько по-разному распределялся репродуктивный успех у мужчин (мужской Gini).</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-emerald-300 font-bold text-sm" data-i18n="b3_3_t">Перевес 306.85 против дрейфа</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="b3_3_d">Итоговый байесовский фактор BF₁₀ = 306.85 (log₁₀ = 2.49) означает сильную поддержку модели с учётом правил и отбора относительно «пустого» дрейфа.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3C: What the Model Means & What It Does Not -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec3c_title">3В. Что эти цифры значат на практике — и чего они не значат</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/25">ВАЖНЫЕ ОГОВОРКИ</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/55 border border-emerald-400/25 rounded-2xl p-5 space-y-2">
+                    <div class="text-emerald-300 font-bold text-sm" data-i18n="ok_yes_t">Что модель показывает хорошо</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="ok_yes_d">Как долгие правила семьи, брака, еды и плотности жизни сдвигают средние значения по группам на отрезке в 4 000 лет и почему у разных укладов возникают разные сильные стороны и компромиссы.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-rose-400/25 rounded-2xl p-5 space-y-2">
+                    <div class="text-rose-300 font-bold text-sm" data-i18n="ok_no_t">Чего модель НЕ утверждает</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="ok_no_d">Она не предсказывает способности конкретного человека, не делает один народ «выше» другого и не заменяет культуру, образование и личный выбор генетическим фатализмом.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3G: Plain-Language Glossary -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec3g_title">3Г. Краткий словарь понятий без занудства</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">СЛОВАРЬ</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-indigo-300 font-bold text-sm mono">SD</div>
+                    <p class="story-text text-slate-300 text-xs leading-relaxed" data-i18n="gl_sd">Стандартный шаг отклонения — мера того, насколько сдвинулся признак относительно среднего уровня.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-cyan-300 font-bold text-sm mono">LROH</div>
+                    <p class="story-text text-slate-300 text-xs leading-relaxed" data-i18n="gl_lroh">Длинные одинаковые участки ДНК: подсказка о том, насколько частыми были близкородственные браки.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-purple-300 font-bold text-sm mono">M₀ vs M₁</div>
+                    <p class="story-text text-slate-300 text-xs leading-relaxed" data-i18n="gl_m01">M₀ — случайный дрейф без отбора; M₁ — модель, где учитываются правила брака, семьи, среды и отбора.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-emerald-300 font-bold text-sm mono">PAI &amp; Gini</div>
+                    <p class="story-text text-slate-300 text-xs leading-relaxed" data-i18n="gl_pai">PAI — перемешивание предковых ветвей; Gini — насколько неравномерно распределялся успех размножения.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3D: Four Thousand Years in Motion -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec3d_title">3Д. Почему важен масштаб в 4 000 лет, а не «одно поколение»</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">ДЛИННЫЙ ГОРИЗОНТ</span>
+            </div>
+            <p class="story-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec3d_p1">
+                За один год или даже за жизнь одного человека изменения почти незаметны. Но за 4 000 лет сменяется около полутора сотен поколений — и небольшие перекосы в брачных кругах, еде и болезнях складываются в отчётливые региональные траектории, которые можно сверить с древней ДНК.
+            </p>
+        </section>
+
+        <!-- Section 3E: How Rules Change the Speed of Shifts -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec3e_title">3Е. Как разные правила меняют «скорость сдвигов» за 4 000 лет</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/25">СКОРОСТЬ СДВИГОВ</span>
+            </div>
+            <p class="story-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec3e_p1">
+                Одни и те же 4 000 лет могут двигать средние значения по-разному быстро: где-то признаки быстрее собираются благодаря перемешиванию, а где-то счётчики растут в основном внутри замкнутой группы и создают «ловушку цифр».
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/55 border border-indigo-400/25 rounded-2xl p-5 space-y-2">
+                    <div class="text-indigo-300 font-bold text-sm" data-i18n="sp_open_t">Открытый круг и мобильность (Зап. Европа, Вост. Азия)</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="sp_open_d">Смешение разных ветвей быстрее собирает редкие удачные сочетания для мышления (+0.89 SD и +0.85 SD) и иммунитета (+1.26 SD в Вост. Азии), удерживая низкий инбридинг.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-amber-400/25 rounded-2xl p-5 space-y-2">
+                    <div class="text-amber-300 font-bold text-sm" data-i18n="sp_clan_t">Кланы и многожёнство (Ближний Восток)</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="sp_clan_d">Быстрее всего разгоняют сдвиги по питанию/метаболизму (+1.75 SD) и общему выигрышу (+2.47%), когда родовые связи и репродуктивный отбор тянут нужные черты.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-rose-400/25 rounded-2xl p-5 space-y-2">
+                    <div class="text-rose-300 font-bold text-sm" data-i18n="sp_caste_t">Жёсткие границы каст и изоляция (Юж. Азия)</div>
+                    <p class="story-text text-slate-300 text-sm leading-relaxed" data-i18n="sp_caste_d">Усиливают самоконтроль внутри группы (+1.24 SD), но тормозят межгрупповой обмен и дают более скромный общий прирост (+1.35%), где легко перепутать «сырой рост» с чистым сдвигом.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-slate-600/40 rounded-2xl p-5 space-y-2">
+                    <div class="text-slate-300 font-bold text-sm" data-i18n="sp_m0_t">Случайный дрейф без отбора (Контроль M₀)</div>
+                    <p class="story-text text-slate-400 text-sm leading-relaxed" data-i18n="sp_m0_d">Без правил и отбора «скорость» сдвига почти на нуле (+0.03 SD в среднем, +0.02 SD по мышлению) — без направленных механизмов картина топчется у середины.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Takeaway for Everyday Life -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec4_title">4. Главный вывод: не «лучшие и худшие», а разные ставки</h2>
+                <span class="text-xs mono px-3 py-1 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">ГЛАВНЫЙ ВЫВОД</span>
+            </div>
+            <p class="story-text text-slate-200 text-sm sm:text-base leading-relaxed" data-i18n="sec4_p1">
+                Главная мысль исследования не в том, чтобы делить людей на «сильных» и «слабых». В эволюции нет бесплатного обеда: каждый уклад семьи и общества делает ставку на одни качества и неизбежно тратит время или гибкость на другие. Открытость связей помогает смешивать удачные черты, а сплочённые традиции укрепляют дисциплину и взаимовыручку — и именно этот живой баланс формировал человечество последние четыре тысячи лет.
+            </p>
+        </section>
+
+        <!-- CTA to Research -->
+        <div class="glass rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="text-sm sm:text-base font-bold text-indigo-200" data-i18n="cta_res_t">Нужны формулы, ABC-SMC, метрики LROH/PAI и разбор артефактов?</div>
+                <p class="story-text text-xs sm:text-sm text-slate-300" data-i18n="cta_res_d">Откройте полную техническую версию исследования с разбором выборки из 10 703 геномов AADR v66.p1 и проверкой «сырых» счётчиков.</p>
+            </div>
+            <a href="research-v6.html" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 shrink-0 transition-colors">
+                <i class="fas fa-microscope"></i>
+                <span data-i18n="to_tech">Подробнее</span>
+            </a>
+        </div>
+        <footer class="glass rounded-[2rem] px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs mono text-slate-400">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                <span class="text-slate-200 font-bold">699718.space</span>
+                <span>·</span>
+                <span>eggrib</span>
+                <span>·</span>
+                <a href="https://tabletka.699718.space/" class="text-indigo-300 hover:text-white transition-colors">Tabletka</a>
+                <span>·</span>
+                <a href="https://699718.space/simple-v3.html" class="hover:text-white transition-colors">civdem</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-github"></i><span>GitHub</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-telegram-plane"></i><span>Telegram</span>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const textMap = {
+            ru: {
+                back_home: "На главную",
+                to_tech: "Подробнее",
+                hero_badge: "БЕЗ СЛОЖНОГО ЖАРГОНА // ПРОСТЫМИ СЛОВАМИ",
+                hero_title: "Как брачные правила, семья и еда меняли людей за 4 000 лет",
+                hero_sub: "Представьте, что мы запустили машину времени в компьютере на 4 000 лет — от древних времён до наших дней — и сверили её расчёты с реальной древней ДНК 10 703 человек. Оказалось, что правила «кому на ком можно жениться», устройство семьи и еда заметно влияют на то, какие качества чаще встречаются у потомков.",
+                card_gen: "поколений сменилось за 4 000 лет (как эстафета из поколения в поколение)",
+                card_dna: "древних генома использовали для проверки, не выдумывает ли модель сказки",
+                card_odds: "во столько раз правдоподобнее расчёты с учётом правил жизни, чем «просто случайность»",
+                card_spheres: "мышление, самоконтроль, умение ладить с людьми, питание, иммунитет и выносливость",
+                sec1_title: "1. В чём суть простыми словами: колода карт вместо «одинаковых клонов»",
+                sec1_p1: "Люди не похожи на штампованные детали: каждый ребёнок получает половинку «карт» от мамы и половинку от папы. А правила общества решают, как часто тасуют колоду и какие «карты» чаще передаются дальше.",
+                sc_a_tag: "СЦЕНАРИЙ А: ШИРОКИЙ КРУГ (ЭКЗОГАМИЯ)",
+                sc_a_title: "Свежие сочетания из разных семей",
+                node_f1: "Семья 1", node_f2: "Семья 2", node_offspring: "Потомок",
+                sc_a_b1: "• Меньше скрытых «поломок» от близкого родства (LROH падает)",
+                sc_a_b2: "• Быстрее собираются удачные сочетания для мышления и иммунитета",
+                sc_b_tag: "СЦЕНАРИЙ Б: УЗКИЙ КРУГ (РОДСТВО / КАСТЫ)",
+                sc_b_title: "Те же ветви и жёсткие границы групп",
+                node_ba: "Ветвь А", node_ba2: "Ветвь А", node_offspring2: "Потомок",
+                sc_b_b1: "• Сильнее закрепляются групповые черты (самоконтроль, диета)",
+                sc_b_b2: "• Выше риск одинаковых уязвимостей и медленнее обмен между группами",
+                an1_t: "Зачем сравнивали с «пустой моделью» (случайным дрейфом)?",
+                an1_d: "Чтобы не принять случайность за закономерность. Сначала запустили «пустой» вариант без влияния правил жизни — там почти ничего не сдвинулось. А когда включили правила семьи, брака, еды и болезней, расчёты совпали с древней ДНК в 306 раз убедительнее.",
+                an2_t: "Что означают цифры «+0.89» или «+1.75»?",
+                an2_d: "Это шкала отклонений в стандартных шагах (SD): примерно как рост или выносливость относительно среднего уровня. Даже сдвиг на 0.5–1.0 шаг за 4 000 лет — заметное смещение всей картины, а не случайный скачок одного человека.",
+                sec2_title: "2. Наглядные графики: кто и в чём сильнее всего изменился",
+                sec2_p1: "Разные уклады жизни поощряли разные качества: где-то важнее была гибкость ума и открытость новым связям, где-то — умение терпеть, копить ресурсы и держаться клана или общины.",
+                ch_a_title: "Профиль 6 качеств по регионам (шаги SD за 4 000 лет)",
+                ch_b_title: "Общий выигрыш приспособленности (%) и место над предками",
+                ch_c_title: "Сравнение мышления (Z-PGS) и «сырого накопления» — где кроется ловушка цифр",
+                ch_c_note: "Важный нюанс: в симуляции важно отличать чистый сдвиг признака (0.89 SD в Западной Европе и 0.85 SD в Восточной Азии) от механического роста счётчиков при жёсткой изоляции — модель специально проверяет оба показателя, чтобы не обмануться цифрами.",
+                ch_d_title: "График 4. Накопленный уровень 6 кластеров мутаций к 2000 г. н. э. (среднее по миру, %)",
+                sec3_title: "3. Сравнение укладов: у каждого своя «суперсила» и своя цена",
+                lbl_pro: "Суперсила:", lbl_con: "Цена:",
+                lbl_m0_why: "Зачем нужен этот блок:", lbl_m0_out: "Вывод:",
+                r_me_t: "Ближний Восток — «Кланы и еда»",
+                r_me_d: "Лидер по питанию/метаболизму (+1.75 SD) и общему выигрышу (+2.47%, 85.1-й перцентиль над предками). Сильные родовые связи и многожёнство по-разному распределяли успех между мужчинами и женщинами.",
+                r_me_pro: "устойчивость обмена веществ к рациону (+1.75 SD) и высокий общий прирост (+2.47%).",
+                r_me_con: "сильнее выраженное расслоение репродуктивного успеха и зависимость от клановой структуры.",
+                r_we_t: "Западная Европа — «Открытый круг»",
+                r_we_d: "Первое место по мышлению (+0.89 SD) и почти самый низкий длинный инбридинг (0.041%). Запреты на близкие браки + исключения для верхушки дали ровный рост сразу по нескольким сферам.",
+                r_we_pro: "широкое перемешивание линий снижает длинный инбридинг (LROH) и ускоряет сборку когнитивных и иммунных сдвигов.",
+                r_we_con: "меньше «жёсткой» родовой сплочённости и более слабая выраженность отдельных узких пиков по сравнению с локальными специализациями.",
+                r_ea_t: "Восточная Азия — «Ум и иммунитет»",
+                r_ea_d: "Высокий иммунитет (+1.26 SD) и сильное мышление (+0.85 SD). Плотная жизнь, рисовое земледелие и социальный отбор через экзамены по-своему отточили устойчивость к болезням и умственную нагрузку.",
+                r_ea_pro: "адаптация к плотному расселению и болезням плюс отбор через экзаменационную мобильность и рисовое хозяйство.",
+                r_ea_con: "более сдержанный сдвиг по самоконтролю (+0.36 SD) и выносливости к голоду (+0.49 SD) относительно пиковых значений других регионов.",
+                r_by_t: "Византия и Вост. Европа — «Умение ладить»",
+                r_by_d: "Рекорд по просоциальности (+2.37 SD) — способности кооперироваться и жить в общих правилах. Умеренная открытость браков сочеталась с заметным вкладом в совместную работу.",
+                r_by_pro: "сильный акцент на кооперацию, общинные нормы и согласованность действий в группе.",
+                r_by_con: "небольшие сдвиги по мышлению (+0.27 SD), иммунитету (+0.15 SD) и выносливости (+0.06 SD) — фокус ушёл в социальную координацию.",
+                r_sa_t: "Южная Азия — «Выдержка и касты»",
+                r_sa_d: "Сильный рост самоконтроля (+1.24 SD), но более скромный общий прирост (+1.35%): замкнутость внутри каст-джати сдерживает перемешивание признаков между группами.",
+                r_sa_pro: "высокая дисциплина и самоконтроль внутри устойчивых групп джати.",
+                r_sa_con: "жёсткая эндогамия сдерживает перемешивание между группами, а сдвиг по выносливости уходит в минус (-0.12 SD).",
+                r_m0_t: "«Пустой мир» без отбора — «Почти ноль»",
+                r_m0_d: "Если убрать влияние правил и отбора (контроль M₀), сдвиги почти исчезают (+0.03 SD в среднем), а уровень остаётся около середины (51.0%). Это доказывает: история важна.",
+                r_m0_pro: "показывает, как выглядит обычный случайный дрейф без правил брака, среды и отбора.",
+                r_m0_con: "реальные региональные различия не сводятся к пустой случайности (BF₁₀ = 306.85).",
+                sec3b_title: "3Б. Как проверяли расчёты по 10 703 древним геномам",
+                sec3b_p1: "Мало придумать красивую компьютерную модель — нужно проверить, сходится ли она с реальным прошлым. В работе взяли 10 703 древних генома из базы AADR v66.p1 и сравнили, насколько точно модель с учётом правил жизни (M₁) совпадает с данными по сравнению со случайным дрейфом (M₀).",
+                b3_1_t: "Следы близкого родства (LROH)",
+                b3_1_d: "Длинные одинаковые участки ДНК показывают, насколько часто в роду случались близкие браки. Открытые союзы снижают их долю, а замкнутые круги — поднимают.",
+                b3_2_t: "Перемешивание и неравенство",
+                b3_2_d: "Модель смотрит на разнообразие предковых линий (PAI) и на то, насколько по-разному распределялся репродуктивный успех у мужчин (мужской Gini).",
+                b3_3_t: "Перевес 306.85 против дрейфа",
+                b3_3_d: "Итоговый байесовский фактор BF₁₀ = 306.85 (log₁₀ = 2.49) означает сильную поддержку модели с учётом правил и отбора относительно «пустого» дрейфа.",
+                sec3c_title: "3В. Что эти цифры значат на практике — и чего они не значат",
+                ok_yes_t: "Что модель показывает хорошо",
+                ok_yes_d: "Как долгие правила семьи, брака, еды и плотности жизни сдвигают средние значения по группам на отрезке в 4 000 лет и почему у разных укладов возникают разные сильные стороны и компромиссы.",
+                ok_no_t: "Чего модель НЕ утверждает",
+                ok_no_d: "Она не предсказывает способности конкретного человека, не делает один народ «выше» другого и не заменяет культуру, образование и личный выбор генетическим фатализмом.",
+                sec3g_title: "3Г. Краткий словарь понятий без занудства",
+                gl_sd: "Стандартный шаг отклонения — мера того, насколько сдвинулся признак относительно среднего уровня.",
+                gl_lroh: "Длинные одинаковые участки ДНК: подсказка о том, насколько частыми были близкородственные браки.",
+                gl_m01: "M₀ — случайный дрейф без отбора; M₁ — модель, где учитываются правила брака, семьи, среды и отбора.",
+                gl_pai: "PAI — перемешивание предковых ветвей; Gini — насколько неравномерно распределялся успех размножения.",
+                sec3d_title: "3Д. Почему важен масштаб в 4 000 лет, а не «одно поколение»",
+                sec3d_p1: "За один год или даже за жизнь одного человека изменения почти незаметны. Но за 4 000 лет сменяется около полутора сотен поколений — и небольшие перекосы в брачных кругах, еде и болезнях складываются в отчётливые региональные траектории, которые можно сверить с древней ДНК.",
+                sec3e_title: "3Е. Как разные правила меняют «скорость сдвигов» за 4 000 лет",
+                sec3e_p1: "Одни и те же 4 000 лет могут двигать средние значения по-разному быстро: где-то признаки быстрее собираются благодаря перемешиванию, а где-то счётчики растут в основном внутри замкнутой группы и создают «ловушку цифр».",
+                sp_open_t: "Открытый круг и мобильность (Зап. Европа, Вост. Азия)",
+                sp_open_d: "Смешение разных ветвей быстрее собирает редкие удачные сочетания для мышления (+0.89 SD и +0.85 SD) и иммунитета (+1.26 SD в Вост. Азии), удерживая низкий инбридинг.",
+                sp_clan_t: "Кланы и многожёнство (Ближний Восток)",
+                sp_clan_d: "Быстрее всего разгоняют сдвиги по питанию/метаболизму (+1.75 SD) и общему выигрышу (+2.47%), когда родовые связи и репродуктивный отбор тянут нужные черты.",
+                sp_caste_t: "Жёсткие границы каст и изоляция (Юж. Азия)",
+                sp_caste_d: "Усиливают самоконтроль внутри группы (+1.24 SD), но тормозят межгрупповой обмен и дают более скромный общий прирост (+1.35%), где легко перепутать «сырой рост» с чистым сдвигом.",
+                sp_m0_t: "Случайный дрейф без отбора (Контроль M₀)",
+                sp_m0_d: "Без правил и отбора «скорость» сдвига почти на нуле (+0.03 SD в среднем, +0.02 SD по мышлению) — без направленных механизмов картина топчется у середины.",
+                sec4_title: "4. Главный вывод: не «лучшие и худшие», а разные ставки",
+                sec4_p1: "Главная мысль исследования не в том, чтобы делить людей на «сильных» и «слабых». В эволюции нет бесплатного обеда: каждый уклад семьи и общества делает ставку на одни качества и неизбежно тратит время или гибкость на другие. Открытость связей помогает смешивать удачные черты, а сплочённые традиции укрепляют дисциплину и взаимовыручку — и именно этот живой баланс формировал человечество последние четыре тысячи лет.",
+                cta_res_t: "Нужны формулы, ABC-SMC, метрики LROH/PAI и разбор артефактов?",
+                cta_res_d: "Откройте полную техническую версию исследования с разбором выборки из 10 703 геномов AADR v66.p1 и проверкой «сырых» счётчиков."
+            },
+            en: {
+                back_home: "Back to Overview",
+                to_tech: "More Details",
+                hero_badge: "PLAIN LANGUAGE // NO HEAVY JARGON",
+                hero_title: "How Marriage Rules, Family & Diet Shaped People Over 4,000 Years",
+                hero_sub: "Imagine running a 4,000-year time machine on a computer and checking the results against ancient DNA from 10,703 people. Rules about who marries whom, family structure, and diet noticeably shape which traits become more common over generations.",
+                card_gen: "generations passed over 4,000 years—like a long relay race across centuries",
+                card_dna: "ancient genomes used to test whether the model matches real historical DNA",
+                card_odds: "how much more plausible the institutional model is than random drift alone",
+                card_spheres: "cognition, self-control, cooperation, diet & metabolism, immunity, and stamina",
+                sec1_title: "1. In Plain Words: Shuffling a Deck Instead of Stamping Clones",
+                sec1_p1: "People aren't identical factory copies: each child gets half a deck of traits from one parent and half from the other. Social rules decide how often that deck is shuffled and which cards get passed on.",
+                sc_a_tag: "SCENARIO A: WIDE CIRCLE (EXOGAMY)",
+                sc_a_title: "Fresh combinations across families",
+                node_f1: "Family 1", node_f2: "Family 2", node_offspring: "Offspring",
+                sc_a_b1: "• Fewer hidden close-kin bottlenecks (LROH drops)",
+                sc_a_b2: "• Faster assembly of helpful cognition and immunity combinations",
+                sc_b_tag: "SCENARIO B: TIGHT CIRCLE (KIN / CASTES)",
+                sc_b_title: "Same branches and firm group boundaries",
+                node_ba: "Branch A", node_ba2: "Branch A", node_offspring2: "Offspring",
+                sc_b_b1: "• Stronger reinforcement of group traits (self-control, diet)",
+                sc_b_b2: "• Higher shared vulnerability risk and slower cross-group exchange",
+                an1_t: "Why compare against an 'empty' random-drift world?",
+                an1_d: "So we don't mistake luck for a pattern. A baseline run with no selection barely moved. Once family rules, marriage, diet, and diseases were included, the fit to ancient DNA jumped dramatically.",
+                an2_t: "What do numbers like '+0.89' or '+1.75' mean?",
+                an2_d: "They measure shifts in standard steps (SD)—like height or stamina compared to the average. Even a 0.5–1.0 SD shift over 4,000 years is a real population-wide trend rather than a one-person fluke.",
+                sec2_title: "2. Visual Charts: Which Traits Grew Most Across Regions",
+                sec2_p1: "Different ways of life reward different strengths: open marriage networks speed up mixing traits, while tight clans, castes, or shared norms emphasize discipline, diet adaptation, or cooperation.",
+                ch_a_title: "Six-Trait Profile by Region (SD Shifts Over 4,000 Years)",
+                ch_b_title: "Overall Fitness Gain (%) & Percentile Rank Above Ancestors",
+                ch_c_title: "Net Trait Shift vs. Raw Counter Growth—Spotting the Numbers Trap",
+                ch_c_note: "Key distinction: the study separates genuine net polygenic shifts (+0.89 SD in Western Europe, +0.85 SD in East Asia) from raw counter inflation under strict isolation so numbers aren't misread.",
+                ch_d_title: "Chart 4. Cumulative Level of 6 Mutation Clusters by 2000 CE (Global Mean, %)",
+                sec3_title: "3. Side-by-Side Comparison: Every Path Has Strengths & Trade-Offs",
+                lbl_pro: "Superpower:", lbl_con: "Trade-off:",
+                lbl_m0_why: "Why this control matters:", lbl_m0_out: "Takeaway:",
+                r_me_t: "Middle East — 'Clans & Diet'",
+                r_me_d: "Top diet/metabolism shift (+1.75 SD) and highest overall gain (+2.47%, 85.1st percentile above ancestors). Clan ties and polygyny shaped different reproductive paths across sexes.",
+                r_me_pro: "strong diet/metabolism shift (+1.75 SD) and top overall fitness gain (+2.47%).",
+                r_me_con: "wider reproductive variance across sexes and stronger reliance on clan/kin structures.",
+                r_we_t: "Western Europe — 'Wide Circle'",
+                r_we_d: "Leads in cognition (+0.89 SD) with very low long inbreeding (0.041%). Cousin-marriage bans plus elite dispensations produced balanced gains across multiple domains.",
+                r_we_pro: "broader marriage mixing lowers long inbreeding (LROH) and speeds up combined cognitive and immune gains.",
+                r_we_con: "less tight clan cohesion and fewer extreme single-trait spikes than specialized local regimes.",
+                r_ea_t: "East Asia — 'Mind & Immunity'",
+                r_ea_d: "Strong immunity (+1.26 SD) and high cognition (+0.85 SD). Dense settlements, rice agriculture, and exam mobility shaped resilience to pathogens and cognitive selection.",
+                r_ea_pro: "pathogen adaptation in dense settlements plus social mobility via exams and rice agriculture.",
+                r_ea_con: "more moderate shifts in self-control (+0.36 SD) and famine resilience (+0.49 SD) than top regional peaks.",
+                r_by_t: "Byzantium & E. Europe — 'Cooperation'",
+                r_by_d: "Highest prosociality (+2.37 SD)—reflecting cooperative group norms alongside moderate marriage openness.",
+                r_by_pro: "strong emphasis on cooperation, shared norms, and group coordination.",
+                r_by_con: "smaller gains in cognition (+0.27 SD), immunity (+0.15 SD), and famine resilience (+0.06 SD).",
+                r_sa_t: "South Asia — 'Self-Control & Castes'",
+                r_sa_d: "Strong self-control (+1.24 SD) but a smaller overall gain (+1.35%), as endogamous jati boundaries limit cross-group mixing.",
+                r_sa_pro: "high self-control and discipline within endogamous jati groups.",
+                r_sa_con: "strict endogamy slows cross-group mixing, with famine shift at -0.12 SD.",
+                r_m0_t: "'Empty Drift' Baseline — 'Near Zero'",
+                r_m0_d: "With selection turned off (null M₀), average shifts stay near zero (+0.03 SD) and percentile rank stays around 51.0%.",
+                r_m0_pro: "shows what plain random drift looks like without institutional and environmental selection.",
+                r_m0_con: "proves regional shifts aren't mere noise (BF₁₀ = 306.85).",
+                sec3b_title: "3B. How the Model Was Tested Against 10,703 Ancient Genomes",
+                sec3b_p1: "A model only matters if it matches real history. Using 10,703 ancient genomes from AADR v66.p1, the study compares institutional selection (M₁) against random drift (M₀).",
+                b3_1_t: "Close-Kin Traces (LROH)",
+                b3_1_d: "Long identical DNA tracts reflect close-kin mating: wider marriage circles lower long inbreeding, while tighter loops raise it.",
+                b3_2_t: "Mixing & Unequal Paths",
+                b3_2_d: "Tracks ancestral lineage mixing (PAI) alongside how unevenly reproductive success was distributed among males (male Gini).",
+                b3_3_t: "306.85 Bayes Advantage",
+                b3_3_d: "A global Bayes factor of BF₁₀ = 306.85 (log₁₀ = 2.49) gives strong support for institutional selection over unguided drift.",
+                sec3c_title: "3C. What These Numbers Mean — and What They Do Not",
+                ok_yes_t: "What the Model Captures",
+                ok_yes_d: "Long-term population shifts over 4,000 years under marriage, family, diet, and density regimes—and the trade-offs between different paths.",
+                ok_no_t: "What the Model Does NOT Claim",
+                ok_no_d: "It does not judge individuals, rank peoples as 'superior' or 'inferior', or replace culture, learning, and agency with determinism.",
+                sec3g_title: "3G. Plain-Language Glossary Without Jargon",
+                gl_sd: "Standard deviation step—shows how far a trait shifts relative to the baseline scale.",
+                gl_lroh: "Long runs of homozygosity—long matching DNA segments that track close-kin mating.",
+                gl_m01: "M₀ is neutral drift without selection; M₁ includes marriage rules, family structure, environment, and selection.",
+                gl_pai: "PAI tracks ancestral lineage mixing; Gini captures how unevenly reproductive success was shared.",
+                sec3d_title: "3D. Why a 4,000-Year Horizon Matters More Than a Single Generation",
+                sec3d_p1: "Within one lifetime, shifts look tiny. Over 4,000 years—roughly 140–150 generations—subtle differences in marriage circles, diet, and disease pressure compound into distinct population trajectories testable against ancient DNA.",
+                sec3e_title: "3E. How Different Rules Change the 'Speed of Shifts' Over 4,000 Years",
+                sec3e_p1: "Across the same 4,000 years, population averages shift at different speeds depending on whether mixing speeds up combinations or tight boundaries trap changes inside a group.",
+                sp_open_t: "Open Circle & Mobility (W. Europe, E. Asia)",
+                sp_open_d: "Broader mixing speeds up combined gains in cognition (+0.89 SD and +0.85 SD) and immunity (+1.26 SD in East Asia) while keeping inbreeding low.",
+                sp_clan_t: "Clans & Polygyny (Middle East)",
+                sp_clan_d: "Drives the fastest shift in diet/metabolism (+1.75 SD) and overall gain (+2.47%) when kin ties and reproductive selection pull traits forward.",
+                sp_caste_t: "Tight Caste Boundaries & Isolation (S. Asia)",
+                sp_caste_d: "Boosts self-control within groups (+1.24 SD) but slows cross-group exchange and yields a smaller overall gain (+1.35%), requiring care not to confuse raw counts with net shifts.",
+                sp_m0_t: "Random Drift Without Selection (Control M₀)",
+                sp_m0_d: "Without selection rules, shift speed stays near zero (+0.03 SD on average, +0.02 SD for cognition)—drifting near the middle.",
+                sec4_title: "4. Big Takeaway: Trade-Offs, Not 'Better vs. Worse' Peoples",
+                sec4_p1: "The point isn't ranking populations as superior or inferior. Every family and social system makes trade-offs—balancing openness, discipline, cooperation, and adaptability over thousands of years.",
+                cta_res_t: "Want the full methodology, ABC-SMC, LROH/PAI metrics, and raw-counter audit?",
+                cta_res_d: "Open the technical research page covering all 10,703 AADR v66.p1 genomes, BF₁₀ = 306.85, and model boundaries."
+            },
+            he: {
+                back_home: "חזרה לראשי",
+                to_tech: "לפרטים המלאים",
+                hero_badge: "שפה פשוטה // בלי ז׳רגון כבד",
+                hero_title: "כיצד כללי נישואין, משפחה ותזונה עיצבו בני אדם ב-4,000 שנה",
+                hero_sub: "דמיינו מכונת זמן במחשב ל-4,000 שנה שבדקה מול DNA עתיק של 10,703 בני אדם כיצד כללי נישואין, מבנה משפחה ותזונה משפיעים על תכונות לאורך דורות.",
+                card_gen: "דורות ב-4,000 שנה — כמו מרוץ שליחים לאורך מאות שנים",
+                card_dna: "גנומים עתיקים ששימשו לבדיקת ההתאמה למציאות ההיסטורית",
+                card_odds: "עד כמה המודל המוסדי עדיף על סחף אקראי בלבד",
+                card_spheres: "חשיבה, שליטה עצמית, שיתוף פעולה, תזונה, חסינות ועמידות",
+                sec1_title: "1. במילים פשוטות: ערבוב חפיסת קלפים במקום העתקה זהה",
+                sec1_p1: "כל ילד מקבל חצי מההורה האחד וחצי מהשני, וכללי החברה קובעים עד כמה החפיסה מתערבבת ואילו תכונות עוברות הלאה.",
+                sc_a_tag: "תרחיש א׳: מעגל פתוח (אקסוגמיה)",
+                sc_a_title: "שילובים חדשים בין משפחות שונות",
+                node_f1: "משפחה 1", node_f2: "משפחה 2", node_offspring: "צאצא",
+                sc_a_b1: "• פחות קרבה משפחתית הדוקה (ירידה ב-LROH)",
+                sc_a_b2: "• צירוף מהיר יותר של תכונות קוגניטיביות וחיסוניות",
+                sc_b_tag: "תרחיש ב׳: מעגל סגור (קרבה / קאסטות)",
+                sc_b_title: "אותן שושלות וגבולות קבוצה קשיחים",
+                node_ba: "ענף א׳", node_ba2: "ענף א׳", node_offspring2: "צאצא",
+                sc_b_b1: "• חיזוק תכונות קבוצתיות (שליטה עצמית, תזונה)",
+                sc_b_b2: "• סיכון משותף גבוה יותר וערבוב איטי בין קבוצות",
+                an1_t: "למה להשוות למודל 'ריק' של סחף אקראי?",
+                an1_d: "כדי לא להתבלבל בין מקריות למגמה. בלי ברירה השינויים כמעט אפסיים, וכשמוסיפים מוסדות ותזונה ההתאמה ל-DNA העתיק חזקה בהרבה.",
+                an2_t: "מה אומרים מספרים כמו '+0.89' או '+1.75'?",
+                an2_d: "אלו יחידות סטייה תקנית (SD) ביחס לממוצע — כמו גובה או סיבולת. תזוזה של 0.5–1.0 SD לאורך 4,000 שנה היא מגמה אוכלוסייתית ברורה.",
+                sec2_title: "2. גרפים פשוטים: איפה נרשמו השינויים הבולטים ביותר",
+                sec2_p1: "אורחות חיים שונים מחזקים דגשים שונים — מפתיחות לקשרים חדשים ועד משמעת, תזונה ושיתוף פעולה קבוצתי.",
+                ch_a_title: "פרופיל 6 תכונות לפי אזור (יחידות SD ב-4,000 שנה)",
+                ch_b_title: "עלייה כוללת בכשירות (%) ואחוזון ביחס לאבות הקדומים",
+                ch_c_title: "השוואת תזוזה קוגניטיבית נטו מול מדדים גולמיים",
+                ch_c_note: "המודל מפריד בין תזוזה אמיתית (+0.89 SD במערב אירופה, +0.85 SD במזרח אסיה) לבין ניפוח מלאכותי של ספירה בבידוד.",
+                ch_d_title: "גרף 4. רמה מצטברת של 6 אשכולות מוטציות עד 2000 לספירה (%)",
+                sec3_title: "3. השוואה בין משטרים: יתרונות ופשרות בכל מסלול",
+                lbl_pro: "יתרון:", lbl_con: "מחיר:",
+                lbl_m0_why: "מטרת הבקרה:", lbl_m0_out: "מסקנה:",
+                r_me_t: "המזרח התיכון — 'חמולות ותזונה'",
+                r_me_d: "מוביל בתזונה/מטבוליזם (+1.75 SD) ובעלייה הכוללת (+2.47%, אחוזון 85.1).",
+                r_me_pro: "תזוזה בולטת בתזונה/מטבוליזם (+1.75 SD) ועלייה כוללת גבוהה (+2.47%).",
+                r_me_con: "שונות רבייתית גבוהה יותר ותלות במבנה חמולות.",
+                r_we_t: "מערב אירופה — 'מעגל פתוח'",
+                r_we_d: "מוביל בקוגניציה (+0.89 SD) עם LROH נמוך במיוחד (0.041%).",
+                r_we_pro: "פתיחות נישואין מפחיתה LROH ומאיצה צירוף תכונות קוגניטיביות וחיסוניות.",
+                r_we_con: "לכידות שבטית מצומצמת יותר ביחס למשטרים ממוקדים.",
+                r_ea_t: "מזרח אסיה — 'חשיבה וחסינות'",
+                r_ea_d: "חסינות גבוהה (+1.26 SD) וקוגניציה חזקה (+0.85 SD).",
+                r_ea_pro: "התמודדות עם צפיפות ומחלות לצד ניידות מבחנים וחקלאות אורז.",
+                r_ea_con: "שינויים מתונים יותר בשליטה עצמית (+0.36 SD) ועמידות לרעב (+0.49 SD).",
+                r_by_t: "ביזנטיון ומזרח אירופה — 'שיתוף פעולה'",
+                r_by_d: "שיא בפרו-חברתיות (+2.37 SD) לצד פתיחות מתונה בנישואין.",
+                r_by_pro: "דגש חזק על שיתוף פעולה, נורמות משותפות ותיאום קבוצתי.",
+                r_by_con: "שינויים קטנים יותר בקוגניציה (+0.27 SD), חסינות (+0.15 SD) ועמידות (+0.06 SD).",
+                r_sa_t: "דרום אסיה — 'שליטה עצמית וקאסטות'",
+                r_sa_d: "שליטה עצמית גבוהה (+1.24 SD) אך עלייה כוללת מתונה יותר (+1.35%).",
+                r_sa_pro: "משמעת ושליטה עצמית גבוהות בתוך קבוצות ג׳אטי אנדוגמיות.",
+                r_sa_con: "אנדוגמיה הדוקה מגבילה ערבוב בין קבוצות (-0.12 SD בעמידות).",
+                r_m0_t: "בסיס סחף אקראי M₀ — 'כמעט אפס'",
+                r_m0_d: "ללא ברירה, הממוצע נשאר קרוב לאפס (+0.03 SD) ובסביבות אחוזון 51.0%.",
+                r_m0_pro: "מראה סחף אקראי ללא ברירה מוסדית וסביבתית.",
+                r_m0_con: "מוכיח שהפערים אינם מקריים בלבד (BF₁₀ = 306.85).",
+                sec3b_title: "3ב. איך נבדקה המודל מול 10,703 גנומים עתיקים",
+                sec3b_p1: "סימולציה נבחנת מול המציאות: על בסיס 10,703 גנומים מ-AADR v66.p1 נבדקה ברירה מוסדית (M₁) מול סחף אקראי (M₀).",
+                b3_1_t: "עקבות קרבה (LROH)",
+                b3_1_d: "קטעי DNA זהים ארוכים משקפים קרבת נישואין: מעגלים פתוחים מפחיתים LROH, ומעגלים סגורים מעלים אותו.",
+                b3_2_t: "ערבוב ושונות רבייתית",
+                b3_2_d: "המודל בוחן ערבוב שושלות (PAI) ואת מידת אי-השוויון בהצלחה הרבייתית הגברית (ג׳יני זכרי).",
+                b3_3_t: "יתרון בייסיאני 306.85",
+                b3_3_d: "גורם בייס עולמי BF₁₀ = 306.85 (log₁₀ = 2.49) מראה תמיכה חזקה במודל המוסדי לעומת סחף בלבד.",
+                sec3c_title: "3ג. מה המשמעות המעשית — ומה לא נאמר כאן",
+                ok_yes_t: "מה המודל מתאר",
+                ok_yes_d: "מגמות אוכלוסייה ארוכות טווח ב-4,000 שנה תחת כללי משפחה, נישואין, תזונה וצפיפות — ואת הפשרות שנוצרות.",
+                ok_no_t: "מה המודל אינו קובע",
+                ok_no_d: "הוא אינו קובע גורל של פרט, אינו מדרג קבוצות כ'עליונות' או 'נחותות' ואינו מחליף תרבות ובחירה אישית.",
+                sec3g_title: "3ד. מילון מונחים קצר בשפה פשוטה",
+                gl_sd: "יחידת סטיית תקן — מראה עד כמה תכונה זזה ביחס לנקודת הייחוס.",
+                gl_lroh: "רצפי DNA זהים ארוכים — אינדיקציה לקרבת משפחה בנישואין.",
+                gl_m01: "M₀ הוא סחף ניטרלי ללא ברירה; M₁ כולל כללי נישואין, משפחה, סביבה וברירה.",
+                gl_pai: "PAI מודד ערבוב שושלות; ג׳יני משקף אי-שוויון בהצלחה הרבייתית.",
+                sec3d_title: "3ה. למה 4,000 שנה חשובות יותר מדור בודד",
+                sec3d_p1: "בטווח של דור אחד השינויים קטנים, אך לאורך 4,000 שנה — כ-140–150 דורות — הבדלים מתונים בנישואין, בתזונה ובמחלות מצטברים למגמות שניתן לבדוק מול DNA עתיק.",
+                sec3e_title: "3ה. כיצד כללים שונים משנים את 'קצב התזוזה' ב-4,000 שנה",
+                sec3e_p1: "לאורך אותם 4,000 שנה קצב השינוי משתנה לפי מידת הערבוב מול הסגירות הקבוצתית וההבדל בין ספירה גולמית לתזוזה נטו.",
+                sp_open_t: "מעגל פתוח וניידות (מערב אירופה, מזרח אסיה)",
+                sp_open_d: "ערבוב רחב יותר מאיץ צירוף תכונות בקוגניציה (+0.89 SD ו-+0.85 SD) ובחסינות (+1.26 SD במזרח אסיה).",
+                sp_clan_t: "חמולות ופוליגמיה (המזרח התיכון)",
+                sp_clan_d: "מוביל בשינוי בתזונה/מטבוליזם (+1.75 SD) ובעלייה הכוללת (+2.47%) תחת השפעת קשרי שארות וברירה רבייתית.",
+                sp_caste_t: "גבולות קאסטה הדוקים ובידוד (דרום אסיה)",
+                sp_caste_d: "מחזק שליטה עצמית בתוך הקבוצה (+1.24 SD), אך מאט ערבוב בין קבוצות ומניב עלייה כוללת מתונה יותר (+1.35%).",
+                sp_m0_t: "סחף אקראי ללא ברירה (בקרת M₀)",
+                sp_m0_d: "ללא ברירה, קצב התזוזה כמעט אפסי (+0.03 SD בממוצע, +0.02 SD בקוגניציה).",
+                sec4_title: "4. המסקנה המרכזית: פשרות אבולוציוניות, לא היררכיה",
+                sec4_p1: "המחקר מציג פשרות בין פתיחות, משמעת, תזונה ושיתוף פעולה לאורך אלפי שנים — ולא דירוג של 'עליונות' או 'נחיתות'.",
+                cta_res_t: "רוצים מתודולוגיה מלאה, ABC-SMC, מדדי LROH/PAI ובדיקת ספירה גולמית?",
+                cta_res_d: "עברו לעמוד המחקר הטכני הכולל 10,703 גנומים מ-AADR v66.p1 ו-BF₁₀ = 306.85."
+            }
+        };
+
+        let c1 = null, c2 = null, c3 = null, c4 = null;
+
+        function buildCharts(lang) {
+            const isRu = lang === 'ru';
+            const isHe = lang === 'he';
+
+            const traitLabels = isRu
+                ? ['Мышление', 'Самоконтроль', 'Умение ладить', 'Питание', 'Иммунитет', 'Выносливость']
+                : isHe
+                    ? ['חשיבה', 'שליטה עצמית', 'שיתוף פעולה', 'תזונה', 'חסינות', 'עמידות']
+                    : ['Thinking', 'Self-Control', 'Cooperation', 'Diet', 'Immunity', 'Stamina'];
+
+            if (c1) c1.destroy();
+            c1 = new Chart(document.getElementById('simpleProfileChart'), {
+                type: 'bar',
+                data: {
+                    labels: traitLabels,
+                    datasets: [
+                        { label: isRu ? 'Ближний Восток' : (isHe ? 'המזרח התיכון' : 'Middle East'), data: [0.48, 1.19, 1.30, 1.75, 0.76, 0.77], backgroundColor: 'rgba(251, 191, 36, 0.8)' },
+                        { label: isRu ? 'Зап. Европа' : (isHe ? 'מערב אירופה' : 'W. Europe'), data: [0.89, 0.52, 0.82, 0.74, 0.86, 0.79], backgroundColor: 'rgba(129, 140, 248, 0.85)' },
+                        { label: isRu ? 'Вост. Азия' : (isHe ? 'מזרח אסיה' : 'E. Asia'), data: [0.85, 0.36, 0.64, 0.76, 1.26, 0.49], backgroundColor: 'rgba(45, 212, 191, 0.8)' },
+                        { label: isRu ? 'Византия / В.Е.' : (isHe ? 'ביזנטיון' : 'Byzantium'), data: [0.27, 0.87, 2.37, 0.64, 0.15, 0.06], backgroundColor: 'rgba(192, 132, 252, 0.8)' },
+                        { label: isRu ? 'Юж. Азия' : (isHe ? 'דרום אסיה' : 'S. Asia'), data: [0.42, 1.24, 0.45, 0.46, 0.13, -0.12], backgroundColor: 'rgba(251, 113, 133, 0.8)' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 11 } } } },
+                    scales: {
+                        x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+                    }
+                }
+            });
+
+            const regLabels = isRu
+                ? ['Ближ. Восток', 'Вост. Азия', 'Зап. Европа', 'Византия', 'Юж. Азия', 'Пустой дрейф']
+                : isHe
+                    ? ['המזרח התיכון', 'מזרח אסיה', 'מערב אירופה', 'ביזנטיון', 'דרום אסיה', 'סחף ריק']
+                    : ['Middle East', 'East Asia', 'W. Europe', 'Byzantium', 'South Asia', 'Empty Drift'];
+
+            if (c2) c2.destroy();
+            c2 = new Chart(document.getElementById('simpleGainChart'), {
+                type: 'bar',
+                data: {
+                    labels: regLabels,
+                    datasets: [
+                        { label: isRu ? 'Прирост приспособленности (%)' : (isHe ? 'עלייה בכשירות (%)' : 'Fitness Gain (%)'), data: [2.47, 1.96, 1.91, 1.88, 1.35, 0.72], backgroundColor: 'rgba(52, 211, 153, 0.82)' },
+                        { label: isRu ? 'Прирост перцентиля над 50% (п.п.)' : (isHe ? 'תוספת מעל אחוזון 50 (נק׳)' : 'Gain Above 50th %ile (pp)'), data: [35.1, 26.6, 27.9, 26.6, 16.6, 1.0], backgroundColor: 'rgba(168, 85, 247, 0.78)' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 11 } } } },
+                    scales: {
+                        x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+                    }
+                }
+            });
+
+            const trapLabels = isRu
+                ? ['Зап. Европа', 'Вост. Азия', 'Ближ. Восток', 'Юж. Азия', 'Византия', 'Дрейф M₀']
+                : isHe
+                    ? ['מערב אירופה', 'מזרח אסיה', 'המזרח התיכון', 'דרום אסיה', 'ביזנטיון', 'סחף M₀']
+                    : ['W. Europe', 'E. Asia', 'Middle East', 'S. Asia', 'Byzantium', 'Drift M₀'];
+
+            if (c3) c3.destroy();
+            c3 = new Chart(document.getElementById('simpleTrapChart'), {
+                type: 'bar',
+                data: {
+                    labels: trapLabels,
+                    datasets: [
+                        { label: isRu ? 'Чистый сдвиг мышления (SD)' : (isHe ? 'תזוזה קוגניטיבית נטו (SD)' : 'Net Cognition Shift (SD)'), data: [0.89, 0.85, 0.48, 0.42, 0.27, 0.02], backgroundColor: 'rgba(99, 102, 241, 0.85)' },
+                        { label: isRu ? 'Сдвиг выносливости к голоду/среде (SD)' : (isHe ? 'עמידות לתזונה/סביבה (SD)' : 'Diet/Environment Shift (SD)'), data: [0.74, 0.76, 1.75, 0.46, 0.64, 0.01], backgroundColor: 'rgba(245, 158, 11, 0.8)' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 11 } } } },
+                    scales: {
+                        x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+                    }
+                }
+            });
+
+            const mutLabels = isRu
+                ? ['Иммунитет', 'Самоконтроль', 'Умение ладить', 'Выносливость', 'Питание/метаб.', 'Мышление']
+                : isHe
+                    ? ['חסינות', 'שליטה עצמית', 'שיתוף פעולה', 'עמידות', 'תזונה', 'חשיבה']
+                    : ['Immunity', 'Self-Control', 'Cooperation', 'Stamina', 'Diet/Metab.', 'Thinking'];
+            if (c4) c4.destroy();
+            c4 = new Chart(document.getElementById('simpleMutChart'), {
+                type: 'bar',
+                data: {
+                    labels: mutLabels,
+                    datasets: [{
+                        label: isRu ? 'Накопленный уровень кластера к 2000 г. н. э. (%)' : (isHe ? 'רמה מצטברת עד 2000 לספירה (%)' : 'Cumulative Cluster Level by 2000 CE (%)'),
+                        data: [5.95, 5.62, 5.50, 5.25, 4.77, 4.73],
+                        backgroundColor: 'rgba(192, 132, 252, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 11 } } } },
+                    scales: {
+                        x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+                    }
+                }
+            });
+        }
+
+        function setLang(lang) {
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (textMap[lang] && textMap[lang][key]) el.innerHTML = textMap[lang][key];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const active = btn.getAttribute('data-lang') === lang;
+                btn.className = `lang-btn px-3 py-1 rounded-lg transition-colors ${active ? 'bg-indigo-500/25 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white'}`;
+            });
+            buildCharts(lang);
+        }
+
+        const browserLang = navigator.language.split('-')[0];
+        setLang(textMap[browserLang] ? browserLang : 'ru');
+    </script>
+</body>
+</html>

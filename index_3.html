@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="eggrib | Go, Python & .NET 8 Systems, Telegram Bots, Algo Trading, and Linux/Xray Infrastructure.">
+    <meta name="keywords" content="Go, Golang, Fiber, Python, .NET 8, Telegram Bots, Redis, Algo Trading, Bitget, ccxt, Parquet, Docker, Xray, Hiddify, Karing, Ubuntu">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://699718.space/">
+    <meta property="og:title" content="eggrib | Systems & Full-Cycle Engineering">
+    <meta property="og:description" content="Full-cycle engineering across Go, Python, and .NET 8: Telegram bots, trading & simulation engines, and Linux/Xray infrastructure.">
+    <meta property="og:image" content="https://699718.space/og-image.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://699718.space/">
+    <meta name="twitter:title" content="eggrib | Systems & Full-Cycle Engineering">
+    <meta name="twitter:description" content="Full-cycle engineering across Go, Python, and .NET 8: Telegram bots, trading & simulation engines, and Linux/Xray infrastructure.">
+    <meta name="twitter:image" content="https://699718.space/og-image.png">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <title>eggrib | Systems & Full-Cycle Engineering</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23818cf8'/><stop offset='100%25' stop-color='%23c084fc'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='%230f172a'/><polygon points='18,3 8,18 15,18 14,29 24,14 17,14' fill='url(%23g)'/></svg>">
+
+    <script defer src="https://stats.699718.space/script.js" data-website-id="e9088ac7-7a29-4f15-a61a-ac661564484b"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #020617;
+            color: #f1f5f9;
+            font-family: 'Unbounded', sans-serif;
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.15), transparent 40%);
+            transition: direction 0.3s ease;
+        }
+        html[dir="rtl"] body { font-family: 'Heebo', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        html[dir="rtl"] .mono { font-family: 'JetBrains Mono', monospace; direction: ltr; display: inline-block; }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .glass:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(99,102,241,0.15);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s linear infinite;
+        }
+        @keyframes gradientMove { to { background-position: 200% center; } }
+
+        .cta-btn { position: relative; background: #4f46e5; z-index: 1; }
+        .cta-btn::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #4f46e5, #9333ea, #4f46e5);
+            z-index: -1; border-radius: 1.1rem; background-size: 200%;
+            animation: gradientMove 3s linear infinite; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .cta-btn:hover::before { opacity: 1; }
+
+        .card-details {
+            max-height: 0; opacity: 0; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-details.open {
+            max-height: 440px; opacity: 1; margin-top: 1rem; padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .chevron { transition: transform 0.3s ease; }
+        .open-btn.active .chevron { transform: rotate(180deg); }
+
+        .card-spotlight { position: absolute; pointer-events: none; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); transform: translate(-50%, -50%); transition: opacity 0.3s; opacity: 0; z-index: 0; top: 0; left: 0; }
+        @media print {
+            body { background: white !important; color: black !important; background-image: none !important; }
+            .glass { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; backdrop-filter: none !important; }
+            .gradient-text { -webkit-text-fill-color: black !important; background: none !important; }
+            .cta-btn, .lang-btn, .open-btn, .absolute { display: none !important; }
+            .card-details { max-height: none !important; opacity: 1 !important; padding-top: 1rem !important; border-top: 1px solid #ccc !important; }
+            a { color: black !important; }
+        }
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(15,23,42,0.95); border: 1px solid rgba(99,102,241,0.4); color: #e2e8f0; padding: 0.75rem 1.5rem; border-radius: 1rem; font-size: 0.85rem; z-index: 9999; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s; opacity: 0; backdrop-filter: blur(12px); white-space: nowrap; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        #term-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(8px); z-index: 9998; display: none; align-items: center; justify-content: center; }
+        #term-overlay.open { display: flex; }
+        #term-box { background: #0d1117; border: 1px solid rgba(99,102,241,0.4); border-radius: 1rem; width: 90%; max-width: 640px; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #c9d1d9; box-shadow: 0 0 60px rgba(99,102,241,0.2); max-height: 70vh; overflow-y: auto; }
+        #term-box .t-header { color: #6e7681; margin-bottom: 1rem; border-bottom: 1px solid #21262d; padding-bottom: 0.5rem; }
+        .t-prompt { color: #58a6ff; }
+        .t-out { color: #3fb950; white-space: pre; }
+        .t-err { color: #f85149; }
+        #t-input { background: none; border: none; outline: none; color: #c9d1d9; font-family: inherit; font-size: inherit; width: calc(100% - 10rem); caret-color: #58a6ff; }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        #cursor-glow { position: fixed; pointer-events: none; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%); transform: translate(-50%, -50%); z-index: 0; transition: opacity 0.3s; opacity: 0; top: 0; left: 0; }
+        .typing-cursor { display: inline-block; width: 2px; height: 1em; background: #818cf8; margin-left: 2px; vertical-align: middle; animation: blink 0.8s step-end infinite; }
+    </style>
+</head>
+<body class="antialiased min-h-screen py-12 px-4 flex justify-center items-center">
+
+    <div class="max-w-5xl w-full space-y-6 relative">
+
+        <div class="absolute -top-12 md:-top-10 end-4 z-20">
+            <button onclick="toggleLangMenu()" class="md:hidden bg-slate-900/50 p-2 rounded-xl border border-white/5 backdrop-blur-md text-xs mono text-slate-300 hover:text-white transition-colors">
+                <i class="fas fa-globe me-1"></i><span id="current-lang">EN</span> <i class="fas fa-chevron-down ms-1 text-[10px]"></i>
+            </button>
+            <div id="lang-menu" class="hidden md:flex flex-wrap justify-end gap-1 text-xs md:text-sm mono bg-slate-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-md max-w-[90vw]">
+                <button onclick="setLang('en')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="en">EN</button>
+                <button onclick="setLang('de')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="de">DE</button>
+                <button onclick="setLang('fr')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="fr">FR</button>
+                <button onclick="setLang('es')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="es">ES</button>
+                <button onclick="setLang('ru')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="ru">RU</button>
+                <button onclick="setLang('he')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="he">HE</button>
+            </div>
+        </div>
+
+        <header class="reveal glass rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10 mt-6 md:mt-0">
+            <div class="absolute -top-32 -end-32 w-96 h-96 bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none"></div>
+            <div class="relative z-10 text-center md:text-start flex-1">
+
+                <div class="inline-flex items-center space-x-3 rtl:space-x-reverse mb-4">
+                    <div class="flex items-center space-x-2 rtl:space-x-reverse bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20">
+                        <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></div>
+                        <span class="text-[10px] mono text-emerald-400 uppercase tracking-widest font-bold" data-i18n="status">Open to projects</span>
+                    </div>
+                </div>
+
+                <div class="mb-6 block">
+                    <div class="inline-flex items-center space-x-2 rtl:space-x-reverse bg-slate-800/50 px-4 py-2 rounded-xl border border-slate-700/50 backdrop-blur-sm">
+                        <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_#ef4444]"></span>
+                        <span class="text-[11px] mono text-slate-300 tracking-wide" data-i18n="current_focus"></span>
+                    </div>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6" dir="ltr"><span class="gradient-text">eggrib</span></h1>
+                <p class="text-slate-300 text-base md:text-lg max-w-xl leading-relaxed mb-8" data-i18n="subtitle"></p>
+
+                <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                    <a href="https://t.me/eggrib" target="_blank" class="cta-btn flex items-center justify-center px-8 py-4 text-white rounded-2xl transition-all font-bold uppercase tracking-wide text-sm md:text-base">
+                        <i class="fab fa-telegram-plane me-3 text-xl"></i><span data-i18n="contact">Discuss a Project</span>
+                    </a>
+                    <a href="https://github.com/eggrib" target="_blank" class="flex items-center justify-center px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl border border-slate-600 transition-all font-bold uppercase tracking-wide text-sm md:text-base">
+                        <i class="fab fa-github me-3 text-xl"></i><span data-i18n="source">View GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="reveal glass rounded-[2rem] px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div><div class="text-3xl font-extrabold gradient-text counter" data-target="3">0</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_bots">Production Bots</div></div>
+            <div><div class="text-3xl font-extrabold gradient-text counter" data-target="20">0</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_pairs">Trading Pairs</div></div>
+            <div><div class="text-3xl font-extrabold gradient-text counter" data-target="6">0</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_langs">Languages</div></div>
+            <div><div class="text-3xl font-extrabold gradient-text">24/7</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_uptime">Uptime</div></div>
+        </div>
+
+                        <div id="projects-section" class="reveal glass rounded-[2rem] p-8 md:p-10">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <h2 class="text-lg font-bold gradient-text uppercase tracking-wider" data-i18n="projects_title">Projects & Research</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                <!-- 1. civdem (first card) -->
+                <a href="/research.html" class="bg-slate-800/50 hover:bg-slate-700/50 rounded-2xl p-6 border border-slate-700/50 hover:border-yellow-500/40 transition-all flex flex-col group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-yellow-500/20 rounded-xl flex items-center justify-center text-yellow-400"><i class="fas fa-dna"></i></div>
+                        <span class="font-bold text-sm">civdem</span>
+                        <span class="ms-auto text-[10px] bg-yellow-500/10 text-yellow-300 border border-yellow-500/20 px-2 py-0.5 rounded-full mono">ABC-SMC</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3 flex-grow" data-i18n="proj_civdem_full"></p>
+                    <div class="flex flex-wrap gap-1.5 mb-4 mono text-[10px] text-yellow-300">
+                        <span class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20">Python</span>
+                        <span class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20">ABM</span>
+                        <span class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20">ABC-SMC</span>
+                        <span class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20">10,703 AADR</span>
+                    </div>
+                    <div class="text-xs mono text-yellow-300 group-hover:text-yellow-200 inline-flex items-center gap-1.5 pt-2 border-t border-white/5">
+                        <i class="fas fa-microscope"></i> <span data-i18n="study_link">civdem Study & Research</span>
+                    </div>
+                </a>
+
+                <!-- 2. bitget-bot-gridbot -->
+                <a href="/research.html" class="bg-slate-800/50 hover:bg-slate-700/50 rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/40 transition-all flex flex-col group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-blue-500/20 rounded-xl flex items-center justify-center text-blue-400"><i class="fas fa-chart-line"></i></div>
+                        <span class="font-bold text-sm">bitget-bot-gridbot</span>
+                        <span class="ms-auto text-[10px] bg-blue-500/10 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded-full mono">RESEARCH</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3 flex-grow" data-i18n="proj_algo_full"></p>
+                    <div class="flex flex-wrap gap-1.5 mb-4 mono text-[10px] text-blue-300">
+                        <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">Go</span>
+                        <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">WebSockets</span>
+                        <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">ccxt</span>
+                        <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">Parquet</span>
+                    </div>
+                    <div class="text-xs mono text-blue-300 group-hover:text-blue-200 inline-flex items-center gap-1.5 pt-2 border-t border-white/5">
+                        <i class="fas fa-arrow-up-right-from-square"></i> <span data-i18n="more_details">Details & Page</span>
+                    </div>
+                </a>
+
+                <!-- 3. Tabletka (.NET 8) -->
+                <a href="https://github.com/eggrib" target="_blank" class="bg-slate-800/50 hover:bg-slate-700/50 rounded-2xl p-6 border border-slate-700/50 hover:border-purple-500/40 transition-all flex flex-col group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-purple-500/20 rounded-xl flex items-center justify-center text-purple-400"><i class="fas fa-desktop"></i></div>
+                        <span class="font-bold text-sm">Tabletka</span>
+                        <span class="ms-auto text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full mono">v0.9.7.80</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3 flex-grow" data-i18n="proj_tabletka_full"></p>
+                    <div class="flex flex-wrap gap-1.5 mb-4 mono text-[10px] text-purple-300">
+                        <span class="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">.NET 8</span>
+                        <span class="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">60-FPS UI</span>
+                        <span class="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">JSON</span>
+                        <span class="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">Inno Setup</span>
+                    </div>
+                    <div class="text-xs mono text-purple-300 group-hover:text-purple-200 inline-flex items-center gap-1.5 pt-2 border-t border-white/5">
+                        <i class="fab fa-github"></i> <span data-i18n="source">View GitHub</span>
+                    </div>
+                </a>
+
+                <!-- 4. MAS 699 -->
+                <a href="https://t.me/mas699bot" target="_blank" class="bg-slate-800/50 hover:bg-slate-700/50 rounded-2xl p-6 border border-slate-700/50 hover:border-indigo-500/40 transition-all flex flex-col group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400"><i class="fas fa-robot"></i></div>
+                        <span class="font-bold text-sm">MAS 699</span>
+                        <span class="ms-auto text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full mono">LIVE</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3 flex-grow" data-i18n="proj_mas_full"></p>
+                    <div class="flex flex-wrap gap-1.5 mb-4 mono text-[10px] text-indigo-300">
+                        <span class="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">Go</span>
+                        <span class="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">Redis</span>
+                        <span class="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">Docker</span>
+                        <span class="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">Multi-LLM</span>
+                    </div>
+                    <div class="text-xs mono text-indigo-300 group-hover:text-indigo-200 inline-flex items-center gap-1.5 pt-2 border-t border-white/5">
+                        <i class="fab fa-telegram-plane"></i> <span data-i18n="bot_link">Launch @mas699bot</span>
+                    </div>
+                </a>
+
+                <!-- 5. shazam699_bot5 -->
+                <a href="https://t.me/Shazam699_bot" target="_blank" class="bg-slate-800/50 hover:bg-slate-700/50 rounded-2xl p-6 border border-slate-700/50 hover:border-pink-500/40 transition-all flex flex-col group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-pink-500/20 rounded-xl flex items-center justify-center text-pink-400"><i class="fas fa-music"></i></div>
+                        <span class="font-bold text-sm">shazam699_bot5</span>
+                        <span class="ms-auto text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full mono">LIVE</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3 flex-grow" data-i18n="proj_shazam_full"></p>
+                    <div class="flex flex-wrap gap-1.5 mb-4 mono text-[10px] text-pink-300">
+                        <span class="px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/20">Go</span>
+                        <span class="px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/20">FLAC/MP3</span>
+                        <span class="px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/20">Deezer ARL</span>
+                        <span class="px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/20">ffmpeg</span>
+                    </div>
+                    <div class="text-xs mono text-pink-300 group-hover:text-pink-200 inline-flex items-center gap-1.5 pt-2 border-t border-white/5">
+                        <i class="fab fa-telegram-plane"></i> <span>@Shazam699_bot</span>
+                    </div>
+                </a>
+
+                <!-- 6. vpn-shop & Infra -->
+                <a href="/research.html" class="bg-slate-800/50 hover:bg-slate-700/50 rounded-2xl p-6 border border-slate-700/50 hover:border-emerald-500/40 transition-all flex flex-col group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400"><i class="fas fa-network-wired"></i></div>
+                        <span class="font-bold text-sm">vpn-shop &amp; Infra</span>
+                        <span class="ms-auto text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full mono">PROD</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3 flex-grow" data-i18n="proj_infra_full"></p>
+                    <div class="flex flex-wrap gap-1.5 mb-4 mono text-[10px] text-emerald-300">
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Go Fiber</span>
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Xray/Hiddify</span>
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Caddy</span>
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Ubuntu 24.04</span>
+                    </div>
+                    <div class="text-xs mono text-emerald-300 group-hover:text-emerald-200 inline-flex items-center gap-1.5 pt-2 border-t border-white/5">
+                        <i class="fas fa-server"></i> <span data-i18n="more_details">Details & Page</span>
+                    </div>
+                </a>
+
+                <!-- 7. tradebot699 & Go Net Tools -->
+                <a href="https://github.com/eggrib" target="_blank" class="bg-slate-800/50 hover:bg-slate-700/50 rounded-2xl p-6 border border-slate-700/50 hover:border-cyan-500/40 transition-all flex flex-col group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-cyan-500/20 rounded-xl flex items-center justify-center text-cyan-400"><i class="fas fa-terminal"></i></div>
+                        <span class="font-bold text-sm">tradebot699 &amp; Net</span>
+                        <span class="ms-auto text-[10px] bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-full mono">TOOLS</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3 flex-grow" data-i18n="proj_tools_full"></p>
+                    <div class="flex flex-wrap gap-1.5 mb-4 mono text-[10px] text-cyan-300">
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">Python</span>
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">Parquet</span>
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">Go mDNS</span>
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">Karing</span>
+                    </div>
+                    <div class="text-xs mono text-cyan-300 group-hover:text-cyan-200 inline-flex items-center gap-1.5 pt-2 border-t border-white/5">
+                        <i class="fab fa-github"></i> <span data-i18n="source">View GitHub</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <div id='spotlight' class='card-spotlight'></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 border border-indigo-500/20"><i class="fas fa-robot text-2xl"></i></div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="bots_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="bots_desc"></p>
+                <button onclick="toggleCard('bots')" class="open-btn mt-4 text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="bots" class="card-details text-sm text-slate-300" data-i18n="bots_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-400 mb-6 border border-purple-500/20"><i class="fas fa-server text-2xl"></i></div>
+                <h2 class="text-xl font-bold mb-3"><span data-i18n="infra_title"></span><span class="cursor-blink text-purple-400">_</span></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="infra_desc"></p>
+                <button onclick="toggleCard('infra')" class="open-btn mt-4 text-xs font-bold text-purple-400 hover:text-purple-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="infra" class="card-details text-sm text-slate-300" data-i18n="infra_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 mb-6 border border-blue-500/20"><i class="fas fa-chart-line text-2xl"></i></div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="data_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="data_desc"></p>
+                <button onclick="toggleCard('data')" class="open-btn mt-4 text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="data" class="card-details text-sm text-slate-300" data-i18n="data_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-yellow-500/20 rounded-2xl flex items-center justify-center text-yellow-400 mb-6 border border-yellow-500/20"><i class="fas fa-microchip text-2xl"></i></div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="py_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="py_desc"></p>
+                <button onclick="toggleCard('py')" class="open-btn mt-4 text-xs font-bold text-yellow-400 hover:text-yellow-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="py" class="card-details text-sm text-slate-300" data-i18n="py_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-pink-500/20 rounded-2xl flex items-center justify-center text-pink-400 mb-6 border border-pink-500/20"><i class="fas fa-laptop-code text-2xl"></i></div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="front_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="front_desc"></p>
+                <button onclick="toggleCard('front')" class="open-btn mt-4 text-xs font-bold text-pink-400 hover:text-pink-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="front" class="card-details text-sm text-slate-300" data-i18n="front_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20"><i class="fas fa-shield-halved text-2xl"></i></div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="net_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="net_desc"></p>
+                <button onclick="toggleCard('net')" class="open-btn mt-4 text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="net" class="card-details text-sm text-slate-300" data-i18n="net_lvl2"></div>
+            </section>
+
+        </div>
+        <footer class="glass rounded-[2rem] px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs mono text-slate-400">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                <span class="text-slate-200 font-bold">699718.space</span>
+                <span>·</span>
+                <span>eggrib</span>
+                <span>·</span>
+                <a href="https://tabletka.699718.space/" class="text-indigo-300 hover:text-white transition-colors">Tabletka</a>
+                <span>·</span>
+                <a href="https://699718.space/simple-v3.html" class="hover:text-white transition-colors">civdem</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-github"></i><span>GitHub</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-telegram-plane"></i><span>Telegram</span>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <div id="cursor-glow"></div>
+    <div class="toast" id="toast"></div>
+    <div id="term-overlay"><div id="term-box"><div class="t-header">eggrib@KompEgg:~ &nbsp; [press ` or ESC to close]</div><div id="t-out"></div><div><span class="t-prompt">eggrib@KompEgg:~$ </span><input id="t-input" spellcheck="false" placeholder="type 'help'"></div></div></div>
+
+    <script>
+        const t = {
+            en: {
+                projects_title: "Projects & Research",
+                open_research_page: "Open research page",
+                more_details: "Details & Page",
+                study_link: "civdem Study & Repo",
+                bot_link: "Launch @mas699bot",
+                page_link: "Research Page",
+                proj_algo_desc: "Bitget futures grid bot. Go WebSocket core + Python history & backtest pipeline.",
+                proj_algo_full: "Futures grid bot on Bitget (Go WebSockets, RSI Wilder, BB, EMA, VWAP, ATR, score analyzer, paper-trading) + Python ccxt & Parquet history/backtesting across 20 pairs (12M, 5m).",
+                proj_tabletka_full: "Native .NET 8 Windows utility (v0.9.7.80): automatic game process priority, 60-FPS audio visualizer, recording module, atomic JSON storage, and Inno Setup Linux deployment.",
+                proj_civdem_full: "Agent-based evolutionary demography in Python across five kinship/marriage regimes, calibrated with ABC-SMC Bayesian validation on 10,703 ancient AADR genomes.",
+                proj_mas_full: "Telegram multi-agent orchestrator on Go + Redis in Docker running iterative debates across Claude Sonnet, DeepSeek, and Claude Haiku.",
+                proj_shazam_full: "Go Telegram bot for track recognition and FLAC/MP3 delivery with Deezer ARL decryption and ffmpeg metadata embedding.",
+                proj_infra_full: "Go Fiber web backend with payment gateway, Xray/Hiddify node control, Karing/gVisor routing, Go UDP mDNS reflector, and Caddy/Docker hosting on Ubuntu 24.04.",
+                proj_sim_desc: "Tabletka (.NET 8) Windows utility & civdem (Python) demographic simulation.",
+                proj_mas_desc: "MAS 699 multi-agent debates on Go + Redis & shazam699_bot5 audio/FLAC pipeline.",
+                status: "Open to projects",
+                current_focus: "[LIVE] Building: Tabletka (.NET 8), civdem & bitget-bot-gridbot",
+                subtitle: "Full-cycle engineering across Go, Python, and .NET 8: Telegram bots & MAS, futures trading and demographic simulation, and Linux/Xray infrastructure.",
+                contact: "Discuss a Project", source: "View GitHub", btn_more: "Stack & Details",
+                copy_tg: "Copy Telegram", copy_gh: "Copy GitHub", toast_tg: "Copied: @eggrib", toast_gh: "Copied: github.com/eggrib",
+                stat_bots: "Production Bots", stat_pairs: "Trading Pairs", stat_langs: "Languages", stat_uptime: "Uptime",
+                bots_title: "Telegram Bots & MAS",
+                bots_desc: "Telegram bots and multi-agent orchestrators on <span class='text-white font-bold'>Go</span> with Redis state, FLAC/MP3 media processing, and multi-LLM routing.",
+                bots_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>shazam699_bot5: audio recognition & FLAC/MP3 (Deezer ARL, ffmpeg)</li><li>MAS 699 (mas699bot): agent debates backed by Redis</li><li>Direct DeepSeek & Gemini APIs + Claude Sonnet via aiprime</li><li>Deployed with Docker & systemd on Ubuntu 24.04 VPS</li></ul>",
+                infra_title: "Linux & Infra",
+                infra_desc: "<span class='text-white font-bold'>Ubuntu 24.04</span> servers, Docker Compose, systemd, Caddy with auto-HTTPS, and Go Fiber shop backend tied to Xray/Hiddify nodes.",
+                infra_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>vpn-shop on Go Fiber with payment gateway integration</li><li>Automated Xray / Hiddify node management</li><li>Caddy reverse proxy + Docker Compose + systemd</li><li>Cloudflare DNS & domain setup (699718.space)</li></ul>",
+                data_title: "Algo Trading & Data",
+                data_desc: "Futures grid trading on <span class='text-white font-bold'>Go</span> (Bitget WebSockets) paired with <span class='text-white font-bold'>Python</span> historical ingestion and edge validation.",
+                data_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>bitget-bot-gridbot (Go): WebSockets, RSI Wilder, BB, EMA, VWAP, ATR</li><li>Score-based signal analyzer & paper-trading simulator</li><li>tradebot699 (Python): ccxt history & Parquet datasets</li><li>Evaluating strategy edge: Sharpe, Max Drawdown, Profit Factor</li></ul>",
+                py_title: "Desktop (.NET 8) & Sim",
+                py_desc: "Native <span class='text-white font-bold'>.NET 8</span> Windows utilities and <span class='text-white font-bold'>Python</span> evolutionary demography calibrated with ABC-SMC on ancient genomes.",
+                py_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Tabletka (.NET 8): auto game priority, 60-FPS visualizer, recorder</li><li>Atomic JSON storage & Inno Setup deployment to Linux</li><li>civdem (Python): agent-based demography & kinship regimes</li><li>ABC-SMC Bayesian validation on 10,703 AADR genomes</li></ul>",
+                front_title: "Frontend & Web",
+                front_desc: "6-language i18n with <span class='text-white font-bold'>RTL for Hebrew</span>, browser language sync, Glassmorphism, spotlight hover, print-to-PDF CSS, and terminal (~).",
+                front_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Vanilla JS i18n engine (EN, DE, FR, ES, RU, HE) + auto-detect</li><li>Automatic RTL mirroring for Hebrew</li><li>Spotlight hover, Toast notifications, Terminal (~ key)</li><li>@media print: auto-expands cards for clean PDF CV</li></ul>",
+                net_title: "Routing & Proxies",
+                net_desc: "Custom traffic routing with <span class='text-white font-bold'>Xray / Hiddify</span>, Karing policy rules, and Go network utilities bridging local and remote traffic.",
+                net_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Xray / VLESS & Hiddify (gVisor stack on Android)</li><li>Karing routing: direct bypass for games & local LAN</li><li>Custom Go UDP mDNS reflector (224.0.0.251:5353)</li><li>Bridging discovery packets across Wi-Fi & Ethernet</li></ul>"
+            },
+            ru: {
+                projects_title: "Проекты и исследования",
+                proj_algo_full: "Сеточный бот для фьючерсов Bitget (Go WebSockets, RSI Wilder, BB, EMA, VWAP, ATR, score-анализатор, paper-trading) + выгрузка истории ccxt в Parquet и бэктест на Python (20 пар, 12 мес, 5m).",
+                proj_tabletka_full: "Утилита Tabletka (.NET 8, v0.9.7.80) под Windows: автоприоритет процессов в играх, 60-FPS визуализатор звука, запись, атомарное JSON-хранилище и доставка через Inno Setup на Linux-сервер.",
+                proj_civdem_full: "Агентная модель эволюционной демографии на Python для пяти систем родства и брака с байесовской калибровкой ABC-SMC по 10 703 древним геномам Harvard AADR.",
+                proj_mas_full: "Мультиагентный Telegram-бот (mas699bot) на Go + Redis в Docker для итеративных дебатов между Claude Sonnet, DeepSeek и Claude Haiku.",
+                proj_shazam_full: "Telegram-бот на Go для распознавания треков и загрузки FLAC/MP3 с расшифровкой по Deezer ARL и записью метаданных через ffmpeg.",
+                proj_infra_full: "Бэкенд vpn-shop на Go Fiber с платежным шлюзом, управление Xray/Hiddify, правила Karing/gVisor, UDP mDNS рефлектор на Go и хостинг Caddy/Docker на Ubuntu 24.04.",
+                open_research_page: "Страница исследований",
+                more_details: "Подробнее на странице",
+                study_link: "Исследование civdem",
+                bot_link: "Открыть @mas699bot",
+                page_link: "Исследования",
+                proj_algo_desc: "Сеточный бот для фьючерсов Bitget. Ядро на Go (WebSockets) + сбор истории и бэктест на Python.",
+                proj_algo_full: "Futures grid bot on Bitget (Go WebSockets, RSI Wilder, BB, EMA, VWAP, ATR, score analyzer, paper-trading) + Python ccxt & Parquet history/backtesting across 20 pairs (12M, 5m).",
+                proj_tabletka_full: "Native .NET 8 Windows utility (v0.9.7.80): automatic game process priority, 60-FPS audio visualizer, recording module, atomic JSON storage, and Inno Setup Linux deployment.",
+                proj_civdem_full: "Agent-based evolutionary demography in Python across five kinship/marriage regimes, calibrated with ABC-SMC Bayesian validation on 10,703 ancient AADR genomes.",
+                proj_mas_full: "Telegram multi-agent orchestrator on Go + Redis in Docker running iterative debates across Claude Sonnet, DeepSeek, and Claude Haiku.",
+                proj_shazam_full: "Go Telegram bot for track recognition and FLAC/MP3 delivery with Deezer ARL decryption and ffmpeg metadata embedding.",
+                proj_infra_full: "Go Fiber web backend with payment gateway, Xray/Hiddify node control, Karing/gVisor routing, Go UDP mDNS reflector, and Caddy/Docker hosting on Ubuntu 24.04.",
+                proj_sim_desc: "Утилита Tabletka (.NET 8) под Windows и симуляция демографии civdem (Python).",
+                proj_mas_desc: "Мультиагентные дебаты MAS 699 на Go + Redis и аудио/FLAC-пайплайн в shazam699_bot5.",
+                status: "Открыт к проектам",
+                current_focus: "[LIVE] В работе: Tabletka (.NET 8), civdem и bitget-bot-gridbot",
+                subtitle: "Разработка полного цикла на Go, Python и .NET 8: боты и мультиагентные системы, торговые и демографические движки, инфраструктура на Linux и Xray.",
+                contact: "Обсудить проект", source: "Смотреть GitHub", btn_more: "Стек и Детали",
+                copy_tg: "Скопировать Telegram", copy_gh: "Скопировать GitHub", toast_tg: "Скопировано: @eggrib", toast_gh: "Скопировано: github.com/eggrib",
+                stat_bots: "Боты в продакшне", stat_pairs: "Торговых пар", stat_langs: "Языков", stat_uptime: "Аптайм",
+                bots_title: "Боты и MAS в Telegram",
+                bots_desc: "Боты и мультиагентные оркестраторы на <span class='text-white font-bold'>Go</span> с состояниями в Redis, обработкой FLAC/MP3 и маршрутизацией LLM.",
+                bots_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>shazam699_bot5: распознавание и FLAC/MP3 (Deezer ARL, ffmpeg)</li><li>MAS 699 (mas699bot): дебаты агентов на Go + Redis</li><li>DeepSeek и Gemini напрямую, Claude Sonnet через aiprime</li><li>Эксплуатация в Docker и systemd на Ubuntu 24.04 VPS</li></ul>",
+                infra_title: "Linux и Инфраструктура",
+                infra_desc: "Серверы на <span class='text-white font-bold'>Ubuntu 24.04</span>, Docker Compose, systemd, Caddy с авто-HTTPS и бэкенд vpn-shop на Go Fiber для Xray/Hiddify.",
+                infra_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Бэкенд vpn-shop на Go Fiber с платежными шлюзами</li><li>Управление узлами Xray и Hiddify</li><li>Caddy + Docker Compose + юниты systemd</li><li>DNS Cloudflare и домены (699718.space)</li></ul>",
+                data_title: "Алготрейдинг и Данные",
+                data_desc: "Сеточный бот для фьючерсов Bitget на <span class='text-white font-bold'>Go</span> (WebSockets) и пайплайн истории/бэктеста на <span class='text-white font-bold'>Python</span>.",
+                data_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>bitget-bot-gridbot (Go): WebSockets, RSI Wilder, BB, EMA, VWAP, ATR</li><li>Score-анализатор сигналов и paper-trading симулятор</li><li>tradebot699 (Python): выгрузка истории ccxt в Parquet</li><li>Оценка edge стратегии: Sharpe, Max Drawdown, Profit Factor</li></ul>",
+                py_title: "Desktop (.NET 8) и Симуляции",
+                py_desc: "Утилиты под Windows на <span class='text-white font-bold'>.NET 8</span> и модель эволюционной демографии на <span class='text-white font-bold'>Python</span> с калибровкой ABC-SMC по древним геномам.",
+                py_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Tabletka (.NET 8): автоприоритет игр, визуализатор 60 FPS, запись</li><li>Атомарное JSON-хранилище и доставка через Inno Setup</li><li>civdem (Python): агентная демография и системы родства</li><li>Байесовская калибровка ABC-SMC по 10 703 геномам AADR</li></ul>",
+                front_title: "Фронтенд и Веб",
+                front_desc: "i18n на 6 языков с <span class='text-white font-bold'>RTL для иврита</span>, синхронизацией с браузером, Glassmorphism, spotlight, PDF для HR и терминалом (~).",
+                front_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Vanilla JS i18n (EN, DE, FR, ES, RU, HE) и автоопределение</li><li>Автоматическое RTL-зеркало для иврита</li><li>Spotlight hover, Toast-уведомления, Терминал (клавиша ~)</li><li>@media print: авторазворот карточек для PDF-резюме</li></ul>",
+                net_title: "Сети и Маршрутизация",
+                net_desc: "Кастомная маршрутизация через <span class='text-white font-bold'>Xray / Hiddify</span>, правила Karing и сетевые утилиты на Go для локального и удаленного трафика.",
+                net_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Xray / VLESS и Hiddify (стек gVisor на Android)</li><li>Правила Karing: прямой обход для игр и локальной сети</li><li>UDP mDNS рефлектор на Go (224.0.0.251:5353)</li><li>Проброс discovery-пакетов между интерфейсами</li></ul>"
+            },
+            de: {
+                projects_title: "Projekte & Forschung",
+                open_research_page: "Forschungsseite öffnen",
+                more_details: "Details & Seite",
+                study_link: "civdem Studie & Repo",
+                bot_link: "@mas699bot öffnen",
+                page_link: "Forschung",
+                proj_algo_desc: "Bitget-Futures-Grid-Bot. Go-WebSocket-Kern + Python-Historie & Backtest-Pipeline.",
+                proj_algo_full: "Futures grid bot on Bitget (Go WebSockets, RSI Wilder, BB, EMA, VWAP, ATR, score analyzer, paper-trading) + Python ccxt & Parquet history/backtesting across 20 pairs (12M, 5m).",
+                proj_tabletka_full: "Native .NET 8 Windows utility (v0.9.7.80): automatic game process priority, 60-FPS audio visualizer, recording module, atomic JSON storage, and Inno Setup Linux deployment.",
+                proj_civdem_full: "Agent-based evolutionary demography in Python across five kinship/marriage regimes, calibrated with ABC-SMC Bayesian validation on 10,703 ancient AADR genomes.",
+                proj_mas_full: "Telegram multi-agent orchestrator on Go + Redis in Docker running iterative debates across Claude Sonnet, DeepSeek, and Claude Haiku.",
+                proj_shazam_full: "Go Telegram bot for track recognition and FLAC/MP3 delivery with Deezer ARL decryption and ffmpeg metadata embedding.",
+                proj_infra_full: "Go Fiber web backend with payment gateway, Xray/Hiddify node control, Karing/gVisor routing, Go UDP mDNS reflector, and Caddy/Docker hosting on Ubuntu 24.04.",
+                proj_sim_desc: "Tabletka (.NET 8) Windows-Tool & civdem (Python) Demografie-Simulation.",
+                proj_mas_desc: "MAS 699 Multi-Agenten-Debatten auf Go + Redis & Audio/FLAC-Pipeline in shazam699_bot5.",
+                status: "Offen für Projekte",
+                current_focus: "[LIVE] Fokus: Tabletka (.NET 8), civdem & bitget-bot-gridbot",
+                subtitle: "Full-Cycle-Engineering in Go, Python und .NET 8: Telegram-Bots & MAS, Trading- und Demografie-Simulation sowie Linux/Xray-Infrastruktur.",
+                contact: "Projekt besprechen", source: "GitHub ansehen", btn_more: "Stack & Details",
+                copy_tg: "Telegram kopieren", copy_gh: "GitHub kopieren", toast_tg: "Kopiert: @eggrib", toast_gh: "Kopiert: github.com/eggrib",
+                stat_bots: "Produktiv-Bots", stat_pairs: "Handelspaare", stat_langs: "Sprachen", stat_uptime: "Verfügbarkeit",
+                bots_title: "Telegram-Bots & MAS",
+                bots_desc: "Telegram-Bots und Multi-Agenten-Systeme in <span class='text-white font-bold'>Go</span> mit Redis-State, FLAC/MP3-Verarbeitung und LLM-Routing.",
+                bots_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>shazam699_bot5: Audio-Erkennung & FLAC/MP3 (Deezer ARL, ffmpeg)</li><li>MAS 699 (mas699bot): Multi-Agenten-Debatten mit Redis</li><li>DeepSeek & Gemini direkt + Claude Sonnet über aiprime</li><li>Betrieb mit Docker & systemd auf Ubuntu-24.04-VPS</li></ul>",
+                infra_title: "Linux & Infra",
+                infra_desc: "<span class='text-white font-bold'>Ubuntu 24.04</span> Server, Docker Compose, systemd, Caddy mit Auto-HTTPS und Go-Fiber-Shop gekoppelt an Xray/Hiddify.",
+                infra_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>vpn-shop auf Go Fiber mit Zahlungsanbindung</li><li>Verwaltung von Xray- und Hiddify-Knoten</li><li>Caddy Reverse Proxy + Docker Compose + systemd</li><li>Cloudflare DNS & Domains (699718.space)</li></ul>",
+                data_title: "Algo-Trading & Daten",
+                data_desc: "Futures-Grid-Bot in <span class='text-white font-bold'>Go</span> (Bitget WebSockets) mit <span class='text-white font-bold'>Python</span> Historien-Pipeline und Strategy-Validierung.",
+                data_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>bitget-bot-gridbot (Go): WebSockets, RSI Wilder, BB, EMA, VWAP, ATR</li><li>Score-Analyzer & Paper-Trading-Simulator</li><li>tradebot699 (Python): ccxt-Historie & Parquet-Speicher</li><li>Metriken: Sharpe, Max Drawdown, Profit Factor</li></ul>",
+                py_title: "Desktop (.NET 8) & Sim",
+                py_desc: "Native <span class='text-white font-bold'>.NET 8</span> Windows-Tools und <span class='text-white font-bold'>Python</span> Demografie-Simulation per ABC-SMC auf alten Genomen.",
+                py_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Tabletka (.NET 8): Game-Priorität, 60-FPS-Visualizer, Recorder</li><li>Atomares JSON-Speichern & Inno-Setup-Deployment</li><li>civdem (Python): agentenbasierte Demografie & Verwandtschaft</li><li>ABC-SMC-Kalibrierung auf 10.703 AADR-Genomen</li></ul>",
+                front_title: "Frontend & Web",
+                front_desc: "6 Sprachen mit <span class='text-white font-bold'>RTL für Hebräisch</span>, Browser-Spracherkennung, Glassmorphism, Spotlight, Druck-CSS und Terminal (~).",
+                front_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Vanilla-JS-i18n (EN, DE, FR, ES, RU, HE) + Auto-Detect</li><li>Automatisches RTL-Layout für Hebräisch</li><li>Spotlight Hover, Toast-Meldungen, Terminal (Taste ~)</li><li>@media print: Karten offen für sauberes PDF-CV</li></ul>",
+                net_title: "Netzwerk & Routing",
+                net_desc: "Gezieltes Routing mit <span class='text-white font-bold'>Xray / Hiddify</span>, Karing-Regeln und eigenen Go-Netzwerk-Tools für lokalen & Remote-Traffic.",
+                net_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Xray / VLESS & Hiddify (gVisor-Stack auf Android)</li><li>Karing-Regeln: Bypass für Spiele & lokales LAN</li><li>Go UDP mDNS-Reflektor (224.0.0.251:5353)</li><li>Discovery-Traffic zwischen Interfaces</li></ul>"
+            },
+            es: {
+                projects_title: "Proyectos e Investigación",
+                open_research_page: "Abrir página de investigación",
+                more_details: "Detalles y Página",
+                study_link: "Estudio civdem y Repo",
+                bot_link: "Abrir @mas699bot",
+                page_link: "Investigación",
+                proj_algo_desc: "Bot grid de futuros en Bitget. Núcleo Go (WebSockets) + pipeline de historia y backtest en Python.",
+                proj_algo_full: "Futures grid bot on Bitget (Go WebSockets, RSI Wilder, BB, EMA, VWAP, ATR, score analyzer, paper-trading) + Python ccxt & Parquet history/backtesting across 20 pairs (12M, 5m).",
+                proj_tabletka_full: "Native .NET 8 Windows utility (v0.9.7.80): automatic game process priority, 60-FPS audio visualizer, recording module, atomic JSON storage, and Inno Setup Linux deployment.",
+                proj_civdem_full: "Agent-based evolutionary demography in Python across five kinship/marriage regimes, calibrated with ABC-SMC Bayesian validation on 10,703 ancient AADR genomes.",
+                proj_mas_full: "Telegram multi-agent orchestrator on Go + Redis in Docker running iterative debates across Claude Sonnet, DeepSeek, and Claude Haiku.",
+                proj_shazam_full: "Go Telegram bot for track recognition and FLAC/MP3 delivery with Deezer ARL decryption and ffmpeg metadata embedding.",
+                proj_infra_full: "Go Fiber web backend with payment gateway, Xray/Hiddify node control, Karing/gVisor routing, Go UDP mDNS reflector, and Caddy/Docker hosting on Ubuntu 24.04.",
+                proj_sim_desc: "Utilidad Tabletka (.NET 8) en Windows y simulación demográfica civdem (Python).",
+                proj_mas_desc: "Debates multiagente MAS 699 en Go + Redis y pipeline de audio/FLAC en shazam699_bot5.",
+                status: "Disponible para proyectos",
+                current_focus: "[LIVE] Enfoque: Tabletka (.NET 8), civdem y bitget-bot-gridbot",
+                subtitle: "Ingeniería full-cycle en Go, Python y .NET 8: bots y sistemas multiagente, motores de trading y simulación demográfica, e infraestructura Linux/Xray.",
+                contact: "Discutir proyecto", source: "Ver GitHub", btn_more: "Stack y Detalles",
+                copy_tg: "Copiar Telegram", copy_gh: "Copiar GitHub", toast_tg: "Copiado: @eggrib", toast_gh: "Copiado: github.com/eggrib",
+                stat_bots: "Bots en producción", stat_pairs: "Pares de trading", stat_langs: "Idiomas", stat_uptime: "Disponibilidad",
+                bots_title: "Bots Telegram y MAS",
+                bots_desc: "Bots y sistemas multiagente en <span class='text-white font-bold'>Go</span> con estado en Redis, flujo FLAC/MP3 y enrutamiento de LLMs.",
+                bots_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>shazam699_bot5: reconocimiento y FLAC/MP3 (Deezer ARL, ffmpeg)</li><li>MAS 699 (mas699bot): debates multiagente con Redis</li><li>DeepSeek y Gemini directos + Claude Sonnet vía aiprime</li><li>Despliegue con Docker y systemd en VPS Ubuntu 24.04</li></ul>",
+                infra_title: "Linux e Infraestructura",
+                infra_desc: "Servidores <span class='text-white font-bold'>Ubuntu 24.04</span>, Docker Compose, systemd, Caddy con auto-HTTPS y tienda en Go Fiber ligada a Xray/Hiddify.",
+                infra_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Backend vpn-shop en Go Fiber con pasarelas de pago</li><li>Gestión de nodos Xray y Hiddify</li><li>Caddy + Docker Compose + servicios systemd</li><li>DNS Cloudflare y dominios (699718.space)</li></ul>",
+                data_title: "Trading Algorítmico",
+                data_desc: "Bot grid de futuros en <span class='text-white font-bold'>Go</span> (WebSockets de Bitget) con ingesta histórica y validación en <span class='text-white font-bold'>Python</span>.",
+                data_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>bitget-bot-gridbot (Go): WebSockets, RSI Wilder, BB, EMA, VWAP, ATR</li><li>Analizador por puntuación y simulador paper-trading</li><li>tradebot699 (Python): historial ccxt y formato Parquet</li><li>Evaluación de edge: Sharpe, Max Drawdown, Profit Factor</li></ul>",
+                py_title: "Desktop (.NET 8) y Simulación",
+                py_desc: "Utilidades Windows en <span class='text-white font-bold'>.NET 8</span> y simulación demográfica en <span class='text-white font-bold'>Python</span> con ABC-SMC sobre genomas antiguos.",
+                py_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Tabletka (.NET 8): prioridad en juegos, visualizador 60 FPS, grabación</li><li>Almacenamiento JSON atómico y despliegue con Inno Setup</li><li>civdem (Python): demografía basada en agentes y parentesco</li><li>Calibración bayesiana ABC-SMC en 10.703 genomas AADR</li></ul>",
+                front_title: "Frontend y Web",
+                front_desc: "i18n en 6 idiomas con <span class='text-white font-bold'>RTL para hebreo</span>, detección de navegador, Glassmorphism, spotlight, PDF para RR. HH. y terminal (~).",
+                front_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Motor i18n en Vanilla JS (EN, DE, FR, ES, RU, HE) + autodetección</li><li>Espejado automático RTL para hebreo</li><li>Spotlight hover, notificaciones Toast, Terminal (tecla ~)</li><li>@media print: tarjetas expandidas para CV en PDF</li></ul>",
+                net_title: "Redes y Enrutamiento",
+                net_desc: "Enrutamiento a medida con <span class='text-white font-bold'>Xray / Hiddify</span>, reglas Karing y utilidades en Go para tráfico local y remoto.",
+                net_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Xray / VLESS y Hiddify (stack gVisor en Android)</li><li>Reglas Karing: bypass directo para juegos y LAN local</li><li>Reflector UDP mDNS en Go (224.0.0.251:5353)</li><li>Puente de paquetes discovery entre interfaces</li></ul>"
+            },
+            fr: {
+                projects_title: "Projets & Recherche",
+                open_research_page: "Ouvrir la page recherche",
+                more_details: "Détails & Page",
+                study_link: "Étude civdem & Repo",
+                bot_link: "Lancer @mas699bot",
+                page_link: "Recherche",
+                proj_algo_desc: "Bot grid futures sur Bitget. Cœur Go (WebSockets) + historique & backtest en Python.",
+                proj_algo_full: "Futures grid bot on Bitget (Go WebSockets, RSI Wilder, BB, EMA, VWAP, ATR, score analyzer, paper-trading) + Python ccxt & Parquet history/backtesting across 20 pairs (12M, 5m).",
+                proj_tabletka_full: "Native .NET 8 Windows utility (v0.9.7.80): automatic game process priority, 60-FPS audio visualizer, recording module, atomic JSON storage, and Inno Setup Linux deployment.",
+                proj_civdem_full: "Agent-based evolutionary demography in Python across five kinship/marriage regimes, calibrated with ABC-SMC Bayesian validation on 10,703 ancient AADR genomes.",
+                proj_mas_full: "Telegram multi-agent orchestrator on Go + Redis in Docker running iterative debates across Claude Sonnet, DeepSeek, and Claude Haiku.",
+                proj_shazam_full: "Go Telegram bot for track recognition and FLAC/MP3 delivery with Deezer ARL decryption and ffmpeg metadata embedding.",
+                proj_infra_full: "Go Fiber web backend with payment gateway, Xray/Hiddify node control, Karing/gVisor routing, Go UDP mDNS reflector, and Caddy/Docker hosting on Ubuntu 24.04.",
+                proj_sim_desc: "Utilitaire Tabletka (.NET 8) Windows & simulation démographique civdem (Python).",
+                proj_mas_desc: "Débats multi-agents MAS 699 sur Go + Redis & pipeline audio/FLAC dans shazam699_bot5.",
+                status: "Disponible pour projets",
+                current_focus: "[LIVE] Focus : Tabletka (.NET 8), civdem & bitget-bot-gridbot",
+                subtitle: "Ingénierie full-cycle en Go, Python et .NET 8 : bots & systèmes multi-agents, moteurs de trading et simulation démographique, infrastructure Linux/Xray.",
+                contact: "Discuter d'un projet", source: "Voir GitHub", btn_more: "Stack & Détails",
+                copy_tg: "Copier Telegram", copy_gh: "Copier GitHub", toast_tg: "Copié : @eggrib", toast_gh: "Copié : github.com/eggrib",
+                stat_bots: "Bots en production", stat_pairs: "Paires de trading", stat_langs: "Langues", stat_uptime: "Disponibilité",
+                bots_title: "Bots Telegram & MAS",
+                bots_desc: "Bots et orchestrateurs multi-agents en <span class='text-white font-bold'>Go</span> avec état Redis, flux FLAC/MP3 et routage LLM.",
+                bots_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>shazam699_bot5 : reconnaissance & FLAC/MP3 (Deezer ARL, ffmpeg)</li><li>MAS 699 (mas699bot) : débats multi-agents sur Redis</li><li>DeepSeek & Gemini directs + Claude Sonnet via aiprime</li><li>Déploiement Docker & systemd sur VPS Ubuntu 24.04</li></ul>",
+                infra_title: "Linux & Infra",
+                infra_desc: "Serveurs <span class='text-white font-bold'>Ubuntu 24.04</span>, Docker Compose, systemd, Caddy avec auto-HTTPS et boutique Go Fiber liée à Xray/Hiddify.",
+                infra_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Backend vpn-shop en Go Fiber avec paiements</li><li>Gestion des nœuds Xray et Hiddify</li><li>Caddy reverse proxy + Docker Compose + systemd</li><li>DNS Cloudflare & domaines (699718.space)</li></ul>",
+                data_title: "Trading Algo & Données",
+                data_desc: "Bot grid futures en <span class='text-white font-bold'>Go</span> (WebSockets Bitget) avec pipeline historique et validation en <span class='text-white font-bold'>Python</span>.",
+                data_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>bitget-bot-gridbot (Go) : WebSockets, RSI Wilder, BB, EMA, VWAP, ATR</li><li>Analyseur par score & simulateur paper-trading</li><li>tradebot699 (Python) : historique ccxt & stockage Parquet</li><li>Validation de l'edge : Sharpe, Max Drawdown, Profit Factor</li></ul>",
+                py_title: "Desktop (.NET 8) & Sim",
+                py_desc: "Outils Windows <span class='text-white font-bold'>.NET 8</span> et démographie évolutive <span class='text-white font-bold'>Python</span> calibrée par ABC-SMC sur génomes anciens.",
+                py_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Tabletka (.NET 8) : priorité jeux, visualiseur 60 FPS, capture</li><li>Stockage JSON atomique & déploiement Inno Setup</li><li>civdem (Python) : démographie multi-agents & régimes de parenté</li><li>Calibration bayésienne ABC-SMC sur 10 703 génomes AADR</li></ul>",
+                front_title: "Frontend & Web",
+                front_desc: "i18n 6 langues avec <span class='text-white font-bold'>RTL pour l'hébreu</span>, détection navigateur, Glassmorphism, spotlight, impression PDF et terminal (~).",
+                front_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Moteur i18n Vanilla JS (EN, DE, FR, ES, RU, HE) + détection auto</li><li>Inversion RTL automatique pour l'hébreu</li><li>Spotlight hover, notifications Toast, Terminal (touche ~)</li><li>@media print : cartes ouvertes pour CV PDF</li></ul>",
+                net_title: "Réseau & Routage",
+                net_desc: "Routage sur mesure via <span class='text-white font-bold'>Xray / Hiddify</span>, règles Karing et outils Go pour le trafic local et distant.",
+                net_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Xray / VLESS & Hiddify (pile gVisor sur Android)</li><li>Règles Karing : bypass direct jeux & LAN local</li><li>Réflecteur UDP mDNS en Go (224.0.0.251:5353)</li><li>Pontage des paquets discovery entre interfaces</li></ul>"
+            },
+            he: {
+                projects_title: "פרויקטים ומחקר",
+                open_research_page: "פתיחת עמוד המחקר",
+                more_details: "פרטים ועמוד",
+                study_link: "מחקר civdem וקוד",
+                bot_link: "פתיחת @mas699bot",
+                page_link: "עמוד מחקר",
+                proj_algo_desc: "בוט גריד לחוזים עתידיים ב-Bitget. ליבת Go (WebSockets) + היסטוריה ובדיקות ב-Python.",
+                proj_algo_full: "Futures grid bot on Bitget (Go WebSockets, RSI Wilder, BB, EMA, VWAP, ATR, score analyzer, paper-trading) + Python ccxt & Parquet history/backtesting across 20 pairs (12M, 5m).",
+                proj_tabletka_full: "Native .NET 8 Windows utility (v0.9.7.80): automatic game process priority, 60-FPS audio visualizer, recording module, atomic JSON storage, and Inno Setup Linux deployment.",
+                proj_civdem_full: "Agent-based evolutionary demography in Python across five kinship/marriage regimes, calibrated with ABC-SMC Bayesian validation on 10,703 ancient AADR genomes.",
+                proj_mas_full: "Telegram multi-agent orchestrator on Go + Redis in Docker running iterative debates across Claude Sonnet, DeepSeek, and Claude Haiku.",
+                proj_shazam_full: "Go Telegram bot for track recognition and FLAC/MP3 delivery with Deezer ARL decryption and ffmpeg metadata embedding.",
+                proj_infra_full: "Go Fiber web backend with payment gateway, Xray/Hiddify node control, Karing/gVisor routing, Go UDP mDNS reflector, and Caddy/Docker hosting on Ubuntu 24.04.",
+                proj_sim_desc: "כלי Tabletka (.NET 8) ל-Windows וסימולציה דמוגרפית civdem ב-Python.",
+                proj_mas_desc: "דיונים מרובי-סוכנים MAS 699 ב-Go + Redis וצינור אודיו/FLAC ב-shazam699_bot5.",
+                status: "פנוי לפרויקטים",
+                current_focus: "[LIVE] בפיתוח: Tabletka (.NET 8), civdem ו-bitget-bot-gridbot",
+                subtitle: "הנדסת פול-סטאק ב-Go, Python ו-.NET 8: בוטים ומערכות מרובות-סוכנים, מסחר וסימולציה דמוגרפית, ותשתיות Linux/Xray.",
+                contact: "נדבר על פרויקט", source: "צפה ב-GitHub", btn_more: "פרטים וטכנולוגיות",
+                copy_tg: "העתק Telegram", copy_gh: "העתק GitHub", toast_tg: "הועתק: @eggrib", toast_gh: "הועתק: github.com/eggrib",
+                stat_bots: "בוטים בפרודקשן", stat_pairs: "זוגות מסחר", stat_langs: "שפות", stat_uptime: "זמינות",
+                bots_title: "בוטי טלגרם ו-MAS",
+                bots_desc: "בוטים ומערכות מרובות-סוכנים ב-<span class='text-white font-bold'>Go</span> עם מצב ב-Redis, עיבוד FLAC/MP3 וניתוב LLM.",
+                bots_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>shazam699_bot5: זיהוי ו-FLAC/MP3 (Deezer ARL, ffmpeg)</li><li>MAS 699 (mas699bot): דיונים מרובי-סוכנים על Redis</li><li>DeepSeek ו-Gemini ישירות + Claude Sonnet דרך aiprime</li><li>הפעלה עם Docker ו-systemd על Ubuntu 24.04 VPS</li></ul>",
+                infra_title: "Linux ותשתית",
+                infra_desc: "שרתי <span class='text-white font-bold'>Ubuntu 24.04</span>, Docker Compose, systemd, Caddy עם HTTPS אוטומטי ובאקאנד חנות Go Fiber מול Xray/Hiddify.",
+                infra_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>באקאנד vpn-shop ב-Go Fiber עם שערי תשלום</li><li>ניהול צמתי Xray ו-Hiddify</li><li>Caddy + Docker Compose + שירותי systemd</li><li>ניהול DNS ב-Cloudflare ודומיינים (699718.space)</li></ul>",
+                data_title: "מסחר אלגוריתמי ונתונים",
+                data_desc: "בוט גריד לחוזים ב-<span class='text-white font-bold'>Go</span> (Bitget WebSockets) עם איסוף היסטוריה ואימות ב-<span class='text-white font-bold'>Python</span>.",
+                data_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>bitget-bot-gridbot (Go): WebSockets, RSI Wilder, BB, EMA, VWAP, ATR</li><li>מנתח ניקוד וסימולטור paper-trading</li><li>tradebot699 (Python): היסטוריית ccxt ושמירה ב-Parquet</li><li>בדיקת edge: Sharpe, Max Drawdown, Profit Factor</li></ul>",
+                py_title: "דסקטופ (.NET 8) וסימולציות",
+                py_desc: "כלי Windows ב-<span class='text-white font-bold'>.NET 8</span> וסימולציה דמוגרפית ב-<span class='text-white font-bold'>Python</span> בכיול ABC-SMC על גנומים עתיקים.",
+                py_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>Tabletka (.NET 8): עדיפות למשחקים, ויזואלייזר 60 FPS, הקלטה</li><li>אחסון JSON אטומי ופריסה דרך Inno Setup</li><li>civdem (Python): דמוגרפיה מבוססת סוכנים ומשטרי נישואין</li><li>כיול בייסיאני ABC-SMC על 10,703 גנומים מ-AADR</li></ul>",
+                front_title: "פרונטאנד ווב",
+                front_desc: "i18n ל-6 שפות עם <span class='text-white font-bold'>RTL לעברית</span>, זיהוי דפדפן, Glassmorphism, זרקור, הדפסת PDF וטרמינל (~).",
+                front_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>מנוע i18n ב-Vanilla JS (EN, DE, FR, ES, RU, HE) + זיהוי אוטומטי</li><li>היפוך כיוון RTL אוטומטי בעברית</li><li>אפקט זרקור, התראות Toast, טרמינל (מקש ~)</li><li>@media print: פתיחת כרטיסיות אוטומטית לקורות חיים ב-PDF</li></ul>",
+                net_title: "רשתות וניתוב",
+                net_desc: "ניתוב מותאם עם <span class='text-white font-bold'>Xray / Hiddify</span>, כללי Karing וכלי Go לגישור תעבורה מקומית ומרוחקת.",
+                net_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>Xray / VLESS ו-Hiddify (מחסנית gVisor באנדרואיד)</li><li>כללי Karing: עקיפה ישירה למשחקים ולרשת מקומית</li><li>משקף UDP mDNS ב-Go (224.0.0.251:5353)</li><li>גישור הודעות discovery בין ממשקי רשת</li></ul>"
+            }
+        };
+
+        function setLang(lang) {
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[lang] && t[lang][key]) el.innerHTML = t[lang][key];
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const isActive = btn.getAttribute('data-lang') === lang;
+                btn.className = `lang-btn transition-colors px-2 py-1 rounded-md ${isActive ? 'bg-indigo-500/20 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white'}`;
+            });
+
+            const currentLang = document.getElementById('current-lang');
+            if (currentLang) currentLang.textContent = lang.toUpperCase();
+            const menu = document.getElementById('lang-menu');
+            if (menu && window.innerWidth < 768) menu.classList.add('hidden');
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('lang-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleCard(id) {
+            const detailsDiv = document.getElementById(id);
+            const btn = detailsDiv.previousElementSibling;
+
+            if (detailsDiv.classList.contains('open')) {
+                detailsDiv.classList.remove('open');
+                btn.classList.remove('active');
+            } else {
+                detailsDiv.classList.add('open');
+                btn.classList.add('active');
+            }
+        }
+
+        function autoDetect() {
+            const browserLang = navigator.language.split('-')[0];
+            if (t[browserLang]) { setLang(browserLang); }
+            else { setLang('en'); }
+        }
+
+        autoDetect();
+
+        // CURSOR GLOW
+        const glow = document.getElementById('cursor-glow');
+        document.addEventListener('mousemove', e => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+            glow.style.opacity = '1';
+        });
+        document.addEventListener('mouseleave', () => glow.style.opacity = '0');
+
+        // TYPING EFFECT for subtitle
+        function typeText(el, text, speed = 24) {
+            el.innerHTML = '';
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+            let i = 0;
+            const timer = setInterval(() => {
+                el.insertBefore(document.createTextNode(text[i]), cursor);
+                i++;
+                if (i >= text.length) { clearInterval(timer); setTimeout(() => cursor.remove(), 1500); }
+            }, speed);
+        }
+        setTimeout(() => {
+            const lang = document.documentElement.lang || 'en';
+            const subtitleEl = document.querySelector('[data-i18n="subtitle"]');
+            if (subtitleEl && t[lang] && t[lang].subtitle) typeText(subtitleEl, t[lang].subtitle);
+        }, 400);
+
+        // AVAILABILITY TOAST
+        const hour = new Date().getHours();
+        if (hour < 8 || hour >= 23) {
+            setTimeout(() => showToast('🌙 Late night visit — I\'ll reply within 24h'), 2000);
+        }
+
+        function copyContact(text, toastKey) {
+            navigator.clipboard.writeText(text).then(() => {
+                const lang = document.documentElement.lang || 'en';
+                const msg = (t[lang] && t[lang][toastKey]) || ('Copied: ' + text);
+                showToast('\u2705 ' + msg);
+            });
+        }
+
+        // SCROLL REVEAL
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        revealEls.forEach(el => observer.observe(el));
+        setTimeout(() => revealEls.forEach(el => el.classList.add('visible')), 300);
+
+        // COUNTERS
+        const counters = document.querySelectorAll('.counter');
+        const counterObs = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                const target = +el.dataset.target;
+                const step = Math.ceil(target / 30);
+                let cur = 0;
+                const timer = setInterval(() => {
+                    cur = Math.min(cur + step, target);
+                    el.textContent = cur;
+                    if (cur >= target) clearInterval(timer);
+                }, 40);
+                counterObs.unobserve(el);
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(el => counterObs.observe(el));
+
+        // SPOTLIGHT
+        const grid = document.querySelector('.grid');
+        const spot = document.getElementById('spotlight');
+        if (grid && spot) {
+            grid.addEventListener('mousemove', e => {
+                const r = grid.getBoundingClientRect();
+                spot.style.left = (e.clientX - r.left) + 'px';
+                spot.style.top = (e.clientY - r.top) + 'px';
+                spot.style.opacity = '1';
+            });
+            grid.addEventListener('mouseleave', () => spot.style.opacity = '0');
+        }
+
+        // TOAST
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg; toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // TERMINAL
+        const tOverlay = document.getElementById('term-overlay');
+        const tInput = document.getElementById('t-input');
+        const tOut = document.getElementById('t-out');
+        const cmds = {
+            'help': '  whoami | ls projects | cat stack.txt | git log | run algo_bot | ping bitget | clear | exit',
+            'whoami': '  eggrib — full-cycle engineer\n  Go · Python · .NET 8 · DevOps · Algo Trading · Simulation\n  Location: remote | Status: active',
+            'ls projects': '  drwxr-xr-x  bitget-bot-gridbot/  Go WebSocket + Python research\n  drwxr-xr-x  tradebot699/         ccxt history -> Parquet\n  drwxr-xr-x  shazam699_bot5/      audio recognition + FLAC/MP3\n  drwxr-xr-x  MAS-699/             multi-agent system (Go + Redis)\n  drwxr-xr-x  Tabletka/            .NET 8 Windows utility\n  drwxr-xr-x  civdem/              ABC-SMC demography (10,703 genomes)\n  drwxr-xr-x  vpn-shop/            Go Fiber + Xray/Hiddify\n  drwxr-xr-x  699718.space/        portfolio site (Caddy + Docker)',
+            'cat stack.txt': '  Languages:  Go · Python · C# (.NET 8) · JS/HTML\n  Infra/Net:  Ubuntu 24.04 · Docker · systemd · Caddy · Xray/Hiddify · Karing\n  Quant/Sim:  ccxt · Parquet · pandas · NumPy · ABC-SMC\n  Bots/Data:  Redis · Fiber · ffmpeg\n  Web:        Tailwind CSS · Vanilla JS · Umami',
+            'git log': '  f410a9c  update Tabletka (.NET 8) Inno Setup deploy pipeline\n  e82c310  validate ABC-SMC calibration on 10,703 AADR genomes\n  b81e047  tune RSI Wilder, BB, EMA, VWAP, ATR scoring in Go\n  d4a3b88  serve 699718.space & stats via Caddy + Docker',
+            'run algo_bot': '  [INIT] Loading bitget-bot-gridbot config...\n  [OK]   WebSocket stream & score-based analyzer ready\n  [OK]   Indicators: RSI Wilder, Bollinger, EMA, VWAP, ATR\n  [DATA] tradebot699 Parquet store & validation pipeline active',
+            'ping bitget': '  PING api.bitget.com\n  64 bytes: icmp_seq=1 ttl=55 time=18.4 ms\n  64 bytes: icmp_seq=2 ttl=55 time=17.9 ms\n  64 bytes: icmp_seq=3 ttl=55 time=18.1 ms\n  --- 3 packets transmitted, 3 received, 0% loss',
+            'clear': '__clear__', 'exit': '__exit__'
+        };
+        function openTerm() { tOverlay.classList.add('open'); setTimeout(() => tInput.focus(), 100); }
+        function closeTerm() { tOverlay.classList.remove('open'); tOut.innerHTML = ''; tInput.value = ''; }
+        document.addEventListener('keydown', e => {
+            if (e.key === '`' || e.key === '~') { e.preventDefault(); tOverlay.classList.contains('open') ? closeTerm() : openTerm(); }
+            if (e.key === 'Escape') closeTerm();
+        });
+        tOverlay.addEventListener('click', e => { if (e.target === tOverlay) closeTerm(); });
+        tInput.addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return;
+            const val = tInput.value.trim().toLowerCase(); tInput.value = '';
+            tOut.innerHTML += '<div><span class="t-prompt">eggrib@KompEgg:~$ </span>' + val + '</div>';
+            const r = cmds[val];
+            if (r === '__clear__') tOut.innerHTML = '';
+            else if (r === '__exit__') closeTerm();
+            else tOut.innerHTML += '<div class="' + (r ? 't-out' : 't-err') + '">' + (r || "  command not found. type 'help'") + '</div>';
+            tOut.scrollTop = tOut.scrollHeight;
+        });
+    </script>
+</body>
+</html>

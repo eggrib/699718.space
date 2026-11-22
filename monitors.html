@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="tabletka Monitors Pill | Live CPU, GPU & temperature, RAM usage, network DL/UL counters, tile pinning, and quick cleanup.">
+    <meta name="theme-color" content="#4f46e5">
+    <title>tabletka — Monitors Pill</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23818cf8'/><stop offset='100%25' stop-color='%23c084fc'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='%230f172a'/><polygon points='18,3 8,18 15,18 14,29 24,14 17,14' fill='url(%23g)'/></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #020617;
+            color: #f1f5f9;
+            font-family: 'Unbounded', sans-serif;
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.15), transparent 40%);
+            transition: direction 0.3s ease;
+        }
+        html[dir="rtl"] body { font-family: 'Heebo', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        html[dir="rtl"] .mono { font-family: 'JetBrains Mono', monospace; direction: ltr; display: inline-block; }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .glass:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(99,102,241,0.15);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s linear infinite;
+        }
+        @keyframes gradientMove { to { background-position: 200% center; } }
+
+        .cta-btn { position: relative; background: #4f46e5; z-index: 1; }
+        .cta-btn::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #4f46e5, #9333ea, #4f46e5);
+            z-index: -1; border-radius: 1.1rem; background-size: 200%;
+            animation: gradientMove 3s linear infinite; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .cta-btn:hover::before { opacity: 1; }
+
+        .card-details {
+            max-height: 0; opacity: 0; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-details.open {
+            max-height: 440px; opacity: 1; margin-top: 1rem; padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .chevron { transition: transform 0.3s ease; }
+        .open-btn.active .chevron { transform: rotate(180deg); }
+
+        .card-spotlight { position: absolute; pointer-events: none; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); transform: translate(-50%, -50%); transition: opacity 0.3s; opacity: 0; z-index: 0; top: 0; left: 0; }
+
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(15,23,42,0.95); border: 1px solid rgba(99,102,241,0.4); color: #e2e8f0; padding: 0.75rem 1.5rem; border-radius: 1rem; font-size: 0.85rem; z-index: 9999; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s; opacity: 0; backdrop-filter: blur(12px); white-space: nowrap; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        #term-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(8px); z-index: 9998; display: none; align-items: center; justify-content: center; }
+        #term-overlay.open { display: flex; }
+        #term-box { background: #0d1117; border: 1px solid rgba(99,102,241,0.4); border-radius: 1rem; width: 90%; max-width: 640px; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #c9d1d9; box-shadow: 0 0 60px rgba(99,102,241,0.2); max-height: 70vh; overflow-y: auto; }
+        #term-box .t-header { color: #6e7681; margin-bottom: 1rem; border-bottom: 1px solid #21262d; padding-bottom: 0.5rem; }
+        .t-prompt { color: #58a6ff; }
+        .t-out { color: #3fb950; white-space: pre; }
+        .t-err { color: #f85149; }
+        #t-input { background: none; border: none; outline: none; color: #c9d1d9; font-family: inherit; font-size: inherit; width: calc(100% - 10rem); caret-color: #58a6ff; }
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        #cursor-glow { position: fixed; pointer-events: none; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%); transform: translate(-50%, -50%); z-index: 0; transition: opacity 0.3s; opacity: 0; top: 0; left: 0; }
+    </style>
+</head>
+<body class="antialiased min-h-screen py-12 px-4 flex justify-center items-center">
+
+    <div class="max-w-5xl w-full space-y-6 relative">
+
+        <div class="absolute -top-12 md:-top-10 end-4 z-20">
+            <button onclick="toggleLangMenu()" class="md:hidden bg-slate-900/50 p-2 rounded-xl border border-white/5 backdrop-blur-md text-xs mono text-slate-300 hover:text-white transition-colors">
+                <i class="fas fa-globe me-1"></i><span id="current-lang">RU</span> <i class="fas fa-chevron-down ms-1 text-[10px]"></i>
+            </button>
+            <div id="lang-menu" class="hidden md:flex flex-wrap justify-end gap-1 text-xs md:text-sm mono bg-slate-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-md max-w-[90vw]">
+                <button onclick="setLang('en')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="en">EN</button>
+                <button onclick="setLang('de')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="de">DE</button>
+                <button onclick="setLang('fr')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="fr">FR</button>
+                <button onclick="setLang('es')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="es">ES</button>
+                <button onclick="setLang('ru')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="ru">RU</button>
+                <button onclick="setLang('he')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="he">HE</button>
+            </div>
+        </div>
+
+        <header class="reveal glass rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden mt-6 md:mt-0">
+            <div class="absolute -top-32 -end-32 w-96 h-96 bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+                <div class="flex-1">
+                    <div class="inline-flex items-center space-x-2 rtl:space-x-reverse bg-indigo-500/10 px-4 py-1.5 rounded-full border border-indigo-500/20 mb-5">
+                        <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                        <span class="text-[10px] mono text-cyan-300 uppercase tracking-widest font-bold" data-i18n="pill_badge"><span class="normal-case">tabletka</span> · Таблетка 02 / Мониторы</span>
+                    </div>
+
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+                        <span class="gradient-text" data-i18n="hero_title">Таблетка Мониторов</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm md:text-base max-w-2xl leading-relaxed mb-7" data-i18n="hero_subtitle"></p>
+
+                    <div class="flex flex-wrap gap-3">
+                        <a href="#features" class="cta-btn flex items-center justify-center px-6 py-3.5 text-white rounded-2xl transition-all font-bold uppercase tracking-wide text-xs md:text-sm">
+                            <i class="fas fa-microchip me-2.5"></i><span data-i18n="cta_features">Все функции</span>
+                        </a>
+                        <a href="index.html" class="flex items-center justify-center px-6 py-3.5 bg-slate-900/70 hover:bg-slate-800 text-slate-200 rounded-2xl border border-white/10 transition-all font-bold uppercase tracking-wide text-xs md:text-sm">
+                            <i class="fas fa-arrow-left me-2.5"></i><span data-i18n="cta_back">На главную</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-80 bg-slate-900/80 border border-white/10 rounded-2xl p-4 mono text-xs space-y-2.5 relative">
+                    <div class="flex items-center justify-between text-slate-400">
+                        <span class="flex items-center gap-2 text-cyan-400 font-bold">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                            <span>MONITORS</span>
+                        </span>
+                        <span>2/16</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-slate-800/70 p-2.5 rounded-xl border border-white/5">
+                            <div class="flex items-center justify-between text-[10px] text-cyan-300 mb-1">
+                                <span>CPU</span><i class="fas fa-thumbtack text-[9px]"></i>
+                            </div>
+                            <div class="text-white font-bold text-sm">25%</div>
+                        </div>
+                        <div class="bg-slate-800/70 p-2.5 rounded-xl border border-white/5">
+                            <div class="flex items-center justify-between text-[10px] text-emerald-300 mb-1">
+                                <span>GPU</span><i class="fas fa-thumbtack text-[9px]"></i>
+                            </div>
+                            <div class="text-white font-bold text-xs">41% · 50°C</div>
+                        </div>
+                        <div class="bg-slate-800/70 p-2.5 rounded-xl border border-white/5">
+                            <div class="flex items-center justify-between text-[10px] text-indigo-300 mb-1">
+                                <span>RAM</span><i class="fas fa-thumbtack text-[9px]"></i>
+                            </div>
+                            <div class="text-white font-bold text-xs">13,2 / 16 ГБ</div>
+                        </div>
+                        <div class="bg-slate-800/70 p-2.5 rounded-xl border border-white/5">
+                            <div class="flex items-center justify-between text-[10px] text-purple-300 mb-1">
+                                <span>СЕТЬ</span><i class="fas fa-thumbtack text-[9px]"></i>
+                            </div>
+                            <div class="text-white font-bold text-[11px]">↓44K ↑250K</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="reveal glass rounded-[2rem] px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div><div class="text-3xl font-extrabold gradient-text">4</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_blocks">Блока телеметрии</div></div>
+            <div><div class="text-3xl font-extrabold gradient-text">DL/UL</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_net">Скорость сети</div></div>
+            <div><div class="text-3xl font-extrabold gradient-text">PIN</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_pin">Закрепление метрик</div></div>
+            <div><div class="text-3xl font-extrabold gradient-text">SMART</div><div class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-i18n="stat_throttle">Троттлинг в фоне</div></div>
+        </div>
+
+        <div id="spotlight" class="card-spotlight"></div>
+        <div id="features" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 border border-indigo-500/20">
+                    <i class="fas fa-microchip text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="f1_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="f1_desc"></p>
+                <button onclick="toggleCard('f1')" class="open-btn mt-4 text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="f1" class="card-details text-sm text-slate-300" data-i18n="f1_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-400 mb-6 border border-purple-500/20">
+                    <i class="fas fa-temperature-half text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-3"><span data-i18n="f2_title"></span><span class="cursor-blink text-purple-400">_</span></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="f2_desc"></p>
+                <button onclick="toggleCard('f2')" class="open-btn mt-4 text-xs font-bold text-purple-400 hover:text-purple-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="f2" class="card-details text-sm text-slate-300" data-i18n="f2_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 mb-6 border border-blue-500/20">
+                    <i class="fas fa-memory text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="f3_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="f3_desc"></p>
+                <button onclick="toggleCard('f3')" class="open-btn mt-4 text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="f3" class="card-details text-sm text-slate-300" data-i18n="f3_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-yellow-500/20 rounded-2xl flex items-center justify-center text-yellow-400 mb-6 border border-yellow-500/20">
+                    <i class="fas fa-network-wired text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="f4_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="f4_desc"></p>
+                <button onclick="toggleCard('f4')" class="open-btn mt-4 text-xs font-bold text-yellow-400 hover:text-yellow-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="f4" class="card-details text-sm text-slate-300" data-i18n="f4_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-pink-500/20 rounded-2xl flex items-center justify-center text-pink-400 mb-6 border border-pink-500/20">
+                    <i class="fas fa-thumbtack text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="f5_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="f5_desc"></p>
+                <button onclick="toggleCard('f5')" class="open-btn mt-4 text-xs font-bold text-pink-400 hover:text-pink-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="f5" class="card-details text-sm text-slate-300" data-i18n="f5_lvl2"></div>
+            </section>
+
+            <section class="reveal glass p-8 rounded-[2rem] flex flex-col h-full">
+                <div class="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20">
+                    <i class="fas fa-broom text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-3" data-i18n="f6_title"></h2>
+                <p class="text-slate-400 text-sm leading-relaxed flex-grow" data-i18n="f6_desc"></p>
+                <button onclick="toggleCard('f6')" class="open-btn mt-4 text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center rtl:flex-row-reverse uppercase tracking-wider">
+                    <span data-i18n="btn_more"></span> <i class="fas fa-chevron-down ms-2 chevron"></i>
+                </button>
+                <div id="f6" class="card-details text-sm text-slate-300" data-i18n="f6_lvl2"></div>
+            </section>
+
+        </div>
+        <footer class="glass rounded-[2rem] px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs mono text-slate-400">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                <span class="text-slate-200 font-bold">699718.space</span>
+                <span>·</span>
+                <span>eggrib</span>
+                <span>·</span>
+                <a href="https://tabletka.699718.space/" class="text-indigo-300 hover:text-white transition-colors">tabletka</a>
+                <span>·</span>
+                <a href="https://699718.space/simple-v3.html" class="hover:text-white transition-colors">civdem</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-github"></i><span>GitHub</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-telegram-plane"></i><span>Telegram</span>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <div id="cursor-glow"></div>
+    <div class="toast" id="toast"></div>
+    <div id="term-overlay"><div id="term-box"><div class="t-header">eggrib@KompEgg:~/tabletka/monitors &nbsp; [press ` or ESC to close]</div><div id="t-out"></div><div><span class="t-prompt">eggrib@KompEgg:~$ </span><input id="t-input" spellcheck="false" placeholder="type 'help'"></div></div></div>
+
+    <script>
+        const t = {
+            ru: {
+                pill_badge: "tabletka · Таблетка 02 / Мониторы",
+                hero_title: "Таблетка Мониторов",
+                hero_subtitle: "Сводка состояния ПК в свёрнутой строке (CPU и RAM) и развёрнутое окно MONITORS с плитками CPU, GPU и температуры, RAM, скоростью сети DL/UL, закреплением и быстрой очисткой.",
+                cta_features: "Все функции",
+                cta_media: "Таблетка Медиа",
+                cta_back: "На главную",
+                stat_blocks: "Блока телеметрии",
+                stat_net: "Скорость сети",
+                stat_pin: "Закрепление метрик",
+                stat_throttle: "Троттлинг в фоне",
+                btn_more: "Детали реализации",
+                f1_title: "Загрузка CPU",
+                f1_desc: "Текущая нагрузка процессора в процентах в компактной строке и в отдельной плитке окна MONITORS.",
+                f1_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Быстрая считка процента загрузки без лишней нагрузки</li><li>Синхронизация между свёрнутой пилюлей и сеткой карточек</li><li>Мгновенное обновление при раскрытии окна</li></ul>",
+                f2_title: "GPU и температура",
+                f2_desc: "Нагрузка видеокарты и температура в градусах Цельсия в единой плитке (например 41% • 50°C).",
+                f2_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Совместный вывод загрузки и температуры GPU</li><li>Удобный контроль при играх и рендеринге</li><li>Умный троттлинг опроса при свёрнутой таблетке</li></ul>",
+                f3_title: "Оперативная память RAM",
+                f3_desc: "Занятый и общий объём памяти в гигабайтах в компактной строке и карточке RAM.",
+                f3_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Формат занято / всего (например 13,2 / 16 ГБ)</li><li>Быстрый контроль нехватки памяти перед запуском задач</li><li>Стабильное обновление значений в реальном времени</li></ul>",
+                f4_title: "СЕТЬ (DL / UL)",
+                f4_desc: "Текущая входящая и исходящая скорость сетевого интерфейса с наглядными стрелками ↓ и ↑.",
+                f4_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Раздельный учёт приёма и отдачи (↓DL / ↑UL)</li><li>Удобно для контроля загрузок и сетевой активности</li><li>Снижение частоты опроса при свёрнутой таблетке</li></ul>",
+                f5_title: "Закрепление плиток",
+                f5_desc: "Кнопки пина на каждой карточке метрик для фиксации нужных показателей под рукой.",
+                f5_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Отдельный переключатель закрепления на каждой плитке</li><li>Быстрое считывание ключевых параметров в один взгляд</li><li>Единая сетка 2×2 в окне MONITORS</li></ul>",
+                f6_title: "Быстрая очистка",
+                f6_desc: "Центральная кнопка очистки для снятия лишней нагрузки и освобождения ресурсов.",
+                f6_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Расположена в центре сетки метрик для быстрого нажатия</li><li>Помогает разгрузить систему при росте потребления</li><li>Работает без закрытия самого оверлея</li></ul>"
+            },
+            en: {
+                pill_badge: "tabletka · Pill 02 / Monitors",
+                hero_title: "Monitors Pill",
+                hero_subtitle: "Compact pill summary (CPU & RAM) and expanded MONITORS view with CPU, GPU & temperature, RAM, network DL/UL counters, tile pins, and quick cleanup.",
+                cta_features: "All Features",
+                cta_media: "Media Pill",
+                cta_back: "Back to Index",
+                stat_blocks: "Telemetry Tiles",
+                stat_net: "Network Rates",
+                stat_pin: "Tile Pinning",
+                stat_throttle: "Background Throttling",
+                btn_more: "Implementation Details",
+                f1_title: "CPU Utilization",
+                f1_desc: "Live processor load percentage shown in the compact pill and dedicated CPU tile.",
+                f1_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Low-overhead live CPU percentage sampling</li><li>Consistent value across compact pill and expanded grid</li><li>Instant refresh when opening MONITORS</li></ul>",
+                f2_title: "GPU & Temperature",
+                f2_desc: "Graphics load and Celsius temperature together in one tile (e.g. 41% • 50°C).",
+                f2_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Combined GPU load and temperature readout</li><li>Helpful during gaming and heavy workloads</li><li>Smart polling throttle while collapsed</li></ul>",
+                f3_title: "Memory (RAM)",
+                f3_desc: "Used and total memory in gigabytes in both compact status and RAM card.",
+                f3_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Clear used / total format (e.g. 13.2 / 16 GB)</li><li>Quick memory check before launching heavy apps</li><li>Smooth periodic updates</li></ul>",
+                f4_title: "Network (DL / UL)",
+                f4_desc: "Live download and upload throughput with clear ↓ and ↑ indicators.",
+                f4_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Separate download and upload throughput (↓ / ↑)</li><li>Easy tracking of transfers and network activity</li><li>Throttled background polling when collapsed</li></ul>",
+                f5_title: "Tile Pinning",
+                f5_desc: "Pin controls on individual metric cards to keep preferred readouts prominent.",
+                f5_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Per-tile pin toggle inside the MONITORS layout</li><li>Fast glanceable hardware telemetry</li><li>Clean 2×2 card arrangement</li></ul>",
+                f6_title: "Quick Cleanup",
+                f6_desc: "Center cleanup trigger to reclaim memory and reduce system overhead on demand.",
+                f6_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Centered action button inside the 2×2 grid</li><li>Helps trim overhead when usage spikes</li><li>Keeps the overlay running smoothly</li></ul>"
+            },
+            de: {
+                pill_badge: "tabletka · Pille 02 / Monitore",
+                hero_title: "Monitore-Pille",
+                hero_subtitle: "Kompakte Anzeige (CPU & RAM) sowie erweiterte MONITORS-Ansicht mit CPU, GPU & Temperatur, RAM, Netzwerk DL/UL, Pin-Symbolen und Schnellbereinigung.",
+                cta_features: "Alle Funktionen",
+                cta_media: "Medien-Pille",
+                cta_back: "Zur Übersicht",
+                stat_blocks: "Telemetrie-Kacheln",
+                stat_net: "Netzwerkraten",
+                stat_pin: "Kacheln pinnen",
+                stat_throttle: "Smart-Drosselung",
+                btn_more: "Details",
+                f1_title: "CPU-Auslastung",
+                f1_desc: "Aktuelle Prozessorlast in Prozent in kompakter Zeile und CPU-Kachel.",
+                f1_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Resourcenschonende CPU-Messung</li><li>Gleiche Werte in kompakter und offener Ansicht</li><li>Sofortige Aktualisierung beim Öffnen</li></ul>",
+                f2_title: "GPU & Temperatur",
+                f2_desc: "Grafiklast und Temperatur in °C in einer Kachel (z. B. 41% • 50°C).",
+                f2_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Kombinierte GPU-Auslastung und Temperatur</li><li>Praktisch bei Spielen und Rendering</li><li>Gedrosselte Abfrage im eingeklappten Zustand</li></ul>",
+                f3_title: "Arbeitsspeicher (RAM)",
+                f3_desc: "Belegter und gesamter Speicher in GB in Zeile und RAM-Kachel.",
+                f3_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Übersichtliche Anzeige belegt / gesamt</li><li>Schneller Überblick vor großen Aufgaben</li><li>Stabile Aktualisierung</li></ul>",
+                f4_title: "Netzwerk (DL / UL)",
+                f4_desc: "Aktuelle Download- und Upload-Rate mit klaren ↓- und ↑-Pfeilen.",
+                f4_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Getrennte Anzeige für Download und Upload</li><li>Überblick über Downloads und Traffic</li><li>Angepasster Intervall bei geschlossener Pille</li></ul>",
+                f5_title: "Kacheln anpinnen",
+                f5_desc: "Pin-Schalter an den Kacheln für schnellen Zugriff auf wichtige Werte.",
+                f5_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Pin-Button pro Kachel im MONITORS-Fenster</li><li>Direkter Blick auf Systemwerte</li><li>Strukturiertes 2×2-Raster</li></ul>",
+                f6_title: "Schnellbereinigung",
+                f6_desc: "Zentrale Schaltfläche zum Freimachen von Ressourcen bei Bedarf.",
+                f6_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Zentral im 2×2-Raster platziert</li><li>Hilft bei hoher Speicher- oder Systemlast</li><li>Ohne Unterbrechung des Overlays</li></ul>"
+            },
+            fr: {
+                pill_badge: "tabletka · Pilule 02 / Moniteurs",
+                hero_title: "Pilule Moniteurs",
+                hero_subtitle: "Aperçu compact (CPU & RAM) et vue MONITORS étendue avec CPU, GPU & température, RAM, débit réseau DL/UL, épingles et nettoyage rapide.",
+                cta_features: "Toutes les fonctions",
+                cta_media: "Pilule Média",
+                cta_back: "Retour à l'accueil",
+                stat_blocks: "Cartes télémétrie",
+                stat_net: "Débits réseau",
+                stat_pin: "Épinglage",
+                stat_throttle: "Régulation fond",
+                btn_more: "Détails",
+                f1_title: "Charge CPU",
+                f1_desc: "Pourcentage d'utilisation CPU sur la barre compacte et la carte dédiée.",
+                f1_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Mesure légère de la charge processeur</li><li>Cohérence entre pilule réduite et vue complète</li><li>Mise à jour immédiate à l'ouverture</li></ul>",
+                f2_title: "GPU & température",
+                f2_desc: "Charge GPU et température en °C réunies dans une carte (ex. 41% • 50°C).",
+                f2_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Charge et température GPU affichées ensemble</li><li>Utile en jeu et sous charge graphique</li><li>Sondage ralenti lorsque la pilule est réduite</li></ul>",
+                f3_title: "Mémoire RAM",
+                f3_desc: "Mémoire utilisée et totale en Go dans la barre et la carte RAM.",
+                f3_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Lecture claire utilisé / total</li><li>Vérification rapide avant les tâches lourdes</li><li>Actualisation régulière</li></ul>",
+                f4_title: "Réseau (DL / UL)",
+                f4_desc: "Débits descendant et montant en direct avec flèches ↓ et ↑.",
+                f4_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Suivi distinct du téléchargement et de l'envoi</li><li>Pratique pour surveiller les transferts</li><li>Fréquence adaptée en mode réduit</li></ul>",
+                f5_title: "Épinglage des cartes",
+                f5_desc: "Boutons d'épinglage sur chaque carte pour garder les mesures clés visibles.",
+                f5_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Épinglage individuel dans la grille MONITORS</li><li>Lecture rapide de l'état matériel</li><li>Disposition claire en grille 2×2</li></ul>",
+                f6_title: "Nettoyage rapide",
+                f6_desc: "Bouton central pour alléger l'utilisation des ressources à la demande.",
+                f6_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Action centrale au milieu de la grille</li><li>Aide à libérer des ressources lors d'un pic</li><li>Sans fermer l'overlay</li></ul>"
+            },
+            es: {
+                pill_badge: "tabletka · Píldora 02 / Monitores",
+                hero_title: "Píldora Monitores",
+                hero_subtitle: "Resumen compacto (CPU y RAM) y vista MONITORS ampliada con CPU, GPU y temperatura, RAM, red DL/UL, pines por tarjeta y limpieza rápida.",
+                cta_features: "Ver funciones",
+                cta_media: "Píldora Media",
+                cta_back: "Volver al inicio",
+                stat_blocks: "Bloques de telemetría",
+                stat_net: "Velocidad de red",
+                stat_pin: "Fijar tarjetas",
+                stat_throttle: "Ahorro en fondo",
+                btn_more: "Detalles",
+                f1_title: "Uso de CPU",
+                f1_desc: "Porcentaje de CPU en la barra compacta y en la tarjeta dedicada.",
+                f1_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Lectura de CPU de bajo consumo</li><li>Sincronía entre píldora compacta y ventana</li><li>Actualización al instante al abrir</li></ul>",
+                f2_title: "GPU y temperatura",
+                f2_desc: "Carga gráfica y temperatura en °C en una misma tarjeta (ej. 41% • 50°C).",
+                f2_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Carga y temperatura de GPU juntas</li><li>Útil en juegos y cargas intensivas</li><li>Menos sondeo cuando está contraída</li></ul>",
+                f3_title: "Memoria RAM",
+                f3_desc: "Memoria usada y total en GB en la barra y en el bloque RAM.",
+                f3_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Formato claro usado / total</li><li>Control rápido antes de abrir apps pesadas</li><li>Refresco estable en tiempo real</li></ul>",
+                f4_title: "Red (DL / UL)",
+                f4_desc: "Velocidad de bajada y subida con indicadores ↓ y ↑.",
+                f4_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Bajada y subida diferenciadas (↓ / ↑)</li><li>Ideal para vigilar descargas y tráfico</li><li>Sondeo ajustado al contraer</li></ul>",
+                f5_title: "Fijar métricas",
+                f5_desc: "Botones de pin en las tarjetas para destacar los datos que prefieras.",
+                f5_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Pin individual en cada bloque de MONITORS</li><li>Consulta rápida del estado del equipo</li><li>Cuadrícula ordenada 2×2</li></ul>",
+                f6_title: "Limpieza rápida",
+                f6_desc: "Botón central para liberar recursos cuando sube el consumo.",
+                f6_lvl2: "<ul class='list-disc ms-4 space-y-1.5'><li>Ubicado al centro de la cuadrícula</li><li>Ayuda a aliviar picos de uso</li><li>Sin cerrar el overlay</li></ul>"
+            },
+            he: {
+                pill_badge: "tabletka · גלולה 02 / מוניטורים",
+                hero_title: "גלולת מוניטורים",
+                hero_subtitle: "סיכום קומפקטי (CPU ו-RAM) ותצוגת MONITORS מורחבת עם CPU, GPU וטמפרטורה, RAM, קצב רשת DL/UL, נעיצת כרטיסים וניקוי מהיר.",
+                cta_features: "כל התכונות",
+                cta_media: "גלולת מדיה",
+                cta_back: "חזרה לעמוד הראשי",
+                stat_blocks: "כרטיסי טלמטריה",
+                stat_net: "קצבי רשת",
+                stat_pin: "נעיצת מדדים",
+                stat_throttle: "וויסות ברקע",
+                btn_more: "פרטים נוספים",
+                f1_title: "עומס CPU",
+                f1_desc: "אחוז ניצול המעבד בשורה הקומפקטית ובכרטיס ה-CPU.",
+                f1_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>דגימת CPU קלה ברקע</li><li>התאמה בין הגלולה לתצוגה המורחבת</li><li>רענון מיידי בפתיחה</li></ul>",
+                f2_title: "GPU וטמפרטורה",
+                f2_desc: "עומס כרטיס המסך וטמפרטורה ב-°C בכרטיס אחד (למשל 41% • 50°C).",
+                f2_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>תצוגה משולבת של עומס וטמפרטורת GPU</li><li>נוח בזמן משחקים ועומס גרפי</li><li>דגימה מווסתת במצב מכווץ</li></ul>",
+                f3_title: "זיכרון RAM",
+                f3_desc: "זיכרון בשימוש וסך הזיכרון ב-GB בשורה ובכרטיס RAM.",
+                f3_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>תצוגה ברורה של בשימוש / סך הכול</li><li>בדיקה מהירה לפני הפעלת יישומים כבדים</li><li>עדכון שוטף</li></ul>",
+                f4_title: "רשת (DL / UL)",
+                f4_desc: "קצב הורדה והעלאה בזמן אמת עם חצים ↓ ו-↑.",
+                f4_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>הפרדה בין הורדה להעלאה (↓ / ↑)</li><li>מעקב נוח אחר העברות נתונים</li><li>קצב מותאם כשהגלולה מכווצת</li></ul>",
+                f5_title: "נעיצת כרטיסים",
+                f5_desc: "כפתורי נעיצה על הכרטיסים לשמירת מדדים בולטים.",
+                f5_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>נעיצה לכל כרטיס בנפרד בתצוגת MONITORS</li><li>קריאה מהירה של נתוני החומרה</li><li>פריסת 2×2 מסודרת</li></ul>",
+                f6_title: "ניקוי מהיר",
+                f6_desc: "כפתור מרכזי לשחרור משאבים בעת עליית עומס.",
+                f6_lvl2: "<ul class='list-disc me-4 space-y-1.5'><li>ממוקם במרכז הרשת לגישה נוחה</li><li>מסייע להפחתת עומס זמני</li><li>ללא סגירת ה-Overlay</li></ul>"
+            }
+        };
+
+        function setLang(lang) {
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[lang] && t[lang][key]) el.innerHTML = t[lang][key];
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const isActive = btn.getAttribute('data-lang') === lang;
+                btn.className = `lang-btn transition-colors px-2 py-1 rounded-md ${isActive ? 'bg-indigo-500/20 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white'}`;
+            });
+
+            const currentLang = document.getElementById('current-lang');
+            if (currentLang) currentLang.textContent = lang.toUpperCase();
+            const menu = document.getElementById('lang-menu');
+            if (menu && window.innerWidth < 768) menu.classList.add('hidden');
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('lang-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        function toggleCard(id) {
+            const detailsDiv = document.getElementById(id);
+            const btn = detailsDiv.previousElementSibling;
+            detailsDiv.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        function autoDetect() {
+            const browserLang = (navigator.language || 'ru').split('-')[0];
+            if (t[browserLang]) setLang(browserLang);
+            else setLang('ru');
+        }
+        autoDetect();
+
+        const glow = document.getElementById('cursor-glow');
+        document.addEventListener('mousemove', e => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+            glow.style.opacity = '1';
+        });
+        document.addEventListener('mouseleave', () => glow.style.opacity = '0');
+
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        revealEls.forEach(el => observer.observe(el));
+        setTimeout(() => revealEls.forEach(el => el.classList.add('visible')), 300);
+
+        const grid = document.getElementById('features');
+        const spot = document.getElementById('spotlight');
+        if (grid && spot) {
+            grid.addEventListener('mousemove', e => {
+                const r = grid.getBoundingClientRect();
+                spot.style.left = (e.clientX - r.left) + 'px';
+                spot.style.top = (e.clientY - r.top) + 'px';
+                spot.style.opacity = '1';
+            });
+            grid.addEventListener('mouseleave', () => spot.style.opacity = '0');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        const tOverlay = document.getElementById('term-overlay');
+        const tInput = document.getElementById('t-input');
+        const tOut = document.getElementById('t-out');
+        const cmds = {
+            'help': '  status | tiles | net | clear | exit',
+            'status': '  module: HardwareHud / Monitors (tabletka)\n  tiles: CPU, GPU + temp, RAM, NET (DL/UL)',
+            'tiles': '  [OK] 2x2 grid with per-tile pin toggle and center cleanup action',
+            'net': '  [OK] Live download/upload readout + smart collapse throttling',
+            'clear': '__clear__',
+            'exit': '__exit__'
+        };
+        function openTerm() { tOverlay.classList.add('open'); setTimeout(() => tInput.focus(), 100); }
+        function closeTerm() { tOverlay.classList.remove('open'); tOut.innerHTML = ''; tInput.value = ''; }
+        document.addEventListener('keydown', e => {
+            if (e.key === '`' || e.key === '~') { e.preventDefault(); tOverlay.classList.contains('open') ? closeTerm() : openTerm(); }
+            if (e.key === 'Escape') closeTerm();
+        });
+        tOverlay.addEventListener('click', e => { if (e.target === tOverlay) closeTerm(); });
+        tInput.addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return;
+            const val = tInput.value.trim().toLowerCase();
+            tInput.value = '';
+            tOut.innerHTML += '<div><span class="t-prompt">eggrib@KompEgg:~$ </span>' + val + '</div>';
+            const r = cmds[val];
+            if (r === '__clear__') tOut.innerHTML = '';
+            else if (r === '__exit__') closeTerm();
+            else tOut.innerHTML += '<div class="' + (r ? 't-out' : 't-err') + '">' + (r || "  command not found. type 'help'") + '</div>';
+            tOut.scrollTop = tOut.scrollHeight;
+        });
+    </script>
+</body>
+</html>

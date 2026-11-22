@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CIVDEM v0.8.3 — 4,000 years of agent-based evolutionary demography, kinship regimes, elite dispensations, and ABC-SMC validation on 10,703 ancient genomes from AADR v66.p1.">
+    <title>eggrib | CIVDEM v0.8.3 — Evolutionary Demography Study</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23818cf8'/><stop offset='100%25' stop-color='%23c084fc'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='%230f172a'/><polygon points='18,3 8,18 15,18 14,29 24,14 17,14' fill='url(%23g)'/></svg>">
+    <script defer src="https://stats.699718.space/script.js" data-website-id="e9088ac7-7a29-4f15-a61a-ac661564484b"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #020617;
+            color: #f1f5f9;
+            font-family: 'Unbounded', sans-serif;
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.16), transparent 42%),
+                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.16), transparent 42%);
+            overflow-x: hidden;
+        }
+        html[dir="rtl"] body { font-family: 'Heebo', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass {
+            background: rgba(15, 23, 42, 0.58);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #818cf8, #c084fc, #34d399, #818cf8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .prose-text {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Heebo', sans-serif;
+        }
+        .chart-box {
+            position: relative;
+            width: 100%;
+            min-height: 260px;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen py-6 sm:py-10 px-3 sm:px-6 flex justify-center">
+    <div class="max-w-5xl w-full space-y-6">
+
+        <!-- Top Navigation -->
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap gap-2">
+                <a href="/" class="glass px-4 py-2.5 rounded-xl text-xs mono text-slate-300 hover:text-white hover:border-indigo-400/40 transition-all inline-flex items-center gap-2">
+                    <i class="fas fa-arrow-left rtl:rotate-180"></i>
+                    <span data-i18n="back_home">На главную</span>
+                </a>
+                <a href="/simple.html" class="glass px-4 py-2.5 rounded-xl text-xs mono text-emerald-300 hover:text-white hover:border-emerald-400/40 transition-all inline-flex items-center gap-2">
+                    <i class="fas fa-book-open"></i>
+                    <span data-i18n="to_simple">Простым языком</span>
+                </a>
+            </div>
+            <div class="flex gap-1 text-xs mono bg-slate-900/60 p-1.5 rounded-xl border border-white/10">
+                <button onclick="setLang('ru')" class="lang-btn px-3 py-1 rounded-lg transition-colors" data-lang="ru">RU</button>
+                <button onclick="setLang('en')" class="lang-btn px-3 py-1 rounded-lg transition-colors" data-lang="en">EN</button>
+                <button onclick="setLang('he')" class="lang-btn px-3 py-1 rounded-lg transition-colors" data-lang="he">HE</button>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <header class="glass rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 md:p-12 relative overflow-hidden">
+            <div class="absolute -top-28 -end-28 w-80 h-80 bg-indigo-500/20 blur-[110px] rounded-full pointer-events-none"></div>
+            <div class="relative z-10 space-y-5">
+                <div class="text-[11px] sm:text-xs mono text-indigo-300 uppercase tracking-widest break-words" data-i18n="hero_eyebrow">
+                    CIVDEM v0.8.3 // 4,000-YEAR AGENT-BASED EVOLUTIONARY DEMOGRAPHY
+                </div>
+                <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight break-words">
+                    <span class="gradient-text" data-i18n="hero_title">Как брачные правила и институты формируют генофонд народов</span>
+                </h1>
+                <p class="prose-text text-slate-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl" data-i18n="hero_sub">
+                    Полное описание агентно-геномной симуляции на горизонте 4 000 лет, байесовской калибровки ABC-SMC и эмпирической проверки на 10 703 древних геномах из базы AADR v66.p1.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-indigo-300 mono">4 000</div>
+                        <div class="prose-text text-xs text-slate-400 mt-1" data-i18n="kpi_years">Лет симуляции (~130–150 поколений)</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-purple-300 mono">10 703</div>
+                        <div class="prose-text text-xs text-slate-400 mt-1" data-i18n="kpi_genomes">Древних геномов AADR v66.p1</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-emerald-300 mono">BF₁₀ = 306.85</div>
+                        <div class="prose-text text-xs text-slate-400 mt-1" data-i18n="kpi_bf">Перевес M₁ над дрейфом M₀ (log₁₀ = 2.49)</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4">
+                        <div class="text-xl sm:text-2xl font-extrabold text-amber-300 mono">15–35×</div>
+                        <div class="prose-text text-xs text-slate-400 mt-1" data-i18n="kpi_speed">Ускорение направленных сдвигов</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section 1: Goals & Core Hypothesis -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec_goals_title">1. Цели исследования и главная гипотеза</h2>
+                <span class="text-[11px] sm:text-xs mono px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">GOALS &amp; HYPOTHESIS</span>
+            </div>
+            <p class="prose-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec_goals_p1">
+                Исследование формализует влияние социальных и демографических институтов — запретов или поощрения близкородственных браков (экзогамия против кузенных браков и эндогамии), сословных диспенсаций, кастовой/клановой структуры, полигинии, диеты, голода и эпидемической плотности — на эволюционные траектории популяций за 4 000 лет.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                <div class="bg-slate-900/50 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-indigo-400 font-bold text-sm" data-i18n="g1_title">Роль родства и брака (KII)</div>
+                    <p class="prose-text text-slate-400 text-sm leading-relaxed" data-i18n="g1_desc">Как непрерывный индекс родства KII ∈ [-1.5, +1.5] регулирует длинный инбридинг (LROH), комбинаторную сборку полигенных вариантов и расслоение слоёв.</p>
+                </div>
+                <div class="bg-slate-900/50 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-purple-400 font-bold text-sm" data-i18n="g2_title">Отбор против дрейфа (M₁ vs M₀)</div>
+                    <p class="prose-text text-slate-400 text-sm leading-relaxed" data-i18n="g2_desc">Отделить институциональный и половой отбор (M₁) от нейтрального генетического дрейфа (M₀) через байесовский фактор BF₁₀ и дистанции ошибок ρ(M₁), ρ(M₀).</p>
+                </div>
+                <div class="bg-slate-900/50 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-emerald-400 font-bold text-sm" data-i18n="g3_title">Связка с древней ДНК</div>
+                    <p class="prose-text text-slate-400 text-sm leading-relaxed" data-i18n="g3_desc">Сверить прогнозные траектории с 10 703 древними геномами из Гарвардского ресурса AADR v66.p1 (0–4000 BP) по пяти макрорегионам.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Responsive Architecture Flow (No Fixed Wide SVG) -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec_arch_title">2. Архитектура CIVDEM v0.8.3 и контур валидации ABC-SMC</h2>
+                <span class="text-[11px] sm:text-xs mono px-3 py-1 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">PYTHON · ABC-SMC · AADR v66.p1</span>
+            </div>
+            <p class="prose-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec_arch_desc">
+                Контур расчётов объединяет агентно-геномную симуляцию пяти историко-институциональных режимов и нулевой модели дрейфа M₀, шесть функциональных генетических кластеров и байесовский валидатор ABC-SMC по палеогеномным сводным статистикам.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="bg-indigo-950/45 border border-indigo-400/35 rounded-2xl p-5 space-y-2.5">
+                    <div class="text-xs mono text-indigo-300 font-bold" data-i18n="arch_s1_k">1. INSTITUTIONS &amp; KII</div>
+                    <div class="text-base font-bold text-white" data-i18n="arch_s1_t">5 режимов + контроль M₀</div>
+                    <ul class="prose-text text-xs sm:text-sm text-slate-300 space-y-1.5">
+                        <li data-i18n="arch_s1_b1">• Непрерывный индекс родства KII ∈ [-1.5, +1.5]</li>
+                        <li data-i18n="arch_s1_b2">• Экзогамия, кланы, касты джати и полигиния</li>
+                        <li data-i18n="arch_s1_b3">• Элитные диспенсации и экзаменационная мобильность</li>
+                        <li data-i18n="arch_s1_b4">• Диета, голод и патогенная нагрузка на горизонте 4 000 лет</li>
+                    </ul>
+                </div>
+
+                <div class="bg-purple-950/40 border border-purple-400/35 rounded-2xl p-5 space-y-2.5">
+                    <div class="text-xs mono text-purple-300 font-bold" data-i18n="arch_s2_k">2. 6 GENOMIC CLUSTERS</div>
+                    <div class="text-base font-bold text-white" data-i18n="arch_s2_t">Z-PGS, LROH, PAI и Gini</div>
+                    <ul class="prose-text text-xs sm:text-sm text-slate-300 space-y-1.5">
+                        <li data-i18n="arch_s2_b1">• Интеллект, самоконтроль и просоциальность</li>
+                        <li data-i18n="arch_s2_b2">• Питание/метаболизм, иммунитет и выносливость</li>
+                        <li data-i18n="arch_s2_b3">• Доля длинных сегментов гомозиготности (LROH)</li>
+                        <li data-i18n="arch_s2_b4">• Индекс перемешивания (PAI) и мужской Gini</li>
+                    </ul>
+                </div>
+
+                <div class="bg-emerald-950/40 border border-emerald-400/35 rounded-2xl p-5 space-y-2.5">
+                    <div class="text-xs mono text-emerald-300 font-bold" data-i18n="arch_s3_k">3. EMPIRICAL VALIDATION</div>
+                    <div class="text-base font-bold text-white" data-i18n="arch_s3_t">AADR v66.p1 (10 703 генома)</div>
+                    <ul class="prose-text text-xs sm:text-sm text-slate-300 space-y-1.5">
+                        <li data-i18n="arch_s3_b1">• Зап. Европа (7 718), Византия / В.Е. (1 084)</li>
+                        <li data-i18n="arch_s3_b2">• Юж. Азия (764), Вост. Азия (726), Ближ. Восток (407)</li>
+                        <li data-i18n="arch_s3_b3">• Сравнение дистанций ошибок ρ(M₁) и ρ(M₀)</li>
+                        <li data-i18n="arch_s3_b4">• Глобальный байесовский фактор BF₁₀ = 306.85</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: One Chart Per Row (Charts 1 & 2) -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec_charts_title">3. Графики результатов: 6 кластеров (SD) и совокупный прирост (%)</h2>
+                <span class="text-[11px] sm:text-xs mono px-3 py-1 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/25">ONE CHART PER ROW</span>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-indigo-200 mb-3" data-i18n="chart1_title">Сдвиг по 6 функциональным кластерам за 4 000 лет (Z-PGS, SD)</h3>
+                    <div class="chart-box h-72 sm:h-80"><canvas id="clustersChart"></canvas></div>
+                </div>
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-emerald-200 mb-3" data-i18n="chart2_title">Прирост приспособленности (%) и сдвиг перцентиля над 50% (п.п.)</h3>
+                    <div class="chart-box h-72 sm:h-80"><canvas id="percentChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Methodology, Scientific Rigor & One Chart Per Row (Charts 3 & 4) -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec_meth_title">4. Методология, научная строгость и ABC-SMC на AADR v66.p1</h2>
+                <span class="text-[11px] sm:text-xs mono px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/25">METHODOLOGY &amp; RIGOR</span>
+            </div>
+            <p class="prose-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec_meth_p1">
+                CIVDEM v0.8.3 сопоставляет агентные траектории пяти режимов и нулевого дрейфа M₀ с палеогеномными сводными статистиками 10 703 древних геномов из AADR v66.p1 (.anno) через байесовский алгоритм ABC-SMC.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-cyan-300 font-bold text-xs sm:text-sm mono" data-i18n="m_box1_t">ИНСТИТУЦИОНАЛЬНЫЕ МЕХАНИЗМЫ (KII &amp; РЕЖИМЫ)</div>
+                    <p class="prose-text text-slate-300 text-sm leading-relaxed" data-i18n="m_box1_d">
+                        Непрерывный индекс KII ∈ [-1.5, +1.5] описывает переход между экзогамией, кузенными союзами и эндогамией с учётом элитных диспенсаций, кастовых/клановых барьеров, экзаменационной мобильности и среды.
+                    </p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-purple-300 font-bold text-xs sm:text-sm mono" data-i18n="m_box2_t">БАЙЕСОВСКИЙ ОТБОР M₁ ПРОТИВ ДРЕЙФА M₀</div>
+                    <p class="prose-text text-slate-300 text-sm leading-relaxed" data-i18n="m_box2_d">
+                        ABC-SMC оценивает апостериорное соответствие модели M₁ и контроля дрейфа M₀ по эмпирическим данным: глобальный байесовский фактор составляет BF₁₀ = 306.85 (log₁₀ BF₁₀ = 2.49).
+                    </p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-amber-300 font-bold text-xs sm:text-sm mono" data-i18n="m_box3_t">КОНТРОЛЬ АРТЕФАКТОВ И «СЫРОГО» НАКОПЛЕНИЯ</div>
+                    <p class="prose-text text-slate-300 text-sm leading-relaxed" data-i18n="m_box3_d">
+                        Разделение нормированного Z-PGS (+0.42 SD в Южной Азии; +0.02 SD в M₀) и неканонического «сырого» счётчика (8.03 SD в кастовом режиме и 5.67 SD в M₀) предотвращает путаницу между эффектом изоляции и реальным сдвигом признаков.
+                    </p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-5 space-y-2">
+                    <div class="text-emerald-300 font-bold text-xs sm:text-sm mono" data-i18n="m_box4_t">ГРАНИЦЫ ПРИМЕНИМОСТИ МОДЕЛИ</div>
+                    <p class="prose-text text-slate-300 text-sm leading-relaxed" data-i18n="m_box4_d">
+                        Модель описывает статистические тренды популяций на 4 000-летнем интервале и структуре выборки AADR v66.p1 — она не задаёт жёсткий детерминизм для отдельных людей или оценочных «иерархий народов».
+                    </p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-amber-200 mb-3" data-i18n="chart3_title">Накопленный уровень 6 кластеров мутаций к 2000 г. н. э. (среднее по миру, %)</h3>
+                    <div class="chart-box h-72"><canvas id="mutationsChart"></canvas></div>
+                </div>
+                <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold text-indigo-200 mb-3" data-i18n="chart4_title">Сдвиг Z-PGS интеллекта по режимам и контролю M₀ (SD)</h3>
+                    <div class="chart-box h-72"><canvas id="cognitionModesChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4B: Dynamics, Raw vs Net Metric Artifact & Glossary -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec4b_title">4Б. Скорость сдвигов, ловушка «сырого» счётчика и словарь метрик</h2>
+                <span class="text-[11px] sm:text-xs mono px-3 py-1 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">DYNAMICS &amp; GLOSSARY</span>
+            </div>
+            <p class="prose-text text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="sec4b_p1">
+                На 4 000-летнем горизонте темп изменений зависит от сочетания KII, межгрупповой связности и направленного/полового отбора. Ниже приведены ключевые динамические различия и краткий справочник метрик.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/55 border border-indigo-400/25 rounded-2xl p-5 space-y-2">
+                    <div class="text-indigo-300 font-bold text-xs sm:text-sm mono" data-i18n="r4b_1_t">ТЕМП СДВИГОВ ПРИ ЭКЗОГАМИИ И МОБИЛЬНОСТИ</div>
+                    <p class="prose-text text-slate-300 text-sm leading-relaxed" data-i18n="r4b_1_d">
+                        Широкие брачные круги и социальная мобильность (Западная Европа +0.89 SD по интеллекту, Восточная Азия +0.85 SD по интеллекту и +1.26 SD по иммунитету) ускоряют рекомбинацию полезных аллелей при низком LROH.
+                    </p>
+                </div>
+                <div class="bg-slate-900/55 border border-amber-400/25 rounded-2xl p-5 space-y-2">
+                    <div class="text-amber-300 font-bold text-xs sm:text-sm mono" data-i18n="r4b_2_t">«СЫРОЙ» СЧЁТЧИК VS ЧИСТЫЙ Z-PGS И КОНТРОЛЬ M₀</div>
+                    <p class="prose-text text-slate-300 text-sm leading-relaxed" data-i18n="r4b_2_d">
+                        Неканонический сырой счётчик (8.03 SD в кастовом режиме и 5.67 SD у контроля M₀) отражает эффект изоляции/накопления, тогда как Z-PGS (+0.42 SD в Южной Азии; +0.02 SD в M₀) и BF₁₀ = 306.85 отделяют реальный сдвиг от артефактов.
+                    </p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-cyan-300 font-bold text-xs mono">KII ∈ [-1.5, +1.5]</div>
+                    <p class="prose-text text-slate-300 text-xs leading-relaxed" data-i18n="rg_kii">Непрерывный индекс родства: шкала от экзогамии к кузенным бракам, эндогамии и клановой структуре.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-purple-300 font-bold text-xs mono">LROH &amp; PAI</div>
+                    <p class="prose-text text-slate-300 text-xs leading-relaxed" data-i18n="rg_lroh">Long Runs of Homozygosity (маркер длинного инбридинга) и индекс перемешивания предковых линий (PAI).</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-amber-300 font-bold text-xs mono">MALE GINI &amp; POLYGYNY</div>
+                    <p class="prose-text text-slate-300 text-xs leading-relaxed" data-i18n="rg_gini">Неравенство мужского репродуктивного успеха и половой отбор при полигинии и сословных диспенсациях.</p>
+                </div>
+                <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1.5">
+                    <div class="text-emerald-300 font-bold text-xs mono">ABC-SMC (BF₁₀ = 306.85)</div>
+                    <p class="prose-text text-slate-300 text-xs leading-relaxed" data-i18n="rg_abc">Байесовский последовательный Монте-Карло: сопоставление ошибок ρ(M₁) и ρ(M₀) на 10 703 геномах AADR v66.p1.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Regional Profiles Table -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec_table_title">5. Региональные профили, выборка AADR и сводная таблица</h2>
+                <span class="text-[11px] sm:text-xs mono px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/25">REGIONAL BREAKDOWN</span>
+            </div>
+            <p class="prose-text text-slate-300 text-xs sm:text-sm leading-relaxed" data-i18n="sec_table_note">
+                Эмпирическая калибровка опирается на 10 703 древних генома из AADR v66.p1: Западная Европа (7 718), Византия / Восточная Европа (1 084), Южная Азия (764), Восточная Азия (726) и Ближний Восток (407).
+            </p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs mono min-w-[680px]">
+                    <thead>
+                        <tr class="border-b border-white/15 text-slate-300">
+                            <th class="py-3 px-2.5" data-i18n="th_reg">Регион / Режим</th>
+                            <th class="py-3 px-2.5">Cog</th>
+                            <th class="py-3 px-2.5">Self-Ctrl</th>
+                            <th class="py-3 px-2.5">Prosoc</th>
+                            <th class="py-3 px-2.5">Diet</th>
+                            <th class="py-3 px-2.5">Imm</th>
+                            <th class="py-3 px-2.5">Famine</th>
+                            <th class="py-3 px-2.5">Mean SD</th>
+                            <th class="py-3 px-2.5">Fitness %</th>
+                            <th class="py-3 px-2.5">Anc. %ile</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/10 text-slate-200">
+                        <tr>
+                            <td class="py-3 px-2.5 font-bold text-amber-300" data-i18n="tr_me">Ближний Восток (кланы + полигиния)</td>
+                            <td class="py-3 px-2.5">+0.48</td><td class="py-3 px-2.5">+1.19</td><td class="py-3 px-2.5">+1.30</td>
+                            <td class="py-3 px-2.5 font-bold text-emerald-300">+1.75</td><td class="py-3 px-2.5">+0.76</td><td class="py-3 px-2.5">+0.77</td>
+                            <td class="py-3 px-2.5 font-bold">+1.04</td><td class="py-3 px-2.5 font-bold text-emerald-300">+2.47%</td><td class="py-3 px-2.5">85.1%</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2.5 font-bold text-indigo-300" data-i18n="tr_we">Западная Европа (экзогамия + диспенсации)</td>
+                            <td class="py-3 px-2.5 font-bold text-indigo-300">+0.89</td><td class="py-3 px-2.5">+0.52</td><td class="py-3 px-2.5">+0.82</td>
+                            <td class="py-3 px-2.5">+0.74</td><td class="py-3 px-2.5">+0.86</td><td class="py-3 px-2.5 font-bold">+0.79</td>
+                            <td class="py-3 px-2.5 font-bold">+0.77</td><td class="py-3 px-2.5">+1.91%</td><td class="py-3 px-2.5">77.9%</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2.5 font-bold text-teal-300" data-i18n="tr_ea">Восточная Азия (экзамены + рис)</td>
+                            <td class="py-3 px-2.5 font-bold text-indigo-300">+0.85</td><td class="py-3 px-2.5">+0.36</td><td class="py-3 px-2.5">+0.64</td>
+                            <td class="py-3 px-2.5">+0.76</td><td class="py-3 px-2.5 font-bold text-teal-300">+1.26</td><td class="py-3 px-2.5">+0.49</td>
+                            <td class="py-3 px-2.5 font-bold">+0.73</td><td class="py-3 px-2.5">+1.96%</td><td class="py-3 px-2.5">76.6%</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2.5 font-bold text-purple-300" data-i18n="tr_by">Византия / Вост. Европа (умеренная экзогамия)</td>
+                            <td class="py-3 px-2.5">+0.27</td><td class="py-3 px-2.5">+0.87</td><td class="py-3 px-2.5 font-bold text-purple-300">+2.37</td>
+                            <td class="py-3 px-2.5">+0.64</td><td class="py-3 px-2.5">+0.15</td><td class="py-3 px-2.5">+0.06</td>
+                            <td class="py-3 px-2.5 font-bold">+0.73</td><td class="py-3 px-2.5">+1.88%</td><td class="py-3 px-2.5">76.6%</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2.5 font-bold text-rose-300" data-i18n="tr_sa">Южная Азия (кастовая эндогамия джати)</td>
+                            <td class="py-3 px-2.5">+0.42</td><td class="py-3 px-2.5 font-bold text-rose-300">+1.24</td><td class="py-3 px-2.5">+0.45</td>
+                            <td class="py-3 px-2.5">+0.46</td><td class="py-3 px-2.5">+0.13</td><td class="py-3 px-2.5">-0.12</td>
+                            <td class="py-3 px-2.5 font-bold">+0.43</td><td class="py-3 px-2.5">+1.35%</td><td class="py-3 px-2.5">66.6%</td>
+                        </tr>
+                        <tr class="text-slate-400">
+                            <td class="py-3 px-2.5" data-i18n="tr_m0">Контроль дрейфа M₀ (без отбора)</td>
+                            <td class="py-3 px-2.5">+0.02</td><td class="py-3 px-2.5">-0.01</td><td class="py-3 px-2.5">+0.13</td>
+                            <td class="py-3 px-2.5">+0.01</td><td class="py-3 px-2.5">-0.12</td><td class="py-3 px-2.5">+0.12</td>
+                            <td class="py-3 px-2.5">+0.03</td><td class="py-3 px-2.5">+0.72%</td><td class="py-3 px-2.5">51.0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 6: Conclusions -->
+        <section class="glass rounded-[2rem] p-6 sm:p-8 md:p-10 space-y-5">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold" data-i18n="sec_conc_title">6. Выводы и научная ценность</h2>
+                <span class="text-[11px] sm:text-xs mono px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">CONCLUSIONS &amp; VALUE</span>
+            </div>
+            <ul class="prose-text space-y-3 text-slate-300 text-sm sm:text-base leading-relaxed list-disc ms-5">
+                <li data-i18n="c1"><strong>Экзогамия ускоряет комбинаторную сборку признаков:</strong> ограничение близкородственных браков снижает длинный инбридинг (LROH до 0.041% в Западной Европе) и помогает быстрее собирать полезные полигенные сочетания.</li>
+                <li data-i18n="c2"><strong>Институты задают разные векторы и компромиссы:</strong> кланы, касты, полигиния и сословная мобильность смещают акценты между метаболизмом, самоконтролем, просоциальностью и межгрупповым обменом.</li>
+                <li data-i18n="c3"><strong>Надёжность против дрейфа:</strong> модель M₁ превосходит нейтральный дрейф M₀ на 10 703 геномах AADR v66.p1 (BF₁₀ = 306.85, log₁₀ BF₁₀ = 2.49), фиксируя эволюционные компромиссы без оценочных иерархий.</li>
+            </ul>
+            <div class="flex flex-wrap gap-3 pt-2">
+                <a href="https://github.com/eggrib" target="_blank" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2">
+                    <i class="fab fa-github"></i> <span>GitHub (@eggrib)</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-slate-100 border border-white/15 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2">
+                    <i class="fab fa-telegram-plane"></i> <span>Telegram (@eggrib)</span>
+                </a>
+            </div>
+        </section>
+        <footer class="glass rounded-[2rem] px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs mono text-slate-400">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                <span class="text-slate-200 font-bold">699718.space</span>
+                <span>·</span>
+                <span>eggrib</span>
+                <span>·</span>
+                <a href="https://tabletka.699718.space/" class="text-indigo-300 hover:text-white transition-colors">Tabletka</a>
+                <span>·</span>
+                <a href="https://699718.space/simple-v3.html" class="hover:text-white transition-colors">civdem</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-github"></i><span>GitHub</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                    <i class="fab fa-telegram-plane"></i><span>Telegram</span>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const i18nData = {
+            ru: {
+                back_home: "На главную",
+                to_simple: "Простым языком",
+                hero_eyebrow: "CIVDEM v0.8.3 // АГЕНТНАЯ ЭВОЛЮЦИОННАЯ ДЕМОГРАФИЯ НА 4 000 ЛЕТ",
+                hero_title: "Как брачные правила и институты формируют генофонд народов",
+                hero_sub: "Полное описание симуляции на 4 000 лет, байесовской калибровки ABC-SMC и проверки на 10 703 древних геномах из базы AADR v66.p1.",
+                kpi_years: "Лет симуляции (~130–150 поколений)",
+                kpi_genomes: "Древних геномов AADR v66.p1",
+                kpi_bf: "Перевес M₁ над дрейфом M₀ (log₁₀ = 2.49)",
+                kpi_speed: "Ускорение направленных сдвигов",
+                sec_goals_title: "1. Цели исследования и главная гипотеза",
+                sec_goals_p1: "Исследование формализует влияние социальных и демографических институтов — запретов или поощрения близкородственных браков (экзогамия против кузенных браков и эндогамии), сословных диспенсаций, кастовой/клановой структуры, полигинии, диеты, голода и эпидемической плотности — на эволюционные траектории популяций за 4 000 лет.",
+                g1_title: "Роль родства и брака (KII)",
+                g1_desc: "Как непрерывный индекс родства KII ∈ [-1.5, +1.5] регулирует длинный инбридинг (LROH), комбинаторную сборку полигенных вариантов и расслоение слоёв.",
+                g2_title: "Отбор против дрейфа (M₁ vs M₀)",
+                g2_desc: "Отделить институциональный и половой отбор (M₁) от нейтрального генетического дрейфа (M₀) через байесовский фактор BF₁₀ и дистанции ошибок ρ(M₁), ρ(M₀).",
+                g3_title: "Связка с древней ДНК",
+                g3_desc: "Сверить прогнозные траектории с 10 703 древними геномами из Гарвардского ресурса AADR v66.p1 (0–4000 BP) по пяти макрорегионам.",
+                sec_arch_title: "2. Архитектура CIVDEM v0.8.3 и контур валидации ABC-SMC",
+                sec_arch_desc: "Контур расчётов объединяет агентно-геномную симуляцию пяти историко-институциональных режимов и нулевой модели дрейфа M₀, шесть функциональных генетических кластеров и байесовский валидатор ABC-SMC по палеогеномным сводным статистикам.",
+                arch_s1_k: "1. INSTITUTIONS & KII", arch_s1_t: "5 режимов + контроль M₀",
+                arch_s1_b1: "• Непрерывный индекс родства KII ∈ [-1.5, +1.5]",
+                arch_s1_b2: "• Экзогамия, кланы, касты джати и полигиния",
+                arch_s1_b3: "• Элитные диспенсации и экзаменационная мобильность",
+                arch_s1_b4: "• Диета, голод и патогенная нагрузка на горизонте 4 000 лет",
+                arch_s2_k: "2. 6 GENOMIC CLUSTERS", arch_s2_t: "Z-PGS, LROH, PAI и Gini",
+                arch_s2_b1: "• Интеллект, самоконтроль и просоциальность",
+                arch_s2_b2: "• Питание/метаболизм, иммунитет и выносливость",
+                arch_s2_b3: "• Доля длинных сегментов гомозиготности (LROH)",
+                arch_s2_b4: "• Индекс перемешивания (PAI) и мужской Gini",
+                arch_s3_k: "3. EMPIRICAL VALIDATION", arch_s3_t: "AADR v66.p1 (10 703 генома)",
+                arch_s3_b1: "• Зап. Европа (7 718), Византия / В.Е. (1 084)",
+                arch_s3_b2: "• Юж. Азия (764), Вост. Азия (726), Ближ. Восток (407)",
+                arch_s3_b3: "• Сравнение дистанций ошибок ρ(M₁) и ρ(M₀)",
+                arch_s3_b4: "• Глобальный байесовский фактор BF₁₀ = 306.85",
+                sec_charts_title: "3. Графики результатов: 6 кластеров (SD) и совокупный прирост (%)",
+                chart1_title: "Сдвиг по 6 функциональным кластерам за 4 000 лет (Z-PGS, SD)",
+                chart2_title: "Прирост приспособленности (%) и сдвиг перцентиля над 50% (п.п.)",
+                sec_meth_title: "4. Методология, научная строгость и ABC-SMC на AADR v66.p1",
+                sec_meth_p1: "CIVDEM v0.8.3 сопоставляет агентные траектории пяти режимов и нулевого дрейфа M₀ с палеогеномными сводными статистиками 10 703 древних геномов из AADR v66.p1 (.anno) через байесовский алгоритм ABC-SMC.",
+                m_box1_t: "ИНСТИТУЦИОНАЛЬНЫЕ МЕХАНИЗМЫ (KII & РЕЖИМЫ)",
+                m_box1_d: "Непрерывный индекс KII ∈ [-1.5, +1.5] описывает переход между экзогамией, кузенными союзами и эндогамией с учётом элитных диспенсаций, кастовых/клановых барьеров, экзаменационной мобильности и среды.",
+                m_box2_t: "БАЙЕСОВСКИЙ ОТБОР M₁ ПРОТИВ ДРЕЙФА M₀",
+                m_box2_d: "ABC-SMC оценивает апостериорное соответствие модели M₁ и контроля дрейфа M₀ по эмпирическим данным: глобальный байесовский фактор составляет BF₁₀ = 306.85 (log₁₀ BF₁₀ = 2.49).",
+                m_box3_t: "КОНТРОЛЬ АРТЕФАКТОВ И «СЫРОГО» НАКОПЛЕНИЯ",
+                m_box3_d: "Разделение нормированного Z-PGS (+0.42 SD в Южной Азии; +0.02 SD в M₀) и неканонического «сырого» счётчика (8.03 SD в кастовом режиме и 5.67 SD в M₀) предотвращает путаницу между эффектом изоляции и реальным сдвигом признаков.",
+                m_box4_t: "ГРАНИЦЫ ПРИМЕНИМОСТИ МОДЕЛИ",
+                m_box4_d: "Модель описывает статистические тренды популяций на 4 000-летнем интервале и структуре выборки AADR v66.p1 — она не задаёт жёсткий детерминизм для отдельных людей или оценочных «иерархий народов».",
+                chart3_title: "Накопленный уровень 6 кластеров мутаций к 2000 г. н. э. (среднее по миру, %)",
+                chart4_title: "Сдвиг Z-PGS интеллекта по режимам и контролю M₀ (SD)",
+                sec4b_title: "4Б. Скорость сдвигов, ловушка «сырого» счётчика и словарь метрик",
+                sec4b_p1: "На 4 000-летнем горизонте темп изменений зависит от сочетания KII, межгрупповой связности и направленного/полового отбора. Ниже приведены ключевые динамические различия и краткий справочник метрик.",
+                r4b_1_t: "ТЕМП СДВИГОВ ПРИ ЭКЗОГАМИИ И МОБИЛЬНОСТИ",
+                r4b_1_d: "Широкие брачные круги и социальная мобильность (Западная Европа +0.89 SD по интеллекту, Восточная Азия +0.85 SD по интеллекту и +1.26 SD по иммунитету) ускоряют рекомбинацию полезных аллелей при низком LROH.",
+                r4b_2_t: "«СЫРОЙ» СЧЁТЧИК VS ЧИСТЫЙ Z-PGS И КОНТРОЛЬ M₀",
+                r4b_2_d: "Неканонический сырой счётчик (8.03 SD в кастовом режиме и 5.67 SD у контроля M₀) отражает эффект изоляции/накопления, тогда как Z-PGS (+0.42 SD в Южной Азии; +0.02 SD в M₀) и BF₁₀ = 306.85 отделяют реальный сдвиг от артефактов.",
+                rg_kii: "Непрерывный индекс родства: шкала от экзогамии к кузенным бракам, эндогамии и клановой структуре.",
+                rg_lroh: "Long Runs of Homozygosity (маркер длинного инбридинга) и индекс перемешивания предковых линий (PAI).",
+                rg_gini: "Неравенство мужского репродуктивного успеха и половой отбор при полигинии и сословных диспенсациях.",
+                rg_abc: "Байесовский последовательный Монте-Карло: сопоставление ошибок ρ(M₁) и ρ(M₀) на 10 703 геномах AADR v66.p1.",
+                sec_table_title: "5. Региональные профили, выборка AADR и сводная таблица",
+                sec_table_note: "Эмпирическая калибровка опирается на 10 703 древних генома из AADR v66.p1: Западная Европа (7 718), Византия / Восточная Европа (1 084), Южная Азия (764), Восточная Азия (726) и Ближний Восток (407).",
+                th_reg: "Регион / Режим",
+                tr_me: "Ближний Восток (кланы + полигиния)",
+                tr_we: "Западная Европа (экзогамия + диспенсации)",
+                tr_ea: "Восточная Азия (экзамены + рис)",
+                tr_by: "Византия / Вост. Европа (умеренная экзогамия)",
+                tr_sa: "Южная Азия (кастовая эндогамия джати)",
+                tr_m0: "Контроль дрейфа M₀ (без отбора)",
+                sec_conc_title: "6. Выводы и научная ценность",
+                c1: "<strong>Экзогамия ускоряет комбинаторную сборку признаков:</strong> ограничение близкородственных браков снижает длинный инбридинг (LROH до 0.041% в Западной Европе) и помогает быстрее собирать полезные полигенные сочетания.",
+                c2: "<strong>Институты задают разные векторы и компромиссы:</strong> кланы, касты, полигиния и сословная мобильность смещают акценты между метаболизмом, самоконтролем, просоциальностью и межгрупповым обменом.",
+                c3: "<strong>Надёжность против дрейфа:</strong> модель M₁ превосходит нейтральный дрейф M₀ на 10 703 геномах AADR v66.p1 (BF₁₀ = 306.85, log₁₀ BF₁₀ = 2.49), фиксируя эволюционные компромиссы без оценочных иерархий."
+            },
+            en: {
+                back_home: "Back to Overview",
+                to_simple: "In Plain Words",
+                hero_eyebrow: "CIVDEM v0.8.3 // 4,000-YEAR AGENT-BASED EVOLUTIONARY DEMOGRAPHY",
+                hero_title: "How Marriage Rules & Institutions Shape Population Genomes",
+                hero_sub: "Complete overview of the 4,000-year simulation, ABC-SMC Bayesian calibration, and validation on 10,703 ancient genomes from AADR v66.p1.",
+                kpi_years: "Simulated Years (~130–150 gen.)",
+                kpi_genomes: "AADR v66.p1 Ancient Genomes",
+                kpi_bf: "M₁ over Drift M₀ (log₁₀ = 2.49)",
+                kpi_speed: "Faster Directed Shift Speed",
+                sec_goals_title: "1. Research Goals & Core Hypothesis",
+                sec_goals_p1: "This study quantifies how social and demographic institutions—cousin-marriage bans vs. kin/caste endogamy, elite dispensations, polygyny, diet, famine, and pathogen density—shape population trajectories over 4,000 years.",
+                g1_title: "Kinship & Marriage (KII)",
+                g1_desc: "How continuous Kinship Intensity KII ∈ [-1.5, +1.5] regulates long runs of homozygosity (LROH), multilocus recombination, and stratification.",
+                g2_title: "Selection vs. Drift (M₁ vs M₀)",
+                g2_desc: "Separating institutional and sexual selection (M₁) from neutral drift (M₀) via Bayes factor BF₁₀ and summary error distances ρ(M₁), ρ(M₀).",
+                g3_title: "Ancient DNA Grounding",
+                g3_desc: "Benchmarking simulation trajectories against 10,703 ancient genomes from Harvard AADR v66.p1 (0–4000 BP) across five macro-regions.",
+                sec_arch_title: "2. CIVDEM v0.8.3 Architecture & ABC-SMC Validation Loop",
+                sec_arch_desc: "Combines agent-based simulations across five regimes and null drift M₀ with six functional genetic clusters and a vectorized ABC-SMC validator against ancient genomic summary statistics.",
+                arch_s1_k: "1. INSTITUTIONS & KII", arch_s1_t: "5 Regimes + Null M₀",
+                arch_s1_b1: "• Continuous Kinship Intensity KII ∈ [-1.5, +1.5]",
+                arch_s1_b2: "• Exogamy, clans, jati castes & polygyny",
+                arch_s1_b3: "• Elite dispensations & exam mobility",
+                arch_s1_b4: "• Diet, famine & pathogen load over 4,000 years",
+                arch_s2_k: "2. 6 GENOMIC CLUSTERS", arch_s2_t: "Z-PGS, LROH, PAI & Gini",
+                arch_s2_b1: "• Cognition, self-control & prosociality",
+                arch_s2_b2: "• Diet/metabolism, immunity & famine stamina",
+                arch_s2_b3: "• Long runs of homozygosity share (LROH)",
+                arch_s2_b4: "• Admixture index (PAI) & male Gini",
+                arch_s3_k: "3. EMPIRICAL VALIDATION", arch_s3_t: "AADR v66.p1 (10,703 Genomes)",
+                arch_s3_b1: "• W. Europe (7,718), Byzantium / E. Europe (1,084)",
+                arch_s3_b2: "• S. Asia (764), E. Asia (726), Middle East (407)",
+                arch_s3_b3: "• Error distance comparison ρ(M₁) vs. ρ(M₀)",
+                arch_s3_b4: "• Global Bayes Factor BF₁₀ = 306.85",
+                sec_charts_title: "3. Results Charts: 6 Functional Clusters (SD) & Percentage Gains",
+                chart1_title: "Shift Across 6 Functional Clusters Over 4,000 Years (Z-PGS, SD)",
+                chart2_title: "Fitness Gain (%) & Percentile Gain Above 50% (pp)",
+                sec_meth_title: "4. Methodology, Scientific Rigor & ABC-SMC on AADR v66.p1",
+                sec_meth_p1: "CIVDEM v0.8.3 benchmarks five regimes and neutral drift M₀ against paleogenomic summaries of 10,703 ancient genomes from AADR v66.p1 (.anno) using ABC-SMC.",
+                m_box1_t: "INSTITUTIONAL MECHANISMS (KII & REGIMES)",
+                m_box1_d: "Continuous KII ∈ [-1.5, +1.5] parameterizes exogamy, cousin marriage, and endogamy alongside elite dispensations, clan/caste boundaries, exam mobility, and environment.",
+                m_box2_t: "BAYESIAN SELECTION M₁ VS. DRIFT M₀",
+                m_box2_d: "ABC-SMC evaluates posterior fit of M₁ versus neutral drift M₀ against empirical summaries, achieving a global Bayes factor of BF₁₀ = 306.85 (log₁₀ BF₁₀ = 2.49).",
+                m_box3_t: "ARTIFACT CONTROL & RAW COUNTER AUDIT",
+                m_box3_d: "Separating normalized Z-PGS (+0.42 SD in South Asia; +0.02 SD in M₀) from raw uncalibrated counters (8.03 SD under caste endogamy; 5.67 SD in M₀) prevents misreading isolation artifacts as net trait shifts.",
+                m_box4_t: "MODEL SCOPE & BOUNDARIES",
+                m_box4_d: "Captures statistical population trends over 4,000 years within defined cluster parameters and AADR v66.p1 coverage—without individual determinism or value hierarchies.",
+                chart3_title: "Cumulative 6 Mutation Clusters by 2000 CE (Global Mean, %)",
+                chart4_title: "Z-PGS Cognition Shift Across Regimes & Null Drift M₀ (SD)",
+                sec4b_title: "4B. Shift Speed, Raw Counter Artifact & Metric Glossary",
+                sec4b_p1: "Over 4,000 years, shift rates reflect KII, cross-group connectivity, and directed/sexual selection.",
+                r4b_1_t: "SHIFT RATE UNDER EXOGAMY & MOBILITY",
+                r4b_1_d: "Broad marriage circles and social mobility (Western Europe +0.89 SD cognition; East Asia +0.85 SD cognition and +1.26 SD immunity) speed up multilocus recombination at low LROH.",
+                r4b_2_t: "RAW COUNTER VS. NET Z-PGS & NULL DRIFT M₀",
+                r4b_2_d: "Raw uncalibrated counters (8.03 SD in caste regime; 5.67 SD in M₀) reflect isolation/accumulation effects, whereas Z-PGS (+0.42 SD in South Asia; +0.02 SD in M₀) and BF₁₀ = 306.85 isolate true selection.",
+                rg_kii: "Continuous kinship intensity index spanning exogamy, cousin marriage, endogamy, and clans.",
+                rg_lroh: "Long Runs of Homozygosity (inbreeding tracts) and population admixture diversity index (PAI).",
+                rg_gini: "Male reproductive inequality and sexual selection under polygyny and elite dispensations.",
+                rg_abc: "ABC Sequential Monte Carlo comparing error distances ρ(M₁) vs. ρ(M₀) on 10,703 AADR v66.p1 genomes.",
+                sec_table_title: "5. Regional Profiles, AADR Sample & Summary Table",
+                sec_table_note: "Empirical calibration uses 10,703 ancient genomes from AADR v66.p1: Western Europe (7,718), Byzantium / Eastern Europe (1,084), South Asia (764), East Asia (726), and Middle East (407).",
+                th_reg: "Region / Regime",
+                tr_me: "Middle East (clans + polygyny)",
+                tr_we: "Western Europe (exogamy + dispensations)",
+                tr_ea: "East Asia (exams + rice)",
+                tr_by: "Byzantium / E. Europe (moderate exogamy)",
+                tr_sa: "South Asia (jati caste endogamy)",
+                tr_m0: "Null Drift M₀ (no selection)",
+                sec_conc_title: "6. Conclusions & Scientific Value",
+                c1: "<strong>Exogamy accelerates combinatorial assembly:</strong> limiting close-kin unions lowers LROH (down to 0.041% in Western Europe) and speeds up favorable polygenic combinations.",
+                c2: "<strong>Institutions shape distinct trade-offs:</strong> clans, castes, polygyny, and mobility balance metabolism, self-control, prosociality, and cross-group mixing differently.",
+                c3: "<strong>Robustness against drift:</strong> M₁ outperforms neutral drift M₀ across 10,703 AADR v66.p1 genomes (BF₁₀ = 306.85, log₁₀ BF₁₀ = 2.49), mapping trade-offs rather than hierarchies."
+            },
+            he: {
+                back_home: "חזרה לראשי",
+                to_simple: "בשפה פשוטה",
+                hero_eyebrow: "CIVDEM v0.8.3 // דמוגרפיה אבולוציונית מבוססת סוכנים ל-4,000 שנה",
+                hero_title: "כיצד כללי נישואין ומוסדות חברתיים מעצבים מאגרי גנים",
+                hero_sub: "תיאור מלא של הסימולציה ל-4,000 שנה, כיול ABC-SMC בייסיאני ואימות מול 10,703 גנומים עתיקים מ-AADR v66.p1.",
+                kpi_years: "שנות סימולציה (~130–150 דורות)",
+                kpi_genomes: "גנומים עתיקים ב-AADR v66.p1",
+                kpi_bf: "עדיפות M₁ מול סחף M₀ (log₁₀ = 2.49)",
+                kpi_speed: "קצב תזוזה מואץ בברירה מכוונת",
+                sec_goals_title: "1. מטרות המחקר וההשערה המרכזית",
+                sec_goals_p1: "המחקר בוחן באופן כמותי כיצד כללי נישואין (אקסוגמיה מול נישואי בני דודים ואנדוגמיה), פטורים לאליטה, קאסטות/חמולות, פוליגמיה, תזונה, רעב וצפיפות אוכלוסין משפיעים על אוכלוסיות לאורך 4,000 שנה.",
+                g1_title: "קרבת משפחה ונישואין (KII)",
+                g1_desc: "כיצד מדד קרבה רציף KII ∈ [-1.5, +1.5] מווסת הומוזיגוטיות ארוכה (LROH), צירוף אללים ופערים בין שכבות.",
+                g2_title: "ברירה מול סחף (M₁ מול M₀)",
+                g2_desc: "הפרדה בין ברירה מוסדית ומינית (M₁) לסחף ניטרלי (M₀) באמצעות גורם בייס BF₁₀ ומרחקי שגיאה ρ(M₁), ρ(M₀).",
+                g3_title: "עיגון ב-DNA עתיק",
+                g3_desc: "השוואת מסלולים ל-10,703 גנומים מ-AADR v66.p1 (0–4000 BP) בחמישה אזורים.",
+                sec_arch_title: "2. ארכיטקטורת CIVDEM v0.8.3 ואימות ABC-SMC",
+                sec_arch_desc: "משלב סימולציית סוכנים לחמישה משטרים ומודל סחף M₀, שישה אשכולות גנטיים תפקודיים ואימות ABC-SMC מול נתונים פלאוגנומיים.",
+                arch_s1_k: "1. INSTITUTIONS & KII", arch_s1_t: "5 משטרים + בקרת M₀",
+                arch_s1_b1: "• מדד קרבה רציף KII ∈ [-1.5, +1.5]",
+                arch_s1_b2: "• אקסוגמיה, חמולות, קאסטות ג׳אטי ופוליגמיה",
+                arch_s1_b3: "• פטורים לאליטה וניידות מבחנים",
+                arch_s1_b4: "• תזונה, רעב ועומס פתוגנים לאורך 4,000 שנה",
+                arch_s2_k: "2. 6 GENOMIC CLUSTERS", arch_s2_t: "Z-PGS, LROH, PAI וג׳יני",
+                arch_s2_b1: "• קוגניציה, שליטה עצמית ופרו-חברתיות",
+                arch_s2_b2: "• תזונה/מטבוליזם, חסינות ועמידות לרעב",
+                arch_s2_b3: "• שיעור רצפי הומוזיגוטיות ארוכים (LROH)",
+                arch_s2_b4: "• מדד ערבוב שושלות (PAI) וג׳יני זכרי",
+                arch_s3_k: "3. EMPIRICAL VALIDATION", arch_s3_t: "AADR v66.p1 (10,703 גנומים)",
+                arch_s3_b1: "• מערב אירופה (7,718), ביזנטיון / מזרח אירופה (1,084)",
+                arch_s3_b2: "• דרום אסיה (764), מזרח אסיה (726), המזרח התיכון (407)",
+                arch_s3_b3: "• השוואת שגיאות ρ(M₁) מול ρ(M₀)",
+                arch_s3_b4: "• גורם בייס עולמי BF₁₀ = 306.85",
+                sec_charts_title: "3. גרפים: 6 אשכולות (SD) ושיעורי שיפור (%)",
+                chart1_title: "שינוי ב-6 אשכולות תפקודיים ב-4,000 שנה (Z-PGS, SD)",
+                chart2_title: "עלייה בכשירות (%) ושיפור מעל אחוזון 50 (נק׳)",
+                sec_meth_title: "4. מתודולוגיה, דיוק מדעי ו-ABC-SMC על AADR v66.p1",
+                sec_meth_p1: "CIVDEM v0.8.3 משווה חמישה משטרים וסחף ניטרלי M₀ מול מדדים פלאוגנומיים של 10,703 גנומים מ-AADR v66.p1 בשיטת ABC-SMC.",
+                m_box1_t: "מנגנונים מוסדיים (KII ומשטרים)",
+                m_box1_d: "מדד KII ∈ [-1.5, +1.5] מגדיר אקסוגמיה, נישואי קרובים ואנדוגמיה לצד פטורים לאליטה, גבולות קאסטה/חמולה, ניידות וסביבה.",
+                m_box2_t: "ברירה בייסיאנית M₁ מול סחף M₀",
+                m_box2_d: "אלגוריתם ABC-SMC בודק התאמה של M₁ מול M₀ על פני 10,703 גנומים עם גורם בייס BF₁₀ = 306.85 (log₁₀ BF₁₀ = 2.49).",
+                m_box3_t: "בקרת ארטיפקטים וספירה גולמית",
+                m_box3_d: "הפרדה בין Z-PGS מנורמל (+0.42 SD בדרום אסיה; +0.02 SD ב-M₀) לבין ספירה גולמית (8.03 SD בקאסטות; 5.67 SD ב-M₀) מונעת פרשנות שגויה של בידוד.",
+                m_box4_t: "גבולות המודל והיקפו",
+                m_box4_d: "מתאר מגמות אוכלוסייה סטטיסטיות לאורך 4,000 שנה ומדגם AADR v66.p1 — ללא דטרמיניזם פרטני או היררכיית ערך.",
+                chart3_title: "רמה מצטברת של 6 אשכולות מוטציות עד 2000 לספירה (ממוצע עולמי, %)",
+                chart4_title: "שינוי Z-PGS קוגניטיבי לפי משטר ובקרת סחף M₀ (SD)",
+                sec4b_title: "4ב. קצב התזוזה, ארטיפקט הספירה הגולמית ומילון מדדים",
+                sec4b_p1: "לאורך 4,000 שנה קצב השינוי משקף KII, קישוריות בין-קבוצתית וברירה מוסדית/מינית.",
+                r4b_1_t: "קצב תזוזה באקסוגמיה וניידות",
+                r4b_1_d: "מעגלי נישואין פתוחים וניידות חברתית (מערב אירופה +0.89 SD בקוגניציה; מזרח אסיה +0.85 SD בקוגניציה ו-+1.26 SD בחסינות) מאיצים צירוף תכונות עם LROH נמוך.",
+                r4b_2_t: "מדד גולמי מול Z-PGS נטו ובקרת סחף M₀",
+                r4b_2_d: "מדדים גולמיים (8.03 SD בקאסטות; 5.67 SD ב-M₀) משקפים בידוד וצבירה, בעוד Z-PGS (+0.42 SD בדרום אסיה; +0.02 SD ב-M₀) ו-BF₁₀ = 306.85 מבדדים ברירה אמיתית.",
+                rg_kii: "מדד קרבה רציף בין אקסוגמיה, נישואי קרובים, אנדוגמיה וחמולות.",
+                rg_lroh: "רצפי הומוזיגוטיות ארוכים (LROH) ומדד ערבוב שושלות (PAI).",
+                rg_gini: "אי-שוויון רבייתי זכרי וברירה מינית תחת פוליגמיה ופטורים לאליטה.",
+                rg_abc: "כיול ABC-SMC המשווה שגיאות ρ(M₁) מול ρ(M₀) על 10,703 גנומים מ-AADR v66.p1.",
+                sec_table_title: "5. פרופילים אזוריים, מדגם AADR וטבלת סיכום",
+                sec_table_note: "הכיול האמפירי מבוסס על 10,703 גנומים מ-AADR v66.p1: מערב אירופה (7,718), ביזנטיון / מזרח אירופה (1,084), דרום אסיה (764), מזרח אסיה (726) והמזרח התיכון (407).",
+                th_reg: "אזור / משטר",
+                tr_me: "המזרח התיכון (חמולות + פוליגמיה)",
+                tr_we: "מערב אירופה (אקסוגמיה + פטורים)",
+                tr_ea: "מזרח אסיה (מבחנים + אורז)",
+                tr_by: "ביזנטיון / מזרח אירופה (אקסוגמיה מתונה)",
+                tr_sa: "דרום אסיה (אנדוגמיית קאסטות ג׳אטי)",
+                tr_m0: "בקרת סחף M₀ (ללא ברירה)",
+                sec_conc_title: "6. מסקנות וערך מדעי",
+                c1: "<strong>אקסוגמיה מאיצה צירוף תכונות:</strong> הפחתת נישואי קרובים מורידה LROH (עד 0.041% במערב אירופה) ומקדמת שילובים מועילים.",
+                c2: "<strong>מוסדות יוצרים פשרות שונות:</strong> חמולות, קאסטות, פוליגמיה וניידות מאזנות אחרת בין מטבוליזם, שליטה עצמית, פרו-חברתיות וערבוב.",
+                c3: "<strong>אמינות מול סחף:</strong> M₁ עדיף על M₀ ב-10,703 גנומים (BF₁₀ = 306.85, log₁₀ BF₁₀ = 2.49) ומציג פשרות אבולוציוניות ללא היררכיה."
+            }
+        };
+
+        let clustersChartInstance = null;
+        let percentChartInstance = null;
+        let mutationsChartInstance = null;
+        let cognitionModesChartInstance = null;
+
+        function chartOpts() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 11 } } } },
+                scales: {
+                    x: { ticks: { color: '#cbd5e1', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                    y: { ticks: { color: '#cbd5e1', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.08)' } }
+                }
+            };
+        }
+
+        function renderCharts(lang) {
+            const isRu = lang === 'ru';
+            const isHe = lang === 'he';
+
+            const labels = isRu
+                ? ['Интеллект', 'Самоконтроль', 'Просоциальность', 'Диета/метаб.', 'Иммунитет', 'Выносливость']
+                : isHe
+                    ? ['קוגניציה', 'שליטה עצמית', 'פרו-חברתיות', 'מטבוליזם', 'חסינות', 'עמידות']
+                    : ['Cognition', 'Self-Control', 'Prosociality', 'Diet/Metab.', 'Immunity', 'Famine'];
+
+            const series = [
+                { label: isRu ? 'Ближний Восток' : (isHe ? 'המזרח התיכון' : 'Middle East'), data: [0.48, 1.19, 1.30, 1.75, 0.76, 0.77], backgroundColor: 'rgba(245, 158, 11, 0.78)' },
+                { label: isRu ? 'Западная Европа' : (isHe ? 'מערב אירופה' : 'Western Europe'), data: [0.89, 0.52, 0.82, 0.74, 0.86, 0.79], backgroundColor: 'rgba(129, 140, 248, 0.82)' },
+                { label: isRu ? 'Восточная Азия' : (isHe ? 'מזרח אסיה' : 'East Asia'), data: [0.85, 0.36, 0.64, 0.76, 1.26, 0.49], backgroundColor: 'rgba(45, 212, 191, 0.78)' },
+                { label: isRu ? 'Византия / Вост. Европа' : (isHe ? 'ביזנטיון / מזרח אירופה' : 'Byzantium / E. Europe'), data: [0.27, 0.87, 2.37, 0.64, 0.15, 0.06], backgroundColor: 'rgba(192, 132, 252, 0.78)' },
+                { label: isRu ? 'Южная Азия (джати)' : (isHe ? 'דרום אסיה (ג׳אטי)' : 'South Asia (Jati)'), data: [0.42, 1.24, 0.45, 0.46, 0.13, -0.12], backgroundColor: 'rgba(251, 113, 133, 0.78)' }
+            ];
+
+            if (clustersChartInstance) clustersChartInstance.destroy();
+            clustersChartInstance = new Chart(document.getElementById('clustersChart'), {
+                type: 'bar',
+                data: { labels, datasets: series },
+                options: chartOpts()
+            });
+
+            const regLabels = isRu
+                ? ['Ближний Восток', 'Зап. Европа', 'Вост. Азия', 'Византия / В.Е.', 'Южная Азия', 'Дрейф M₀']
+                : isHe
+                    ? ['המזרח התיכון', 'מערב אירופה', 'מזרח אסיה', 'ביזנטיון', 'דרום אסיה', 'סחף M₀']
+                    : ['Middle East', 'W. Europe', 'E. Asia', 'Byzantium', 'S. Asia', 'Drift M₀'];
+
+            if (percentChartInstance) percentChartInstance.destroy();
+            percentChartInstance = new Chart(document.getElementById('percentChart'), {
+                type: 'bar',
+                data: {
+                    labels: regLabels,
+                    datasets: [
+                        { label: isRu ? 'Прирост приспособленности (%)' : (isHe ? 'עלייה בכשירות (%)' : 'Fitness Gain (%)'), data: [2.47, 1.91, 1.96, 1.88, 1.35, 0.72], backgroundColor: 'rgba(52, 211, 153, 0.82)' },
+                        { label: isRu ? 'Сдвиг перцентиля над 50% (п.п.)' : (isHe ? 'שיפור באחוזון מעל 50% (נק׳)' : 'Percentile Gain above 50% (pp)'), data: [35.1, 27.9, 26.6, 26.6, 16.6, 1.0], backgroundColor: 'rgba(168, 85, 247, 0.78)' }
+                    ]
+                },
+                options: chartOpts()
+            });
+
+            const mLabels = isRu
+                ? ['Иммунитет', 'Самоконтроль', 'Просоциальность', 'Выносливость', 'Метаболизм', 'Интеллект']
+                : isHe
+                    ? ['חסינות', 'שליטה עצמית', 'פרו-חברתיות', 'עמידות', 'מטבוליזם', 'קוגניציה']
+                    : ['Immunity', 'Self-Control', 'Prosociality', 'Famine', 'Diet/Metab.', 'Cognition'];
+
+            if (mutationsChartInstance) mutationsChartInstance.destroy();
+            mutationsChartInstance = new Chart(document.getElementById('mutationsChart'), {
+                type: 'bar',
+                data: {
+                    labels: mLabels,
+                    datasets: [{
+                        label: isRu ? 'Накопленный уровень кластера мутаций (%)' : (isHe ? 'רמה מצטברת של אשכול מוטציות (%)' : 'Cumulative Mutation Cluster Level (%)'),
+                        data: [5.95, 5.62, 5.50, 5.25, 4.77, 4.73],
+                        backgroundColor: 'rgba(251, 191, 36, 0.78)'
+                    }]
+                },
+                options: chartOpts()
+            });
+
+            const cogLabels = isRu
+                ? ['Зап. Европа', 'Вост. Азия', 'Ближ. Восток', 'Юж. Азия', 'Византия', 'Дрейф M₀']
+                : isHe
+                    ? ['מערב אירופה', 'מזרח אסיה', 'המזרח התיכון', 'דרום אסיה', 'ביזנטיון', 'סחף M₀']
+                    : ['W. Europe', 'E. Asia', 'Middle East', 'S. Asia', 'Byzantium', 'Drift M₀'];
+
+            if (cognitionModesChartInstance) cognitionModesChartInstance.destroy();
+            cognitionModesChartInstance = new Chart(document.getElementById('cognitionModesChart'), {
+                type: 'bar',
+                data: {
+                    labels: cogLabels,
+                    datasets: [{
+                        label: isRu ? 'Сдвиг Z-PGS интеллекта (SD)' : (isHe ? 'שינוי Z-PGS קוגניטיבי (SD)' : 'Z-PGS Cognition Shift (SD)'),
+                        data: [0.89, 0.85, 0.48, 0.42, 0.27, 0.02],
+                        backgroundColor: 'rgba(129, 140, 248, 0.82)'
+                    }]
+                },
+                options: chartOpts()
+            });
+        }
+
+        function setLang(lang) {
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if (i18nData[lang] && i18nData[lang][k]) el.innerHTML = i18nData[lang][k];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const active = btn.getAttribute('data-lang') === lang;
+                btn.className = `lang-btn px-3 py-1 rounded-lg transition-colors ${active ? 'bg-indigo-500/25 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white'}`;
+            });
+            renderCharts(lang);
+        }
+
+        const bl = navigator.language.split('-')[0];
+        setLang(i18nData[bl] ? bl : 'ru');
+    </script>
+</body>
+</html>
