@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /egorchekvpn
+Disallow: /api/
+Disallow: /o/
+
+Sitemap: https://699718.space/sitemap.xml
