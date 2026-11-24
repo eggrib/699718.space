@@ -6,222 +6,185 @@
     <meta name="description" content="tabletka (.NET 8) — desktop overlay and pill modules: Media pill, system monitors, hotkeys, and UI.">
     <meta name="theme-color" content="#4f46e5">
     <title>tabletka — .NET 8 Desktop Overlay</title>
+    <script defer src="https://stats.699718.space/script.js" data-website-id="e9088ac7-7a29-4f15-a61a-ac661564484b"></script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23818cf8'/><stop offset='100%25' stop-color='%23c084fc'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='%230f172a'/><polygon points='18,3 8,18 15,18 14,29 24,14 17,14' fill='url(%23g)'/></svg>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <style id="tw-compiled">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.-end-32{inset-inline-end:-8rem}.-top-32{top:-8rem}.z-10{z-index:10}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.me-1{margin-inline-end:.25rem}.me-1\.5{margin-inline-end:.375rem}.me-2{margin-inline-end:.5rem}.me-4{margin-inline-end:1rem}.ms-1\.5{margin-inline-start:.375rem}.ms-2{margin-inline-start:.5rem}.ms-4{margin-inline-start:1rem}.mt-0\.5{margin-top:.125rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-11{height:2.75rem}.h-2{height:.5rem}.h-96{height:24rem}.min-h-\[36px\]{min-height:36px}.min-h-\[40px\]{min-height:40px}.min-h-\[42px\]{min-height:42px}.min-h-\[44px\]{min-height:44px}.min-h-screen{min-height:100vh}.w-11{width:2.75rem}.w-2{width:.5rem}.w-96{width:24rem}.w-full{width:100%}.min-w-0{min-width:0}.max-w-3xl{max-width:48rem}.max-w-5xl{max-width:64rem}.max-w-full{max-width:100%}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}.list-disc{list-style-type:disc}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-3\.5{gap:.875rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-x-3{-moz-column-gap:.75rem;column-gap:.75rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-y-1{row-gap:.25rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-3\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.875rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.875rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.space-y-5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem*var(--tw-space-y-reverse))}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem*var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-hidden{overflow-x:hidden}.break-words{overflow-wrap:break-word}.rounded-2xl{border-radius:1rem}.rounded-\[1\.75rem\]{border-radius:1.75rem}.rounded-\[2rem\]{border-radius:2rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-t{border-top-width:1px}.border-amber-500\/20{border-color:rgba(245,158,11,.2)}.border-cyan-500\/20{border-color:rgba(6,182,212,.2)}.border-emerald-400\/20{border-color:rgba(52,211,153,.2)}.border-emerald-400\/35{border-color:rgba(52,211,153,.35)}.border-emerald-500\/15{border-color:rgba(16,185,129,.15)}.border-emerald-500\/20{border-color:rgba(16,185,129,.2)}.border-fuchsia-500\/20{border-color:rgba(217,70,239,.2)}.border-indigo-400\/30{border-color:rgba(129,140,248,.3)}.border-indigo-500\/20{border-color:rgba(99,102,241,.2)}.border-lime-500\/20{border-color:rgba(132,204,22,.2)}.border-purple-400\/30{border-color:rgba(192,132,252,.3)}.border-purple-500\/20{border-color:rgba(168,85,247,.2)}.border-rose-500\/20{border-color:rgba(244,63,94,.2)}.border-sky-400\/35{border-color:rgba(56,189,248,.35)}.border-sky-500\/20{border-color:rgba(14,165,233,.2)}.border-teal-500\/20{border-color:rgba(20,184,166,.2)}.border-violet-500\/20{border-color:rgba(139,92,246,.2)}.border-white\/10{border-color:hsla(0,0%,100%,.1)}.border-white\/15{border-color:hsla(0,0%,100%,.15)}.bg-amber-500\/10{background-color:rgba(245,158,11,.1)}.bg-amber-500\/20{background-color:rgba(245,158,11,.2)}.bg-cyan-500\/10{background-color:rgba(6,182,212,.1)}.bg-cyan-500\/20{background-color:rgba(6,182,212,.2)}.bg-emerald-500\/10{background-color:rgba(16,185,129,.1)}.bg-emerald-500\/15{background-color:rgba(16,185,129,.15)}.bg-emerald-500\/20{background-color:rgba(16,185,129,.2)}.bg-fuchsia-500\/10{background-color:rgba(217,70,239,.1)}.bg-fuchsia-500\/20{background-color:rgba(217,70,239,.2)}.bg-indigo-500\/10{background-color:rgba(99,102,241,.1)}.bg-indigo-500\/20{background-color:rgba(99,102,241,.2)}.bg-indigo-500\/25{background-color:rgba(99,102,241,.25)}.bg-indigo-600\/20{background-color:rgba(79,70,229,.2)}.bg-lime-500\/10{background-color:rgba(132,204,22,.1)}.bg-lime-500\/20{background-color:rgba(132,204,22,.2)}.bg-purple-400{--tw-bg-opacity:1;background-color:rgb(192 132 252/var(--tw-bg-opacity,1))}.bg-purple-500\/10{background-color:rgba(168,85,247,.1)}.bg-purple-500\/20{background-color:rgba(168,85,247,.2)}.bg-purple-600\/20{background-color:rgba(147,51,234,.2)}.bg-rose-500\/10{background-color:rgba(244,63,94,.1)}.bg-rose-500\/20{background-color:rgba(244,63,94,.2)}.bg-sky-500\/10{background-color:rgba(14,165,233,.1)}.bg-sky-500\/20{background-color:rgba(14,165,233,.2)}.bg-slate-800\/80{background-color:rgba(30,41,59,.8)}.bg-slate-800\/90{background-color:rgba(30,41,59,.9)}.bg-slate-900\/55{background-color:rgba(15,23,42,.55)}.bg-slate-900\/60{background-color:rgba(15,23,42,.6)}.bg-slate-900\/80{background-color:rgba(15,23,42,.8)}.bg-teal-500\/10{background-color:rgba(20,184,166,.1)}.bg-teal-500\/20{background-color:rgba(20,184,166,.2)}.bg-violet-500\/10{background-color:rgba(139,92,246,.1)}.bg-violet-500\/20{background-color:rgba(139,92,246,.2)}.p-0\.5{padding:.125rem}.p-1\.5{padding:.375rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-0\.5{padding-left:.125rem;padding-right:.125rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pt-1{padding-top:.25rem}.pt-3\.5{padding-top:.875rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[clamp\(1\.75rem\2c 8vw\2c 3\.75rem\)\]{font-size:clamp(1.75rem,8vw,3.75rem)}.text-lg{font-size:1.125rem}.text-lg,.text-xl{line-height:1.75rem}.text-xl{font-size:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.uppercase{text-transform:uppercase}.normal-case{text-transform:none}.leading-\[1\.06\]{line-height:1.06}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.tracking-tight{letter-spacing:-.025em}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.tracking-widest{letter-spacing:.1em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.text-cyan-300{--tw-text-opacity:1;color:rgb(103 232 249/var(--tw-text-opacity,1))}.text-cyan-400{--tw-text-opacity:1;color:rgb(34 211 238/var(--tw-text-opacity,1))}.text-emerald-200{--tw-text-opacity:1;color:rgb(167 243 208/var(--tw-text-opacity,1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183/var(--tw-text-opacity,1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153/var(--tw-text-opacity,1))}.text-fuchsia-300{--tw-text-opacity:1;color:rgb(240 171 252/var(--tw-text-opacity,1))}.text-indigo-200{--tw-text-opacity:1;color:rgb(199 210 254/var(--tw-text-opacity,1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252/var(--tw-text-opacity,1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248/var(--tw-text-opacity,1))}.text-lime-300{--tw-text-opacity:1;color:rgb(190 242 100/var(--tw-text-opacity,1))}.text-purple-200{--tw-text-opacity:1;color:rgb(233 213 255/var(--tw-text-opacity,1))}.text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254/var(--tw-text-opacity,1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252/var(--tw-text-opacity,1))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175/var(--tw-text-opacity,1))}.text-sky-200{--tw-text-opacity:1;color:rgb(186 230 253/var(--tw-text-opacity,1))}.text-sky-200\/85{color:rgba(186,230,253,.85)}.text-sky-300{--tw-text-opacity:1;color:rgb(125 211 252/var(--tw-text-opacity,1))}.text-slate-100{--tw-text-opacity:1;color:rgb(241 245 249/var(--tw-text-opacity,1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-teal-300{--tw-text-opacity:1;color:rgb(94 234 212/var(--tw-text-opacity,1))}.text-violet-300{--tw-text-opacity:1;color:rgb(196 181 253/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline{outline-style:solid}.blur{--tw-blur:blur(8px)}.blur,.blur-\[120px\]{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-\[120px\]{--tw-blur:blur(120px)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px)}.backdrop-blur-md,.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:bg-emerald-500\/25:hover{background-color:rgba(16,185,129,.25)}.hover\:bg-indigo-600\/35:hover{background-color:rgba(79,70,229,.35)}.hover\:bg-purple-600\/35:hover{background-color:rgba(147,51,234,.35)}.hover\:bg-sky-500\/30:hover{background-color:rgba(14,165,233,.3)}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity,1))}.hover\:bg-slate-700\/80:hover{background-color:rgba(51,65,85,.8)}.hover\:bg-slate-700\/90:hover{background-color:rgba(51,65,85,.9)}.hover\:text-amber-200:hover{--tw-text-opacity:1;color:rgb(253 230 138/var(--tw-text-opacity,1))}.hover\:text-cyan-200:hover{--tw-text-opacity:1;color:rgb(165 243 252/var(--tw-text-opacity,1))}.hover\:text-cyan-300:hover{--tw-text-opacity:1;color:rgb(103 232 249/var(--tw-text-opacity,1))}.hover\:text-emerald-200:hover{--tw-text-opacity:1;color:rgb(167 243 208/var(--tw-text-opacity,1))}.hover\:text-fuchsia-200:hover{--tw-text-opacity:1;color:rgb(245 208 254/var(--tw-text-opacity,1))}.hover\:text-indigo-200:hover{--tw-text-opacity:1;color:rgb(199 210 254/var(--tw-text-opacity,1))}.hover\:text-indigo-300:hover{--tw-text-opacity:1;color:rgb(165 180 252/var(--tw-text-opacity,1))}.hover\:text-lime-200:hover{--tw-text-opacity:1;color:rgb(217 249 157/var(--tw-text-opacity,1))}.hover\:text-purple-200:hover{--tw-text-opacity:1;color:rgb(233 213 255/var(--tw-text-opacity,1))}.hover\:text-purple-300:hover{--tw-text-opacity:1;color:rgb(216 180 254/var(--tw-text-opacity,1))}.hover\:text-rose-200:hover{--tw-text-opacity:1;color:rgb(254 205 211/var(--tw-text-opacity,1))}.hover\:text-sky-200:hover{--tw-text-opacity:1;color:rgb(186 230 253/var(--tw-text-opacity,1))}.hover\:text-teal-200:hover{--tw-text-opacity:1;color:rgb(153 246 228/var(--tw-text-opacity,1))}.hover\:text-violet-200:hover{--tw-text-opacity:1;color:rgb(221 214 254/var(--tw-text-opacity,1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}@media (min-width:360px){.min-\[360px\]\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (min-width:640px){.sm\:inline-block{display:inline-block}.sm\:flex{display:flex}.sm\:w-80{width:20rem}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}.sm\:flex-wrap{flex-wrap:wrap}.sm\:items-center{align-items:center}.sm\:justify-start{justify-content:flex-start}.sm\:gap-6{gap:1.5rem}.sm\:space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.sm\:space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem*var(--tw-space-y-reverse))}.sm\:rounded-\[2\.25rem\]{border-radius:2.25rem}.sm\:p-6{padding:1.5rem}.sm\:px-2{padding-left:.5rem;padding-right:.5rem}.sm\:px-4{padding-left:1rem;padding-right:1rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:py-5{padding-top:1.25rem;padding-bottom:1.25rem}.sm\:py-8{padding-top:2rem;padding-bottom:2rem}.sm\:text-sm{font-size:.875rem;line-height:1.25rem}.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width:768px){.md\:col-span-5{grid-column:span 5/span 5}.md\:col-span-7{grid-column:span 7/span 7}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-80{width:20rem}.md\:w-96{width:24rem}.md\:grid-cols-12{grid-template-columns:repeat(12,minmax(0,1fr))}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:p-10{padding:2.5rem}.md\:p-6{padding:1.5rem}.md\:p-8{padding:2rem}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-sm{font-size:.875rem;line-height:1.25rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width:1024px){.lg\:w-96{width:24rem}}.rtl\:flex-row-reverse:where([dir=rtl],[dir=rtl] *){flex-direction:row-reverse}</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Heebo:wght@400;700&display=swap" rel="stylesheet"></noscript>
     <style>
-        body {
-            background: #020617;
-            color: #f1f5f9;
-            font-family: 'Unbounded', sans-serif;
-            background-image:
-                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15), transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.15), transparent 40%);
-            transition: direction 0.3s ease;
-        }
-        html[dir="rtl"] body { font-family: 'Heebo', sans-serif; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        html[dir="rtl"] .mono { font-family: 'JetBrains Mono', monospace; direction: ltr; display: inline-block; }
-
-        .glass {
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            z-index: 1;
-        }
-        .glass:hover {
-            background: rgba(15, 23, 42, 0.8);
-            border-color: rgba(99, 102, 241, 0.5);
-            box-shadow: 0 20px 40px -15px rgba(99,102,241,0.15);
-        }
-        .gradient-text {
-            background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientMove 3s linear infinite;
-        }
-        @keyframes gradientMove { to { background-position: 200% center; } }
-
-        .cta-btn { position: relative; background: #4f46e5; z-index: 1; }
-        .cta-btn::before {
-            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, #4f46e5, #9333ea, #4f46e5);
-            z-index: -1; border-radius: 1.1rem; background-size: 200%;
-            animation: gradientMove 3s linear infinite; opacity: 0; transition: opacity 0.3s ease;
-        }
-        .cta-btn:hover::before { opacity: 1; }
-
-        .card-details {
-            max-height: 0; opacity: 0; overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .card-details.open {
-            max-height: none; opacity: 1; overflow: visible; margin-top: 1rem; padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .chevron { transition: transform 0.3s ease; }
-        .open-btn.active .chevron { transform: rotate(180deg); }
-
-        .card-spotlight { position: absolute; pointer-events: none; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); transform: translate(-50%, -50%); transition: opacity 0.3s; opacity: 0; z-index: 0; top: 0; left: 0; }
-
-        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(15,23,42,0.95); border: 1px solid rgba(99,102,241,0.4); color: #e2e8f0; padding: 0.75rem 1.5rem; border-radius: 1rem; font-size: 0.85rem; z-index: 9999; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s; opacity: 0; backdrop-filter: blur(12px); white-space: nowrap; }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-        #term-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(8px); z-index: 9998; display: none; align-items: center; justify-content: center; }
-        #term-overlay.open { display: flex; }
-        #term-box { background: #0d1117; border: 1px solid rgba(99,102,241,0.4); border-radius: 1rem; width: 90%; max-width: 640px; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #c9d1d9; box-shadow: 0 0 60px rgba(99,102,241,0.2); max-height: 70vh; overflow-y: auto; }
-        #term-box .t-header { color: #6e7681; margin-bottom: 1rem; border-bottom: 1px solid #21262d; padding-bottom: 0.5rem; }
-        .t-prompt { color: #58a6ff; }
-        .t-out { color: #3fb950; white-space: pre; }
-        .t-err { color: #f85149; }
-        #t-input { background: none; border: none; outline: none; color: #c9d1d9; font-family: inherit; font-size: inherit; width: calc(100% - 10rem); caret-color: #58a6ff; }
-
-        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.5s ease; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .cursor-blink { animation: blink 1s step-end infinite; }
-        #cursor-glow { position: fixed; pointer-events: none; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%); transform: translate(-50%, -50%); z-index: 0; transition: opacity 0.3s; opacity: 0; top: 0; left: 0; }
-        #features-panel {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            margin-top: 0;
-            transition: max-height 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin-top 0.4s ease;
-        }
-        #features-panel.open {
-            max-height: none;
-            opacity: 1;
-            overflow: visible;
-            margin-top: 1.5rem;
-        }
-        #features-toggle-btn .pill-chev {
-            transition: transform 0.3s ease;
-        }
-        #features-toggle-btn.active .pill-chev {
-            transform: rotate(180deg);
-        }
-        #img-lightbox {
-            position: fixed;
-            inset: 0;
-            background: rgba(2, 6, 23, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-        #img-lightbox.open { display: flex; }
-        #img-lightbox img {
-            max-width: 95vw;
-            max-height: 88vh;
-            border-radius: 1.25rem;
-            border: 1px solid rgba(129, 140, 248, 0.35);
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75);
-            object-fit: contain;
-            background: #050a18;
-        }
-        /* SHOT_CSS_START */
-        .shot-box {
-            position: relative;
-            display: inline-block;
-            max-width: 100%;
-            border-radius: 1rem;
-            overflow: hidden;
-            border: 1px solid rgba(129, 140, 248, 0.25);
-            background: #050a18;
-            cursor: zoom-in;
-            line-height: 0;
-            transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-        }
-        .shot-box:hover {
-            border-color: rgba(168, 85, 247, 0.65);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px -8px rgba(99, 102, 241, 0.35);
-        }
-        .shot-box img {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-        .card-details .shot-box {
-            display: inline-block;
-            width: fit-content;
-            max-width: 100%;
-        }
-        .card-details .shot-box img {
-            display: block;
-            width: auto;
-            max-width: 100%;
-            height: auto;
-            max-height: 220px;
-        }
-        .shot-zoom-badge {
-            position: absolute;
-            inset-inline-end: 0.45rem;
-            inset-block-end: 0.45rem;
-            line-height: 1.2;
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            color: #e2e8f0;
-            font-size: 10px;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.5rem;
-            pointer-events: none;
-            backdrop-filter: blur(8px);
-        }
-        /* SHOT_CSS_END */
-        .reveal:not(.visible) { opacity: 1 !important; transform: none !important; }
+      body {
+        background: #020617;
+        color: #f1f5f9;
+        font-family: 'Unbounded', sans-serif;
+        background-image:
+          radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.16), transparent 42%),
+          radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.16), transparent 42%);
+        transition: direction 0.25s ease;
+      }
+      html[dir="rtl"] body { font-family: 'Heebo', sans-serif; }
+      .mono { font-family: 'JetBrains Mono', monospace; }
+      html[dir="rtl"] .mono { font-family: 'JetBrains Mono', monospace; direction: ltr; display: inline-block; }
+      .glass {
+        background: rgba(15, 23, 42, 0.56);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        z-index: 1;
+      }
+      .glass:hover {
+        background: rgba(15, 23, 42, 0.84);
+        border-color: rgba(99, 102, 241, 0.45);
+        box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.15);
+      }
+      .gradient-text {
+        background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientMove 3s linear infinite;
+      }
+      @keyframes gradientMove { to { background-position: 200% center; } }
+      .cta-btn { position: relative; background: linear-gradient(135deg, #4f46e5, #6366f1); z-index: 1; }
+      .cta-btn::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(45deg, #4f46e5, #9333ea, #4f46e5);
+        z-index: -1;
+        border-radius: 0.95rem;
+        background-size: 200%;
+        animation: gradientMove 3s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .cta-btn:hover::before { opacity: 1; }
+      .card-details {
+        max-height: 0; opacity: 0; overflow: hidden;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .card-details.open {
+        max-height: none; opacity: 1; overflow: visible; margin-top: 1rem; padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .chevron { transition: transform 0.3s ease; }
+      .open-btn { min-height: 38px; padding-block: 0.45rem; }
+      .open-btn.active .chevron { transform: rotate(180deg); }
+      section h2 { overflow-wrap: anywhere; hyphens: auto; }
+      .card-spotlight { position: absolute; pointer-events: none; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); transform: translate(-50%, -50%); transition: opacity 0.3s; opacity: 0; z-index: 0; top: 0; left: 0; }
+      .toast {
+        position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+        background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(99, 102, 241, 0.45);
+        color: #e2e8f0; padding: 0.75rem 1.25rem; border-radius: 1rem; font-size: 0.85rem;
+        max-width: calc(100vw - 2rem); text-align: center;
+        z-index: 9999; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s;
+        opacity: 0; backdrop-filter: blur(12px);
+      }
+      .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+      #term-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(8px); z-index: 9998; display: none; align-items: center; justify-content: center; }
+      #term-overlay.open { display: flex; }
+      #term-box { background: #0d1117; border: 1px solid rgba(99,102,241,0.4); border-radius: 1rem; width: 92%; max-width: 640px; padding: 1.15rem 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #c9d1d9; box-shadow: 0 0 60px rgba(99,102,241,0.2); max-height: 75vh; overflow-y: auto; }
+      #term-box .t-header { color: #6e7681; margin-bottom: 1rem; border-bottom: 1px solid #21262d; padding-bottom: 0.5rem; }
+      .t-prompt { color: #58a6ff; white-space: nowrap; }
+      .t-out { color: #3fb950; white-space: pre-wrap; word-break: break-word; }
+      .t-err { color: #f85149; }
+      #t-input { background: none; border: none; outline: none; color: #c9d1d9; font-family: inherit; font-size: inherit; flex: 1; min-width: 90px; caret-color: #58a6ff; }
+      @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+      .cursor-blink { animation: blink 1s step-end infinite; }
+      #cursor-glow { position: fixed; pointer-events: none; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%); transform: translate(-50%, -50%); z-index: 0; transition: opacity 0.3s; opacity: 0; top: 0; left: 0; }
+      #features-panel { max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: max-height 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin-top 0.4s ease; }
+      #features-panel.open { max-height: none; opacity: 1; overflow: visible; margin-top: 1.5rem; }
+      #features-toggle-btn .pill-chev { transition: transform 0.3s ease; }
+      #features-toggle-btn.active .pill-chev { transform: rotate(180deg); }
+      #img-lightbox { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
+      #img-lightbox.open { display: flex; }
+      #img-lightbox img { max-width: 95vw; max-height: 88vh; border-radius: 1.25rem; border: 1px solid rgba(129, 140, 248, 0.35); box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75); object-fit: contain; background: #050a18; }
+      .shot-box { position: relative; display: inline-block; max-width: 100%; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(129, 140, 248, 0.25); background: #050a18; cursor: zoom-in; line-height: 0; transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+      .shot-box:hover { border-color: rgba(168, 85, 247, 0.65); transform: translateY(-2px); box-shadow: 0 12px 28px -8px rgba(99, 102, 241, 0.35); }
+      .shot-box picture { display: block; width: 100%; }
+      .shot-box img { display: block; width: 100%; height: auto; }
+      .card-details .shot-box { display: inline-block; width: fit-content; max-width: 100%; }
+      .card-details .shot-box picture { display: block; width: auto; max-width: 100%; }
+      .card-details .shot-box img { display: block; width: auto; max-width: 100%; height: auto; max-height: 220px; }
+      .shot-zoom-badge { position: absolute; inset-inline-end: 0.45rem; inset-block-end: 0.45rem; line-height: 1.2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.18); color: #e2e8f0; font-size: 10px; padding: 0.2rem 0.5rem; border-radius: 0.5rem; pointer-events: none; backdrop-filter: blur(8px); }
     </style>
 </head>
-<body class="antialiased min-h-screen py-12 px-4 flex justify-center items-center">
+<body class="antialiased min-h-screen py-3.5 sm:py-8 px-3.5 sm:px-4 overflow-x-hidden">
 
-    <div class="max-w-5xl w-full space-y-6 relative">
+    <div class="max-w-5xl w-full mx-auto space-y-4 sm:space-y-6 relative">
 
-        <div class="absolute -top-12 md:-top-10 end-4 z-20">
-            <button onclick="toggleLangMenu()" class="md:hidden bg-slate-900/50 p-2 rounded-xl border border-white/5 backdrop-blur-md text-xs mono text-slate-300 hover:text-white transition-colors">
-                <i class="fas fa-globe me-1"></i><span id="current-lang">RU</span> <i class="fas fa-chevron-down ms-1 text-[10px]"></i>
-            </button>
-            <div id="lang-menu" class="hidden md:flex flex-wrap justify-end gap-1 text-xs md:text-sm mono bg-slate-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-md max-w-[90vw]">
-                <button onclick="setLang('en')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="en">EN</button>
-                <button onclick="setLang('de')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="de">DE</button>
-                <button onclick="setLang('fr')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="fr">FR</button>
-                <button onclick="setLang('es')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="es">ES</button>
-                <button onclick="setLang('ru')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="ru">RU</button>
-                <button onclick="setLang('he')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md" data-lang="he">HE</button>
+        <div class="flex flex-wrap items-center justify-between gap-2.5 px-1 sm:px-2">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs mono text-slate-400">
+                <a href="https://699718.space/" class="hover:text-white transition-colors inline-flex items-center gap-1.5 min-h-[36px] py-1.5">
+                    <i class="fas fa-arrow-left text-indigo-400"></i><span>699718.space</span>
+                </a>
+                <span>·</span>
+                <span class="text-slate-200 font-bold py-1.5">tabletka</span>
+                <span>·</span>
+                <a href="https://shop.699718.space/" class="text-emerald-300 hover:text-white transition-colors inline-flex items-center gap-1.5 min-h-[36px] py-1.5">
+                    <i class="fas fa-bolt text-emerald-400"></i><span>tabletkaConnect</span>
+                </a>
+            </div>
+            <div class="relative flex flex-wrap items-center gap-2">
+                <button onclick="toggleLangMenu()" class="md:hidden bg-slate-900/60 px-3.5 py-2 min-h-[36px] rounded-xl border border-white/10 backdrop-blur-md text-xs mono text-slate-300 hover:text-white transition-colors inline-flex items-center">
+                    <i class="fas fa-globe me-1.5"></i><span id="current-lang">RU</span> <i class="fas fa-chevron-down ms-1.5 text-[10px]"></i>
+                </button>
+                <div id="lang-menu" class="hidden md:flex flex-wrap justify-end gap-1 text-xs mono bg-slate-900/60 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
+                    <button onclick="setLang('en')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2.5 py-1.5 min-h-[36px] rounded-xl" data-lang="en">EN</button>
+                    <button onclick="setLang('de')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2.5 py-1.5 min-h-[36px] rounded-xl" data-lang="de">DE</button>
+                    <button onclick="setLang('fr')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2.5 py-1.5 min-h-[36px] rounded-xl" data-lang="fr">FR</button>
+                    <button onclick="setLang('es')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2.5 py-1.5 min-h-[36px] rounded-xl" data-lang="es">ES</button>
+                    <button onclick="setLang('ru')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2.5 py-1.5 min-h-[36px] rounded-xl" data-lang="ru">RU</button>
+                    <button onclick="setLang('he')" class="lang-btn text-slate-400 hover:text-white transition-colors px-2.5 py-1.5 min-h-[36px] rounded-xl" data-lang="he">HE</button>
+                </div>
             </div>
         </div>
 
-        <header class="reveal glass rounded-[2rem] p-6 md:p-10 relative overflow-hidden mt-6 md:mt-0 flex flex-col gap-6">
+        <header class="reveal glass rounded-[1.75rem] sm:rounded-[2.25rem] p-4 sm:p-6 md:p-10 relative overflow-hidden flex flex-col gap-4 sm:gap-6">
             <div class="absolute -top-32 -end-32 w-96 h-96 bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none"></div>
 
-            <div class="relative z-10 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div class="flex-1 space-y-4 min-w-0">
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <div class="inline-flex items-center space-x-2 rtl:space-x-reverse bg-purple-500/10 px-4 py-1.5 rounded-full border border-purple-500/20">
-                            <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
+            <div class="relative z-10 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
+                <div class="flex-1 space-y-3.5 sm:space-y-4 min-w-0 w-full">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="inline-flex items-center gap-2 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20 max-w-full">
+                            <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse shrink-0"></span>
                             <span class="text-[10px] mono text-purple-300 uppercase tracking-widest font-bold"><span class="normal-case">tabletka</span> · .NET 8 · v0.9.8.44</span>
                         </div>
-                        <span class="text-[10px] mono px-3 py-1.5 rounded-full bg-slate-800/80 text-slate-300 border border-white/10" data-i18n="header_meta_os">Windows x64</span>
-                        <span class="text-[10px] mono px-3 py-1.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20" data-i18n="header_meta_mode">Компактная пилюля и модули</span>
+                        <span class="text-[10px] mono px-2.5 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-white/10" data-i18n="header_meta_os">Windows x64</span>
+                        <span class="hidden sm:inline-block text-[10px] mono px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20" data-i18n="header_meta_mode">Компактная пилюля и модули</span>
                     </div>
 
-                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
+                    <h1 class="text-[clamp(1.75rem,8vw,3.75rem)] font-extrabold tracking-tight leading-[1.06]">
                         <span class="gradient-text">tabletka</span>
                     </h1>
 
-                    <p class="text-slate-200 text-sm md:text-base max-w-3xl leading-relaxed" data-i18n="hero_subtitle"></p>
+                    <p class="text-slate-200 text-xs sm:text-sm md:text-base max-w-3xl leading-relaxed" data-i18n="hero_subtitle"></p>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-0.5">
+                    <!-- Первый экран без скролла на ПК и на мобильном (Shorts / Reels / TikTok) -->
+                    <div class="pt-1 space-y-2.5">
+                        <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5">
+                            <a id="tabletka-download-btn" onclick="tracktabletkaDownload()" href="https://699718.space/tabletka/tabletka_0.9.8.44_x64_Setup.exe" class="cta-btn inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-white rounded-xl transition-all font-extrabold uppercase tracking-wide text-xs shadow-lg">
+                                <i class="fas fa-download me-2 shrink-0"></i><span data-i18n="cta_download">Скачать v0.9.8.44</span>
+                            </a>
+                            <div class="grid grid-cols-1 min-[360px]:grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                                <a id="tabletka-send-tg-btn" onclick="trackSaveToPC('telegram')" href="https://t.me/share/url?url=https%3A%2F%2Ftabletka.699718.space%2F&text=tabletka%20%E2%80%94%20desktop%20overlay%20for%20Windows%20(.NET%208)" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center min-h-[42px] px-3.5 py-2 bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 rounded-xl border border-sky-400/35 transition-all font-bold text-xs">
+                                    <i class="fab fa-telegram-plane me-1.5 text-sky-300 shrink-0"></i><span data-i18n="cta_send_tg">Ссылка в Telegram</span>
+                                </a>
+                                <button id="tabletka-copy-pc-btn" type="button" onclick="copyLinkForPC()" class="inline-flex items-center justify-center min-h-[42px] px-3.5 py-2 bg-slate-800/90 hover:bg-slate-700/90 text-slate-100 rounded-xl border border-white/15 transition-all font-bold text-xs">
+                                    <i class="fas fa-link me-1.5 text-indigo-300 shrink-0"></i><span data-i18n="cta_copy_pc">Скопировать на ПК</span>
+                                </button>
+                            </div>
+                        </div>
+                        <p id="mobile-pc-note" class="md:hidden text-[11px] text-sky-200/85 leading-snug" data-i18n="mobile_pc_hint">
+                            Зашли с телефона? Отправьте ссылку себе в Telegram или скопируйте, чтобы установить на Windows-ПК.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
                         <div class="bg-slate-900/55 border border-white/10 rounded-xl p-3">
                             <div class="text-xs font-bold text-indigo-300 mb-1" data-i18n="pill_box1_title">Форм-фактор таблетки</div>
                             <p class="text-xs text-slate-400 leading-relaxed" data-i18n="pill_box1_desc"></p>
@@ -237,46 +200,56 @@
                     </div>
                 </div>
 
-                <div class="w-full md:w-80 lg:w-96 shrink-0 flex flex-col gap-3">
+                <div class="w-full md:w-80 lg:w-96 shrink-0 flex flex-col gap-2.5">
                     <span class="shot-box w-full">
-                        <img src="backdrop-392x105-20261123-015717.png" alt="tabletka compact pill screenshot" loading="lazy">
+                        <picture><source srcset="backdrop-392x105-20261123-015717.webp" type="image/webp"><img src="backdrop-392x105-20261123-015717.png" alt="tabletka compact pill screenshot" width="392" height="105" fetchpriority="high" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
-                    <span class="shot-box w-full">
-                        <img src="backdrop-491x250-20261123-015852.png" alt="tabletka expanded media player screenshot" loading="lazy">
-                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
-                    </span>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between gap-2 px-0.5">
+                            <span class="text-[10px] mono text-slate-400 uppercase tracking-wider" data-i18n="hero_state_lbl">На рабочем столе:</span>
+                            <div class="inline-flex rounded-lg bg-slate-900/80 border border-white/10 p-0.5 text-[10px] mono">
+                                <button type="button" id="hero-tab-exp" onclick="setHeroDesktopShot('exp')" class="px-2 py-0.5 rounded-md bg-indigo-500/25 text-indigo-200 font-bold transition-colors" data-i18n="hero_view_expanded">Раскрыта</button>
+                                <button type="button" id="hero-tab-cmp" onclick="setHeroDesktopShot('cmp')" class="px-2 py-0.5 rounded-md text-slate-400 hover:text-white transition-colors" data-i18n="hero_view_compact">Свёрнута</button>
+                            </div>
+                        </div>
+                        <span id="hero-shot-exp" class="shot-box w-full">
+                            <picture><source srcset="backdrop-491x250-20261123-015852.webp" type="image/webp"><img src="backdrop-491x250-20261123-015852.png" alt="tabletka expanded media player screenshot" width="491" height="250" fetchpriority="high" decoding="async"></picture>
+                            <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                        </span>
+                        <span id="hero-shot-cmp" class="shot-box w-full hidden">
+                            <picture><source srcset="backdrop-491x250-20261123-015839.webp" type="image/webp"><img src="backdrop-491x250-20261123-015839.png" alt="tabletka compact pill on desktop screenshot" width="491" height="250" loading="lazy" decoding="async"></picture>
+                            <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <div class="relative z-10 w-full flex flex-wrap items-center gap-2.5 pt-4 border-t border-white/10">
-                <a id="tabletka-download-btn" onclick="tracktabletkaDownload()" href="https://699718.space/tabletka/tabletka_0.9.8.44_x64_Setup.exe" class="cta-btn inline-flex items-center justify-center px-4 py-2.5 text-white rounded-xl transition-all font-bold uppercase tracking-wide text-xs shrink-0">
-                    <i class="fas fa-download me-2"></i><span data-i18n="cta_download">Скачать v0.9.8.44</span>
-                </a>
-                <a id="tabletka-apk-stub-btn" href="#ecosystem" onclick="return handleApkStubClick(event)" class="inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/35 text-emerald-200 rounded-xl border border-emerald-400/30 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
-                    <i class="fab fa-android me-2"></i><span data-i18n="cta_apk_stub">Скачать APK (заглушка)</span>
-                </a>
-                <button id="features-toggle-btn" type="button" onclick="toggleFeaturesPanel(true)" aria-expanded="false" class="inline-flex items-center justify-center px-4 py-2.5 bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 rounded-xl border border-purple-400/30 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
-                    <i class="fas fa-layer-group me-2"></i><span data-i18n="cta_features">О функциях</span><i class="fas fa-chevron-down ms-2 text-xs pill-chev"></i>
+            <div class="relative z-10 w-full flex flex-wrap items-center gap-2.5 pt-3.5 border-t border-white/10">
+                <button id="features-toggle-btn" type="button" onclick="toggleFeaturesPanel(true)" aria-expanded="false" class="inline-flex items-center justify-center min-h-[40px] px-4 py-2 bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 rounded-xl border border-purple-400/30 transition-all font-bold uppercase tracking-wide text-xs">
+                    <i class="fas fa-layer-group me-2 shrink-0"></i><span data-i18n="cta_features">16 модулей</span><i class="fas fa-chevron-down ms-2 text-xs pill-chev shrink-0"></i>
                 </button>
-                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl border border-slate-600 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
-                    <i class="fab fa-github me-2"></i><span data-i18n="cta_github">GitHub</span>
+                <a href="https://shop.699718.space/" class="inline-flex items-center justify-center min-h-[40px] px-4 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 rounded-xl border border-emerald-400/35 transition-all font-bold uppercase tracking-wide text-xs">
+                    <i class="fas fa-key me-2 shrink-0"></i><span data-i18n="cta_connect">tabletkaConnect</span>
                 </a>
-                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-200 rounded-xl border border-indigo-400/30 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
-                    <i class="fab fa-telegram-plane me-2"></i><span data-i18n="cta_contact">Обратная связь</span>
+                <a id="tabletka-apk-stub-btn" href="#ecosystem" onclick="return handleApkStubClick(event)" class="inline-flex items-center justify-center min-h-[40px] px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 rounded-xl border border-white/10 transition-all font-bold uppercase tracking-wide text-xs">
+                    <i class="fab fa-android me-2 text-emerald-400 shrink-0"></i><span data-i18n="cta_apk_stub">Android APK · Скоро</span>
                 </a>
-                <a href="index.html" class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-900/70 hover:bg-slate-800 text-slate-200 rounded-xl border border-white/10 transition-all font-bold uppercase tracking-wide text-xs shrink-0">
-                    <i class="fas fa-arrow-left me-2"></i><span data-i18n="cta_home">На главную</span>
+                <a href="https://github.com/eggrib/tabletka" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center min-h-[40px] px-4 py-2 bg-slate-800/80 hover:bg-slate-700 text-white rounded-xl border border-white/10 transition-all font-bold uppercase tracking-wide text-xs">
+                    <i class="fab fa-github me-2 shrink-0"></i><span data-i18n="cta_github">GitHub</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center min-h-[40px] px-4 py-2 bg-indigo-600/20 hover:bg-indigo-600/35 text-indigo-200 rounded-xl border border-indigo-400/30 transition-all font-bold uppercase tracking-wide text-xs">
+                    <i class="fab fa-telegram-plane me-2 shrink-0"></i><span data-i18n="cta_contact">Обратная связь</span>
                 </a>
             </div>
         </header>
 
         <!-- БЛОК 1: ЧТО УМЕЕТ И ЧТО НОВОГО -->
-        <section id="whats-new" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5">
+        <section id="whats-new" class="reveal glass rounded-[2rem] p-5 sm:p-6 md:p-8 space-y-5">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
+                <div class="min-w-0">
                     <span class="text-[10px] mono text-indigo-400 uppercase tracking-widest font-bold">RELEASE &amp; CORE</span>
-                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="wn_title">Что умеет и что нового</h2>
+                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold mt-0.5 break-words" data-i18n="wn_title">Что умеет и что нового</h2>
                 </div>
                 <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">.NET 8 · WPF · 10 Langs</span>
             </div>
@@ -299,15 +272,32 @@
                     <p class="text-slate-400 leading-relaxed" data-i18n="wn_f4_desc">Модульный Android-компаньон: привязка по QR-коду, автономные функции на телефоне и синхронизация/команды ПК через relay.699718.space.</p>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                <div class="space-y-2">
+                    <span class="shot-box w-full">
+                        <picture><source srcset="backdrop-647x376-20261122-171356.webp" type="image/webp"><img src="backdrop-647x376-20261122-171356.png" alt="tabletka settings 16 modules toggle" width="647" height="376" loading="lazy" decoding="async"></picture>
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                    <div class="text-[11px] mono text-slate-400 px-1" data-i18n="wn_shot1_cap">Настройки → Модули (16/16): включение нужных виджетов в 1 клик</div>
+                </div>
+                <div class="space-y-2">
+                    <span class="shot-box w-full">
+                        <picture><source srcset="backdrop-647x376-20261122-171407.webp" type="image/webp"><img src="backdrop-647x376-20261122-171407.png" alt="tabletka system settings docking and 10 languages" width="647" height="376" loading="lazy" decoding="async"></picture>
+                        <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
+                    </span>
+                    <div class="text-[11px] mono text-slate-400 px-1" data-i18n="wn_shot2_cap">Настройки → Система: крепление к кромкам, скрытие в играх и 10 языков</div>
+                </div>
+            </div>
         </section>
 
         
         <!-- БЛОК 2: УДОБСТВО, ПРОИЗВОДИТЕЛЬНОСТЬ И PRIVACY-FIRST -->
-        <section id="ux-perf" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5">
+        <section id="ux-perf" class="reveal glass rounded-[2rem] p-5 sm:p-6 md:p-8 space-y-5">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
+                <div class="min-w-0">
                     <span class="text-[10px] mono text-cyan-400 uppercase tracking-widest font-bold">UX &amp; PERFORMANCE</span>
-                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="ux_title">Удобство и производительность</h2>
+                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold mt-0.5 break-words" data-i18n="ux_title">Удобство и производительность</h2>
                 </div>
                 <span class="text-xs mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Zero Bloat · Throttled</span>
             </div>
@@ -328,11 +318,11 @@
             </div>
         </section>
 
-        <section id="privacy-first" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5 border border-emerald-400/20">
+        <section id="privacy-first" class="reveal glass rounded-[2rem] p-5 sm:p-6 md:p-8 space-y-5 border border-emerald-400/20">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
+                <div class="min-w-0">
                     <span class="text-[10px] mono text-emerald-400 uppercase tracking-widest font-bold">PRIVACY-FIRST · 0 DATA RETENTION</span>
-                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="priv_title">Безопасность и приватность (0 хранения данных)</h2>
+                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold mt-0.5 break-words" data-i18n="priv_title">Безопасность и приватность (0 хранения данных)</h2>
                 </div>
                 <span class="text-xs mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Local-First · Transit Relay</span>
             </div>
@@ -359,11 +349,11 @@
 
         
         <!-- БЛОК 3: АРХИТЕКТУРА / ЭКОСИСТЕМА (WINDOWS + ANDROID + RELAY) -->
-        <section id="ecosystem" class="reveal glass rounded-[2rem] p-6 md:p-8 space-y-5">
+        <section id="ecosystem" class="reveal glass rounded-[2rem] p-5 sm:p-6 md:p-8 space-y-5">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
+                <div class="min-w-0">
                     <span class="text-[10px] mono text-purple-400 uppercase tracking-widest font-bold">ECOSYSTEM &amp; ARCHITECTURE</span>
-                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" data-i18n="eco_title">Архитектура / Экосистема: Windows + Android + Relay</h2>
+                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold mt-0.5 break-words" data-i18n="eco_title">Архитектура / Экосистема: Windows + Android + Relay</h2>
                 </div>
                 <span class="text-xs mono px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">relay.699718.space · WSS</span>
             </div>
@@ -395,7 +385,7 @@
                 <span class="text-xs mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">Quick Answers</span>
             </div>
 
-            <div class="space-y-3 text-xs md:text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
                 <div class="bg-slate-900/55 border border-white/10 rounded-2xl p-4 space-y-1">
                     <div class="font-bold text-slate-100" data-i18n="faq_q1">Нужен ли обязательный аккаунт или подключение к сети для работы?</div>
                     <p class="text-slate-400 leading-relaxed" data-i18n="faq_a1">Нет. Оверлей, виджеты и локальные настройки работают автономно на Windows (.NET 8 / WPF); синхронизация с Android и релей подключаются только по желанию.</p>
@@ -442,7 +432,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043410.png" alt="Collapsed Media pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043410.webp" type="image/webp"><img src="backdrop-491x138-20261122-043410.png" alt="Collapsed Media pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -451,7 +441,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                        <img src="backdrop-647x300-20261122-171058.png" alt="Expanded Media player pill" loading="lazy">
+                        <picture><source srcset="backdrop-647x300-20261122-171058.webp" type="image/webp"><img src="backdrop-647x300-20261122-171058.png" alt="Expanded Media player pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                         </div>
@@ -486,7 +476,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043413.png" alt="Collapsed Monitors pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043413.webp" type="image/webp"><img src="backdrop-491x138-20261122-043413.png" alt="Collapsed Monitors pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -495,7 +485,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                        <img src="backdrop-647x300-20261122-171108.png" alt="Expanded Monitors pill" loading="lazy">
+                        <picture><source srcset="backdrop-647x300-20261122-171108.webp" type="image/webp"><img src="backdrop-647x300-20261122-171108.png" alt="Expanded Monitors pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                         </div>
@@ -530,7 +520,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043416.png" alt="Collapsed Record pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043416.webp" type="image/webp"><img src="backdrop-491x138-20261122-043416.png" alt="Collapsed Record pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -539,7 +529,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                        <img src="backdrop-647x300-20261122-171114.png" alt="Expanded Record pill" loading="lazy">
+                        <picture><source srcset="backdrop-647x300-20261122-171114.webp" type="image/webp"><img src="backdrop-647x300-20261122-171114.png" alt="Expanded Record pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                         </div>
@@ -574,7 +564,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043420.png" alt="Collapsed Markets pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043420.webp" type="image/webp"><img src="backdrop-491x138-20261122-043420.png" alt="Collapsed Markets pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -583,7 +573,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171118.png" alt="Expanded Markets pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171118.webp" type="image/webp"><img src="backdrop-647x300-20261122-171118.png" alt="Expanded Markets pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -618,7 +608,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043438.png" alt="Collapsed News pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043438.webp" type="image/webp"><img src="backdrop-491x138-20261122-043438.png" alt="Collapsed News pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -627,7 +617,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171121.png" alt="Expanded News pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171121.webp" type="image/webp"><img src="backdrop-647x300-20261122-171121.png" alt="Expanded News pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -662,7 +652,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043442.png" alt="Collapsed Traffic pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043442.webp" type="image/webp"><img src="backdrop-491x138-20261122-043442.png" alt="Collapsed Traffic pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -671,7 +661,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171124.png" alt="Expanded Traffic pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171124.webp" type="image/webp"><img src="backdrop-647x300-20261122-171124.png" alt="Expanded Traffic pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -706,7 +696,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043445.png" alt="Collapsed Downloader pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043445.webp" type="image/webp"><img src="backdrop-491x138-20261122-043445.png" alt="Collapsed Downloader pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -715,7 +705,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171128.png" alt="Expanded Downloader pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171128.webp" type="image/webp"><img src="backdrop-647x300-20261122-171128.png" alt="Expanded Downloader pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -750,7 +740,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043509.png" alt="Collapsed Torrents pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043509.webp" type="image/webp"><img src="backdrop-491x138-20261122-043509.png" alt="Collapsed Torrents pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -759,7 +749,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171133.png" alt="Expanded Torrents pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171133.webp" type="image/webp"><img src="backdrop-647x300-20261122-171133.png" alt="Expanded Torrents pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -794,7 +784,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043512.png" alt="Collapsed File Pocket pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043512.webp" type="image/webp"><img src="backdrop-491x138-20261122-043512.png" alt="Collapsed File Pocket pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -803,7 +793,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171137.png" alt="Expanded File Pocket pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171137.webp" type="image/webp"><img src="backdrop-647x300-20261122-171137.png" alt="Expanded File Pocket pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -838,7 +828,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043518.png" alt="Collapsed Clipboard pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043518.webp" type="image/webp"><img src="backdrop-491x138-20261122-043518.png" alt="Collapsed Clipboard pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -847,7 +837,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171140.png" alt="Expanded Clipboard pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171140.webp" type="image/webp"><img src="backdrop-647x300-20261122-171140.png" alt="Expanded Clipboard pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -882,7 +872,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-647x300-20261122-171237.png" alt="Snippets pill preview" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043521.webp" type="image/webp"><img src="backdrop-491x138-20261122-043521.png" alt="Collapsed Snippets pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -891,7 +881,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171237.png" alt="Expanded Snippets pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171237.webp" type="image/webp"><img src="backdrop-647x300-20261122-171237.png" alt="Expanded Snippets pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -915,7 +905,7 @@
                             <h2 class="text-lg md:text-xl font-bold" data-i18n="p12_title"></h2>
                         </div>
                     </div>
-                    <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">Audio · Display · VPN</span>
+                    <span class="text-xs mono px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">Audio · Display · Net</span>
                 </div>
 
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
@@ -926,7 +916,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-647x300-20261122-171247.png" alt="Quick tools pill preview" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043523.webp" type="image/webp"><img src="backdrop-491x138-20261122-043523.png" alt="Collapsed Quick tools pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -935,7 +925,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171247.png" alt="Expanded Quick tools pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171247.webp" type="image/webp"><img src="backdrop-647x300-20261122-171247.png" alt="Expanded Quick tools pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -970,7 +960,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-647x300-20261122-171257.png" alt="Server pulse pill preview" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043526.webp" type="image/webp"><img src="backdrop-491x138-20261122-043526.png" alt="Collapsed Server pulse pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -979,7 +969,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171257.png" alt="Expanded Server pulse pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171257.webp" type="image/webp"><img src="backdrop-647x300-20261122-171257.png" alt="Expanded Server pulse pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -1014,7 +1004,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043546.png" alt="Collapsed Timer pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043546.webp" type="image/webp"><img src="backdrop-491x138-20261122-043546.png" alt="Collapsed Timer pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -1023,7 +1013,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171306.png" alt="Expanded Timer pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171306.webp" type="image/webp"><img src="backdrop-647x300-20261122-171306.png" alt="Expanded Timer pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -1058,7 +1048,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043549.png" alt="Collapsed Water pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043549.webp" type="image/webp"><img src="backdrop-491x138-20261122-043549.png" alt="Collapsed Water pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -1067,7 +1057,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171313.png" alt="Expanded Water pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171313.webp" type="image/webp"><img src="backdrop-647x300-20261122-171313.png" alt="Expanded Water pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -1102,7 +1092,7 @@
                         </button>
                     </div>
                     <span class="shot-box w-full sm:w-80 md:w-96 shrink-0">
-                        <img src="backdrop-491x138-20261122-043603.png" alt="Collapsed Smoking pill" loading="lazy">
+                        <picture><source srcset="backdrop-491x138-20261122-043603.webp" type="image/webp"><img src="backdrop-491x138-20261122-043603.png" alt="Collapsed Smoking pill" width="491" height="138" loading="lazy" decoding="async"></picture>
                         <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                     </span>
                 </div>
@@ -1111,7 +1101,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                         <div class="md:col-span-5">
                             <span class="shot-box">
-                                <img src="backdrop-647x300-20261122-171317.png" alt="Expanded Smoking pill" loading="lazy">
+                                <picture><source srcset="backdrop-647x300-20261122-171317.webp" type="image/webp"><img src="backdrop-647x300-20261122-171317.png" alt="Expanded Smoking pill" width="647" height="300" loading="lazy" decoding="async"></picture>
                                 <span class="shot-zoom-badge mono"><i class="fas fa-magnifying-glass-plus me-1"></i>ZOOM</span>
                             </span>
                         </div>
@@ -1127,15 +1117,21 @@
 
     
         <!-- ПОДВАЛ -->
-        <footer id="site-footer" class="reveal glass rounded-[2rem] p-6 md:px-8 md:py-6 text-xs text-slate-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-            <div class="space-y-1">
-                <div class="font-bold text-slate-200 mono" data-i18n="footer_brand">tabletka · .NET 8 / WPF · v0.9.8.44</div>
-                <div data-i18n="footer_meta">Local-first · Relay: relay.699718.space (0 persistent data storage)</div>
+        <footer id="site-footer" class="reveal glass rounded-[2rem] px-5 sm:px-6 py-4 sm:py-5 text-xs mono text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1">
+                <span class="font-bold text-slate-200 py-1.5" data-i18n="footer_brand">tabletka · .NET 8 / WPF · v0.9.8.44</span>
+                <span>·</span>
+                <a href="https://shop.699718.space/" class="text-emerald-300 hover:text-white transition-colors inline-flex items-center min-h-[36px] py-1.5">tabletkaConnect</a>
+                <span>·</span>
+                <a href="https://699718.space/" class="hover:text-white transition-colors inline-flex items-center min-h-[36px] py-1.5">699718.space</a>
             </div>
-            <div class="flex flex-wrap items-center gap-4 mono">
-                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
-                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">@eggrib</a>
-                <a href="index.html" class="hover:text-white transition-colors" data-i18n="cta_home">На главную</a>
+            <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+                <a href="https://github.com/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5 min-h-[36px] py-1.5">
+                    <i class="fab fa-github"></i><span>GitHub</span>
+                </a>
+                <a href="https://t.me/eggrib" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5 min-h-[36px] py-1.5">
+                    <i class="fab fa-telegram-plane"></i><span>@eggrib</span>
+                </a>
             </div>
         </footer>
 
@@ -1143,7 +1139,7 @@
 
     <div id="cursor-glow"></div>
     <div class="toast" id="toast"></div>
-    <div id="term-overlay"><div id="term-box"><div class="t-header">eggrib@KompEgg:~/tabletka &nbsp; [press ` or ESC to close]</div><div id="t-out"></div><div><span class="t-prompt">eggrib@KompEgg:~$ </span><input id="t-input" spellcheck="false" placeholder="type 'help'"></div></div></div>
+    <div id="term-overlay"><div id="term-box" dir="ltr"><div class="t-header">eggrib@KompEgg:~/tabletka &nbsp; [press ` or ESC to close]</div><div id="t-out"></div><div class="flex items-center gap-1.5"><span class="t-prompt">eggrib@KompEgg:~$</span><input id="t-input" spellcheck="false" placeholder="type 'help'"></div></div></div>
 
     <div id="img-lightbox" onclick="closeLightbox(event)">
         <img id="img-lightbox-pic" src="" alt="">
@@ -1201,12 +1197,21 @@
                 pill_box2_desc: "Edge-dragging, очередь загрузок и фоновый троттлинг.",
                 pill_box3_title: "Модули и управление",
                 pill_box3_desc: "16 модулей, 10 языков и связка с Android.",
-                cta_features: "О функциях",
+                cta_features: "16 модулей", cta_connect: "tabletkaConnect",
                 header_meta_os: "Windows x64",
                 header_meta_mode: "Компактная пилюля и модули",
                 cta_download: "Скачать v0.9.8.44",
-                cta_apk_stub: "Скачать APK (заглушка)",
-                toast_apk_stub: "APK-компаньон в разработке (заглушка) · уведомление отправлено",
+                hero_state_lbl: "На рабочем столе:",
+                hero_view_expanded: "Раскрыта",
+                hero_view_compact: "Свёрнута",
+                wn_shot1_cap: "Настройки → Модули (16/16): включение нужных виджетов в 1 клик",
+                wn_shot2_cap: "Настройки → Система: крепление к кромкам, скрытие в играх и 10 языков",
+                cta_send_tg: "Ссылка в Telegram",
+                cta_copy_pc: "Скопировать на ПК",
+                mobile_pc_hint: "Зашли с телефона? Отправьте ссылку себе в Telegram или скопируйте, чтобы установить на Windows-ПК.",
+                toast_pc_copied: "Ссылка скопирована — откройте её на Windows-ПК!",
+                cta_apk_stub: "Android APK · Скоро",
+                toast_apk_stub: "Android-компаньон в разработке · уведомление отправлено",
                 cta_github: "GitHub",
                 cta_home: "На главную",
                 footer_brand: "tabletka · .NET 8 / WPF · v0.9.8.44",
@@ -1254,12 +1259,12 @@
                 p10_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>История записей:</b> пронумерованный список скопированных фрагментов и команд.</li><li><b>Клик — скопировать:</b> быстрое возвращение нужной строки в буфер обмена в один клик.</li><li><b>Очистка:</b> кнопка «Очистить» и закрепление окна поверх других.</li></ul>",
                 p11_title: "Таблетка Сниппетов",
                 p11_collapsed_desc: "Быстрый доступ к сохранённым командам и шаблонам (11/16) с копированием в один клик.",
-                p11_expanded_desc: "При раскрытии открывается окно СНИППЕТЫ со списком команд (например Docker Up, Docker Logs, Restart Xray), управлением порядком и добавлением новых шаблонов.",
+                p11_expanded_desc: "При раскрытии открывается окно СНИППЕТЫ со списком команд (например Docker Up, Docker Logs, Restart Service), управлением порядком и добавлением новых шаблонов.",
                 p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Копирование и порядок:</b> клик копирует команду, а перетаскивание или стрелки меняют порядок строк.</li><li><b>Редактирование и удаление:</b> удаление ненужных позиций по кнопке «×» и добавление через «+ Добавить».</li><li><b>Закрепление окна:</b> кнопка pin в верхнем правом углу.</li></ul>",
                 p12_title: "Таблетка Быстрых Инструментов",
                 p12_collapsed_desc: "Быстрые системные переключатели для звука, экранов и сети (12/16).",
-                p12_expanded_desc: "При раскрытии открывается окно БЫСТРЫЕ ИНСТРУМЕНТЫ с выбором аудиовыхода, переключением режимов экранов (Только ПК, Дублировать, Расширить, Второй экран) и статусом VPN-интерфейса.",
-                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Звук и выход:</b> отображение активного устройства и быстрая смена выхода.</li><li><b>Режимы экранов:</b> быстрое переключение конфигурации дисплеев без настроек Windows.</li><li><b>Статус VPN:</b> индикация активного интерфейса и внутреннего IP-адреса.</li></ul>",
+                p12_expanded_desc: "При раскрытии открывается окно БЫСТРЫЕ ИНСТРУМЕНТЫ с выбором аудиовыхода, переключением режимов экранов (Только ПК, Дублировать, Расширить, Второй экран) и статусом сетевого интерфейса.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Звук и выход:</b> отображение активного устройства и быстрая смена выхода.</li><li><b>Режимы экранов:</b> быстрое переключение конфигурации дисплеев без настроек Windows.</li><li><b>Сеть и туннель:</b> индикация активного интерфейса и внутреннего IP-адреса.</li></ul>",
                 p13_title: "Таблетка Пульса Сервера",
                 p13_collapsed_desc: "Контроль состояния нод и серверов прямо в оверлее (13/16).",
                 p13_expanded_desc: "При раскрытии открывается окно ПУЛЬС СЕРВЕРА со списком нод, временем последнего обновления, кнопкой ручного опроса и добавлением новой ноды.",
@@ -1329,11 +1334,20 @@
                 pill_box2_desc: "Coordinated sizing and glow across open/close states with zero stale halos and throttled idle work.",
                 pill_box3_title: "Modules & Controls",
                 pill_box3_desc: "Media player with spectrum and quick actions, hardware telemetry, hotkeys, and 10-language localization.",
-                cta_features: "Features",
+                cta_features: "16 Modules", cta_connect: "tabletkaConnect",
                 header_meta_os: "Windows x64",
                 header_meta_mode: "Compact Pill & Modules",
                 cta_download: "Download v0.9.8.44",
-                cta_apk_stub: "Download APK (Stub)",
+                hero_state_lbl: "On desktop:",
+                hero_view_expanded: "Expanded",
+                hero_view_compact: "Collapsed",
+                wn_shot1_cap: "Settings → Modules (16/16): toggle widgets in 1 click",
+                wn_shot2_cap: "Settings → System: edge docking, fullscreen game hide & 10 languages",
+                cta_send_tg: "Send to Telegram",
+                cta_copy_pc: "Copy PC Link",
+                mobile_pc_hint: "On mobile? Send the link to Telegram or copy it to install on your Windows PC.",
+                toast_pc_copied: "Link copied — open it on your Windows PC!",
+                cta_apk_stub: "Android APK · Soon",
                 toast_apk_stub: "Android APK stub (coming soon) · notification sent",
                 cta_github: "GitHub",
                 cta_home: "Back to Index",
@@ -1382,12 +1396,12 @@
                 p10_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Entry history:</b> numbered list of copied snippets and commands.</li><li><b>Click to copy:</b> restore any saved entry back to the clipboard with one click.</li><li><b>Clear &amp; pin:</b> clear entries or keep the clipboard window pinned.</li></ul>",
                 p11_title: "Snippets Pill",
                 p11_collapsed_desc: "Quick access to saved commands and templates (11/16) with one-click copy.",
-                p11_expanded_desc: "Expanding opens SNIPPETS with command rows (such as Docker Up, Docker Logs, Restart Xray), row reordering, and adding new snippets.",
+                p11_expanded_desc: "Expanding opens SNIPPETS with command rows (such as Docker Up, Docker Logs, Restart Service), row reordering, and adding new snippets.",
                 p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Copy &amp; order:</b> click to copy a command, and reorder rows via drag or arrows.</li><li><b>Manage entries:</b> remove items or add new snippets with the + Add button.</li><li><b>Pin toggle:</b> pin the snippets window above other windows.</li></ul>",
                 p12_title: "Quick Tools Pill",
-                p12_collapsed_desc: "Quick toggles for audio output, display mode, and VPN status (12/16).",
-                p12_expanded_desc: "Expanding opens QUICK TOOLS with audio output switching, multi-monitor display modes, and active VPN tunnel info.",
-                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio output:</b> view the active sound device and switch output quickly.</li><li><b>Display modes:</b> switch PC-only, duplicate, extend, or second screen modes.</li><li><b>VPN status:</b> see active tunnel interface and assigned IP address.</li></ul>",
+                p12_collapsed_desc: "Quick toggles for audio output, display mode, and Network status (12/16).",
+                p12_expanded_desc: "Expanding opens QUICK TOOLS with audio output switching, multi-monitor display modes, and active network interface info.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio output:</b> view the active sound device and switch output quickly.</li><li><b>Display modes:</b> switch PC-only, duplicate, extend, or second screen modes.</li><li><b>Network status:</b> see active tunnel interface and assigned IP address.</li></ul>",
                 p13_title: "Server Pulse Pill",
                 p13_collapsed_desc: "Monitor server and node status right from the overlay (13/16).",
                 p13_expanded_desc: "Expanding opens SERVER PULSE with monitored nodes, last refresh timestamp, manual refresh, and adding a new node.",
@@ -1457,11 +1471,20 @@
                 pill_box2_desc: "Abgestimmte Größe und Beleuchtung ohne hängende Lichthöfe sowie gedrosselte Hintergrundlast.",
                 pill_box3_title: "Module & Steuerung",
                 pill_box3_desc: "Medienplayer mit Spektrum und Schnellaktionen, Systemmonitore, Hotkeys und 10 Sprachen.",
-                cta_features: "Funktionen",
+                cta_features: "16 Module", cta_connect: "tabletkaConnect", footer_brand: "tabletka · .NET 8 / WPF · v0.9.8.44",
                 header_meta_os: "Windows x64",
                 header_meta_mode: "Kompakte Pille & Module",
                 cta_download: "Download v0.9.8.44",
-                cta_apk_stub: "APK laden (Stub)",
+                hero_state_lbl: "Auf dem Desktop:",
+                hero_view_expanded: "Geöffnet",
+                hero_view_compact: "Kompakt",
+                wn_shot1_cap: "Einstellungen → Module (16/16): Widgets per Klick umschalten",
+                wn_shot2_cap: "Einstellungen → System: Andocken, Vollbild-Ausblendung & 10 Sprachen",
+                cta_send_tg: "An Telegram senden",
+                cta_copy_pc: "PC-Link kopieren",
+                mobile_pc_hint: "Mobil unterwegs? Link an Telegram senden oder für den Windows-PC kopieren.",
+                toast_pc_copied: "Link kopiert — auf Ihrem Windows-PC öffnen!",
+                cta_apk_stub: "Android APK · Bald",
                 toast_apk_stub: "Android-APK-Stub (bald verfügbar) · Benachrichtigung gesendet",
                 cta_github: "GitHub",
                 cta_home: "Zur Startseite",
@@ -1511,9 +1534,9 @@
                 p11_expanded_desc: "Ausgeklappt öffnet sich SNIPPETS mit Befehlszeilen, Sortierung und Hinzufügen neuer Einträge.",
                 p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Kopieren &amp; Reihenfolge:</b> Klick kopiert den Befehl, Zeilen lassen sich sortieren.</li><li><b>Verwaltung:</b> Einträge entfernen oder über + Hinzufügen ergänzen.</li><li><b>Anpinnen:</b> Pin-Schalter zum Fixieren über Fenstern.</li></ul>",
                 p12_title: "Schnellwerkzeuge-Pille",
-                p12_collapsed_desc: "Schnellschalter für Audioausgang, Bildschirme und VPN-Status (12/16).",
-                p12_expanded_desc: "Ausgeklappt öffnet sich SCHNELLWERKZEUGE mit Audioausgabe, Anzeigemodi und VPN-Tunnel-Info.",
-                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audioausgang:</b> aktives Gerät anzeigen und Ausgang wechseln.</li><li><b>Anzeigemodi:</b> schneller Wechsel zwischen PC, Duplizieren, Erweitern und Zweitbildschirm.</li><li><b>VPN-Status:</b> aktiver Tunnel und IP-Adresse im Blick.</li></ul>",
+                p12_collapsed_desc: "Schnellschalter für Audioausgang, Bildschirme und Netzwerkstatus (12/16).",
+                p12_expanded_desc: "Ausgeklappt öffnet sich SCHNELLWERKZEUGE mit Audioausgabe, Anzeigemodi und Netzwerk-Info.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audioausgang:</b> aktives Gerät anzeigen und Ausgang wechseln.</li><li><b>Anzeigemodi:</b> schneller Wechsel zwischen PC, Duplizieren, Erweitern und Zweitbildschirm.</li><li><b>Netzwerkstatus:</b> aktiver Tunnel und IP-Adresse im Blick.</li></ul>",
                 p13_title: "Server-Puls-Pille",
                 p13_collapsed_desc: "Überwachung von Server-Nodes direkt im Overlay (13/16).",
                 p13_expanded_desc: "Ausgeklappt öffnet sich SERVER-PULS mit Nodes, Zeitstempel, Aktualisieren-Button und + Node.",
@@ -1582,10 +1605,19 @@
                 pill_box2_desc: "Taille et halo synchronisés à l'ouverture/fermeture sans traînée ni charge superflue.",
                 pill_box3_title: "Modules & contrôles",
                 pill_box3_desc: "Lecteur média avec spectre et actions rapides, télémétrie, raccourcis et 10 langues.",
-                cta_features: "Fonctions",
+                cta_features: "16 Modules", cta_connect: "tabletkaConnect", cta_apk_stub: "Android APK · Bientôt", toast_apk_stub: "APK Android en préparation · notification envoyée", footer_brand: "tabletka · .NET 8 / WPF · v0.9.8.44",
                 header_meta_os: "Windows x64",
                 header_meta_mode: "Pilule & Modules",
                 cta_download: "Télécharger v0.9.8.44",
+                hero_state_lbl: "Sur le bureau :",
+                hero_view_expanded: "Dépliée",
+                hero_view_compact: "Repliée",
+                wn_shot1_cap: "Réglages → Modules (16/16) : activation rapide des widgets",
+                wn_shot2_cap: "Réglages → Système : ancrage, masquage plein écran & 10 langues",
+                cta_send_tg: "Envoyer sur Telegram",
+                cta_copy_pc: "Copier le lien PC",
+                mobile_pc_hint: "Sur mobile ? Envoyez le lien sur Telegram ou copiez-le pour votre PC Windows.",
+                toast_pc_copied: "Lien copié — ouvrez-le sur votre PC Windows !",
                 cta_github: "GitHub",
                 cta_home: "Accueil",
                 btn_pill_open: "Détails & vue étendue",
@@ -1634,9 +1666,9 @@
                 p11_expanded_desc: "Dépliée, elle ouvre SNIPPETS avec commandes, tri des lignes et ajout de nouveaux extraits.",
                 p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Copie &amp; ordre :</b> clic pour copier et réorganisation des lignes.</li><li><b>Gestion :</b> suppression d'entrées et bouton + Ajouter.</li><li><b>Épinglage :</b> maintien de la fenêtre au premier plan.</li></ul>",
                 p12_title: "Pilule Outils Rapides",
-                p12_collapsed_desc: "Raccourcis pour la sortie audio, l'affichage et l'état VPN (12/16).",
-                p12_expanded_desc: "Dépliée, elle ouvre OUTILS RAPIDES avec sélection audio, modes d'écran et état du tunnel VPN.",
-                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio :</b> périphérique actif et changement rapide de sortie.</li><li><b>Écrans :</b> bascule rapide entre PC seul, dupliquer, étendre et second écran.</li><li><b>VPN :</b> interface active et adresse IP affichées clairement.</li></ul>",
+                p12_collapsed_desc: "Raccourcis pour la sortie audio, l'affichage et l'état réseau (12/16).",
+                p12_expanded_desc: "Dépliée, elle ouvre OUTILS RAPIDES avec sélection audio, modes d'écran et état du interface réseau.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio :</b> périphérique actif et changement rapide de sortie.</li><li><b>Écrans :</b> bascule rapide entre PC seul, dupliquer, étendre et second écran.</li><li><b>Net :</b> interface active et adresse IP affichées clairement.</li></ul>",
                 p13_title: "Pilule Pouls Serveur",
                 p13_collapsed_desc: "Suivi des nœuds et serveurs directement dans l'overlay (13/16).",
                 p13_expanded_desc: "Dépliée, elle ouvre POULS SERVEUR avec liste des nœuds, horodatage, actualisation et + Nœud.",
@@ -1705,10 +1737,19 @@
                 pill_box2_desc: "Geometría y resplandor sincronizados sin halos pegados y con ahorro en reposo.",
                 pill_box3_title: "Módulos y control",
                 pill_box3_desc: "Reproductor con espectro y acciones rápidas, monitores, atajos y 10 idiomas.",
-                cta_features: "Funciones",
+                cta_features: "16 Módulos", cta_connect: "tabletkaConnect", cta_apk_stub: "Android APK · Pronto", toast_apk_stub: "APK de Android en desarrollo · aviso enviado", footer_brand: "tabletka · .NET 8 / WPF · v0.9.8.44",
                 header_meta_os: "Windows x64",
                 header_meta_mode: "Píldora y Módulos",
                 cta_download: "Descargar v0.9.8.44",
+                hero_state_lbl: "En el escritorio:",
+                hero_view_expanded: "Expandida",
+                hero_view_compact: "Compacta",
+                wn_shot1_cap: "Ajustes → Módulos (16/16): activa los widgets en 1 clic",
+                wn_shot2_cap: "Ajustes → Sistema: anclaje en bordes, juegos y 10 idiomas",
+                cta_send_tg: "Enviar a Telegram",
+                cta_copy_pc: "Copiar enlace PC",
+                mobile_pc_hint: "¿Desde el móvil? Envía el enlace a Telegram o cópialo para instalar en tu PC Windows.",
+                toast_pc_copied: "Enlace copiado — ábrelo en tu PC con Windows",
                 cta_github: "GitHub",
                 cta_home: "Inicio",
                 btn_pill_open: "Detalles y vista ampliada",
@@ -1757,9 +1798,9 @@
                 p11_expanded_desc: "Al expandir abre SNIPPETS con filas de comandos, ordenación y botón + Añadir.",
                 p11_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Copiar y ordenar:</b> clic para copiar y reordenar filas fácilmente.</li><li><b>Gestión:</b> borrar elementos o añadir nuevos desde + Añadir.</li><li><b>Fijar ventana:</b> opción pin en la esquina superior.</li></ul>",
                 p12_title: "Píldora Herramientas Rápidas",
-                p12_collapsed_desc: "Controles rápidos de salida de audio, pantallas y estado VPN (12/16).",
-                p12_expanded_desc: "Al expandir abre HERRAMIENTAS RÁPIDAS con salida de audio, modos de pantalla y estado de VPN.",
-                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio:</b> dispositivo activo y cambio rápido de salida.</li><li><b>Pantallas:</b> cambio rápido entre solo PC, duplicar, extender y segunda pantalla.</li><li><b>VPN:</b> interfaz activa e IP visibles al instante.</li></ul>",
+                p12_collapsed_desc: "Controles rápidos de salida de audio, pantallas y estado de red (12/16).",
+                p12_expanded_desc: "Al expandir abre HERRAMIENTAS RÁPIDAS con salida de audio, modos de pantalla y estado de red.",
+                p12_features: "<ul class='list-disc ms-4 space-y-1.5'><li><b>Audio:</b> dispositivo activo y cambio rápido de salida.</li><li><b>Pantallas:</b> cambio rápido entre solo PC, duplicar, extender y segunda pantalla.</li><li><b>Net:</b> interfaz activa e IP visibles al instante.</li></ul>",
                 p13_title: "Píldora Pulso del Servidor",
                 p13_collapsed_desc: "Supervisión de nodos y servidores directamente en el overlay (13/16).",
                 p13_expanded_desc: "Al expandir abre PULSO DEL SERVIDOR con nodos, hora de actualización, refresco y + Nodo.",
@@ -1828,10 +1869,19 @@
                 pill_box2_desc: "התאמת מידות והילה בפתיחה וסגירה ללא שאריות זוהר ועם ויסות ברקע.",
                 pill_box3_title: "מודולים ושליטה",
                 pill_box3_desc: "נגן מדיה עם ספקטרום ופעולות מהירות, ניטור מערכת, קיצורים ו-10 שפות.",
-                cta_features: "תכונות",
+                cta_features: "16 מודולים", cta_connect: "tabletkaConnect", cta_apk_stub: "Android APK · בקרוב", toast_apk_stub: "אפליקציית אנדרואיד בפיתוח · התראה נשלחה", footer_brand: "tabletka · .NET 8 / WPF · v0.9.8.44",
                 header_meta_os: "Windows x64",
                 header_meta_mode: "גלולה ומודולים",
                 cta_download: "הורדה v0.9.8.44",
+                hero_state_lbl: "על שולחן העבודה:",
+                hero_view_expanded: "פתוחה",
+                hero_view_compact: "מכווצת",
+                wn_shot1_cap: "הגדרות ← מודולים (16/16): הפעלה וכיבוי בקליק אחד",
+                wn_shot2_cap: "הגדרות ← מערכת: הצמדה לקצוות, הסתרה במשחקים ו-10 שפות",
+                cta_send_tg: "שלח לטלגרם",
+                cta_copy_pc: "העתק קישור למחשב",
+                mobile_pc_hint: "נכנסת מהנייד? שלח את הקישור לטלגרם או העתק להתקנה במחשב Windows.",
+                toast_pc_copied: "הקישור הועתק — פתחו אותו במחשב Windows!",
                 cta_github: "GitHub",
                 cta_home: "לעמוד הראשי",
                 btn_pill_open: "פרטים ותצוגה מורחבת",
@@ -1880,9 +1930,9 @@
                 p11_expanded_desc: "בפתיחה נפתח סניפטים עם שורות פקודות, שינוי סדר והוספת פריטים חדשים.",
                 p11_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>העתקה וסדר:</b> לחיצה מעתיקה פקודה וסידור מחדש של שורות.</li><li><b>ניהול:</b> הסרת שורות וכפתור + הוסף.</li><li><b>נעיצה:</b> הצמדת החלון מעל חלונות אחרים.</li></ul>",
                 p12_title: "גלולת כלים מהירים",
-                p12_collapsed_desc: "מתגים מהירים לשמע, מסכים ומצב VPN (12/16).",
-                p12_expanded_desc: "בפתיחה נפתח כלים מהירים עם בחירת יציאת שמע, מצבי תצוגה וסטטוס VPN.",
-                p12_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>שמע:</b> הצגת התקן פעיל והחלפת יציאה מהירה.</li><li><b>מסכים:</b> מעבר מהיר בין מסך מחשב, שכפול, הרחבה ומסך שני.</li><li><b>VPN:</b> חיווי ממשק פעיל וכתובת IP.</li></ul>",
+                p12_collapsed_desc: "מתגים מהירים לשמע, מסכים ומצב רשת (12/16).",
+                p12_expanded_desc: "בפתיחה נפתח כלים מהירים עם בחירת יציאת שמע, מצבי תצוגה וסטטוס רשת.",
+                p12_features: "<ul class='list-disc me-4 space-y-1.5'><li><b>שמע:</b> הצגת התקן פעיל והחלפת יציאה מהירה.</li><li><b>מסכים:</b> מעבר מהיר בין מסך מחשב, שכפול, הרחבה ומסך שני.</li><li><b>Net:</b> חיווי ממשק פעיל וכתובת IP.</li></ul>",
                 p13_title: "גלולת דופק שרת",
                 p13_collapsed_desc: "מעקב אחר צמתי שרת ישירות באוברליי (13/16).",
                 p13_expanded_desc: "בפתיחה נפתח דופק שרת עם רשימת צמתים, חותמת עדכון, רענון ו-+ צומת.",
@@ -1913,7 +1963,7 @@
 
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 const isActive = btn.getAttribute('data-lang') === lang;
-                btn.className = `lang-btn transition-colors px-2 py-1 rounded-md ${isActive ? 'bg-indigo-500/20 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white'}`;
+                btn.className = `lang-btn transition-colors px-2.5 py-1.5 min-h-[36px] rounded-xl ${isActive ? 'bg-indigo-500/25 text-indigo-200 font-bold' : 'text-slate-400 hover:text-white'}`;
             });
 
             const currentLang = document.getElementById('current-lang');
@@ -1966,6 +2016,22 @@
             }
         }
 
+        function setHeroDesktopShot(mode) {
+            const isExp = mode !== 'cmp';
+            const expBox = document.getElementById('hero-shot-exp');
+            const cmpBox = document.getElementById('hero-shot-cmp');
+            const expBtn = document.getElementById('hero-tab-exp');
+            const cmpBtn = document.getElementById('hero-tab-cmp');
+            if (expBox) expBox.classList.toggle('hidden', !isExp);
+            if (cmpBox) cmpBox.classList.toggle('hidden', isExp);
+            if (expBtn) expBtn.className = isExp
+                ? 'px-2 py-0.5 rounded-md bg-indigo-500/25 text-indigo-200 font-bold transition-colors'
+                : 'px-2 py-0.5 rounded-md text-slate-400 hover:text-white transition-colors';
+            if (cmpBtn) cmpBtn.className = !isExp
+                ? 'px-2 py-0.5 rounded-md bg-indigo-500/25 text-indigo-200 font-bold transition-colors'
+                : 'px-2 py-0.5 rounded-md text-slate-400 hover:text-white transition-colors';
+        }
+
         function openLightbox(src, alt) {
             const box = document.getElementById('img-lightbox');
             const pic = document.getElementById('img-lightbox-pic');
@@ -1984,10 +2050,10 @@
         }
 
         document.addEventListener('click', e => {
-            const img = e.target.closest('#features-panel img, header .shot-box img');
+            const img = e.target.closest('.shot-box img');
             if (img) {
                 e.preventDefault();
-                openLightbox(img.getAttribute('src'), img.getAttribute('alt'));
+                openLightbox(img.currentSrc || img.getAttribute('src'), img.getAttribute('alt'));
             }
         });
 
@@ -2043,9 +2109,10 @@
         const tInput = document.getElementById('t-input');
         const tOut = document.getElementById('t-out');
         const cmds = {
-            'help': '  status | pills | clear | exit',
-            'status': '  app: tabletka (.NET 8)\n  pills_loaded: [Media]',
-            'pills': '  01. Media (active)\n  02. Next pill pending',
+            'help': '  status | pills | relay | clear | exit',
+            'status': '  app: tabletka (.NET 8 / WPF) v0.9.8.44\n  modules_loaded: 16/16\n  throttling: adaptive (idle/game aware)\n  storage: local-first (0 server retention)',
+            'pills': '  01 Media      02 Monitors   03 Record     04 Markets\n  05 News       06 Traffic    07 Downloader 08 Torrents\n  09 Pocket     10 Clipboard  11 Snippets   12 QuickTools\n  13 Server     14 Timer      15 Water      16 Habit',
+            'relay': '  endpoint: wss://relay.699718.space\n  pairing: QR-code + DPAPI token\n  connect_portal: https://shop.699718.space/',
             'clear': '__clear__',
             'exit': '__exit__'
         };
@@ -2059,8 +2126,9 @@
         if (tInput) tInput.addEventListener('keydown', e => {
             if (e.key !== 'Enter') return;
             const val = tInput.value.trim().toLowerCase();
+            const safeVal = val.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
             tInput.value = '';
-            if (tOut) tOut.innerHTML += '<div><span class="t-prompt">eggrib@KompEgg:~$ </span>' + val + '</div>';
+            if (tOut) tOut.innerHTML += '<div><span class="t-prompt">eggrib@KompEgg:~$ </span>' + safeVal + '</div>';
             const r = cmds[val];
             if (r === '__clear__') { if (tOut) tOut.innerHTML = ''; }
             else if (r === '__exit__') closeTerm();
@@ -2068,17 +2136,20 @@
             if (tOut) tOut.scrollTop = tOut.scrollHeight;
         });
 
-        const tabletka_NOTIFY_URL = "https://699718.space/api/tabletka/download";
+        const tabletka_NOTIFY_URL = "https://shop.699718.space/api/tabletka/download";
         const TELEGRAM_PREVIEW_TEMPLATE = (stats, lang, ip) => {
             const nowUtc = new Date().toISOString().replace("T", " ").replace(/\.\d+Z$/, " UTC");
             return [
-                "👁 tabletka Page View",
+                "⬇️ tabletka Download",
                 "Page: tabletka.699718.space/",
-                `Total views: ${stats.views} · Downloads: ${stats.downloads}`,
+                `Views: ${stats.views} · Downloads: ${stats.downloads}`,
                 `Lang: ${lang} · IP: ${ip || "client"}`,
                 `Time: ${nowUtc}`
             ].join("\n");
         };
+
+        window.__tabletkaVersion = "0.9.8.44";
+        window.__tabletkaSetupFile = "tabletka_0.9.8.44_x64_Setup.exe";
 
         function sendtabletkaTelemetry(eventName, fileName, extra) {
             try {
@@ -2098,7 +2169,7 @@
                     event: eventName,
                     action: extra && extra.action ? extra.action : "download",
                     stub: Boolean(extra && extra.stub),
-                    version: "0.9.8.44",
+                    version: window.__tabletkaVersion || "0.9.8.44",
                     file: fileName,
                     page: "tabletka.699718.space/",
                     total_views: views,
@@ -2113,25 +2184,92 @@
                 if (!tabletka_NOTIFY_URL) return;
 
                 if (navigator.sendBeacon) {
-                    const blob = new Blob([payload], { type: "application/json" });
-                    navigator.sendBeacon(tabletka_NOTIFY_URL, blob);
-                } else {
-                    fetch(tabletka_NOTIFY_URL, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: payload,
-                        keepalive: true
-                    }).catch(() => {});
+                    const blob = new Blob([payload], { type: "text/plain;charset=UTF-8" });
+                    if (navigator.sendBeacon(tabletka_NOTIFY_URL, blob)) return;
                 }
+                fetch(tabletka_NOTIFY_URL, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: { "Content-Type": "text/plain;charset=UTF-8" },
+                    body: payload,
+                    keepalive: true
+                }).catch(() => {});
             } catch (_) {}
         }
 
         function tracktabletkaDownload() {
-            sendtabletkaTelemetry("tabletka_download", "tabletka_0.9.8.44_x64_Setup.exe", {
+            try { if (window.umami && typeof window.umami.track === "function") window.umami.track("tabletka_download", { version: window.__tabletkaVersion || "0.9.8.44" }); } catch (_) {}
+            sendtabletkaTelemetry("tabletka_download", window.__tabletkaSetupFile || "tabletka_0.9.8.44_x64_Setup.exe", {
                 action: "windows_setup",
                 stub: false
             });
         }
+
+        function trackSaveToPC(channel) {
+            try { if (window.umami && typeof window.umami.track === "function") window.umami.track("save_link_for_pc", { channel: channel || "telegram" }); } catch (_) {}
+            sendtabletkaTelemetry("tabletka_save_pc_link", "https://tabletka.699718.space/", {
+                action: "save_to_" + (channel || "telegram"),
+                stub: false
+            });
+        }
+
+        function copyLinkForPC() {
+            const url = "https://tabletka.699718.space/";
+            trackSaveToPC("copy");
+            const lang = document.documentElement.lang || "ru";
+            const msg = (typeof t === "object" && t && t[lang] && t[lang].toast_pc_copied) || "Ссылка скопирована — откройте её на Windows-ПК!";
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(() => showToast(msg)).catch(() => showToast(url));
+            } else {
+                showToast(url);
+            }
+        }
+
+        // Автоподхват свежей версии установщика из /tabletka/version.json
+        (async function syncLiveTabletkaVersion() {
+            try {
+                const r = await fetch("/tabletka/version.json", { cache: "no-cache" });
+                if (!r.ok) return;
+                const d = await r.json();
+                const ver = String((d && (d.version || d.latest || d.tag)) || "").trim().replace(/^v/i, "");
+                if (!/^\d+\.\d+\.\d+(?:\.\d+)?$/.test(ver)) return;
+                const rawUrl = String((d && (d.url || d.download_url || d.installer_url)) || "").trim();
+                const setupFile = `tabletka_${ver}_x64_Setup.exe`;
+                const dlUrl = /^https:\/\/699718\.space\/tabletka\/[\w.-]+\.exe$/i.test(rawUrl)
+                    ? rawUrl
+                    : `https://699718.space/tabletka/${setupFile}`;
+
+                window.__tabletkaVersion = ver;
+                window.__tabletkaSetupFile = dlUrl.split("/").pop() || setupFile;
+
+                const btn = document.getElementById("tabletka-download-btn");
+                if (btn) btn.href = dlUrl;
+
+                if (ver !== "0.9.8.44") {
+                    if (typeof t === "object" && t) {
+                        Object.keys(t).forEach(code => {
+                            if (!t[code]) return;
+                            ["cta_download", "footer_brand"].forEach(k => {
+                                if (typeof t[code][k] === "string") {
+                                    t[code][k] = t[code][k].replace(/0\.9\.8\.\d+/g, ver);
+                                }
+                            });
+                        });
+                    }
+                    if (typeof commands === "object" && commands && typeof commands.status === "string") {
+                        commands.status = commands.status.replace(/0\.9\.8\.\d+/g, ver);
+                    }
+                    document.querySelectorAll("span").forEach(el => {
+                        if (el.children.length === 1 && /0\.9\.8\.\d+/.test(el.textContent || "")) {
+                            el.innerHTML = el.innerHTML.replace(/0\.9\.8\.\d+/g, ver);
+                        }
+                    });
+                    if (typeof setLang === "function") {
+                        setLang(document.documentElement.lang || "ru");
+                    }
+                }
+            } catch (_) {}
+        })();
 
         function handleApkStubClick(ev) {
             if (ev) ev.preventDefault();
@@ -2147,5 +2285,74 @@
             return false;
         }
     </script>
+<!-- TRACKER_699719_START -->
+<script>
+(function () {
+  if (window.__tc699Bound) return;
+  window.__tc699Bound = true;
+
+  var TRACK_URL = "/api/track";
+  var SID_KEY = "tc_sid_699719";
+  var sid = "";
+  try {
+    sid = sessionStorage.getItem(SID_KEY) || "";
+    if (!sid) {
+      sid = "s_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+      sessionStorage.setItem(SID_KEY, sid);
+    }
+  } catch (e) {
+    sid = "s_anon";
+  }
+
+  function postEvent(evType, label, meta) {
+    try {
+      var body = JSON.stringify({
+        sid: sid,
+        type: evType || "click",
+        page: location.pathname || "/",
+        host: location.hostname || "",
+        lang: document.documentElement.lang || "ru",
+        label: String(label || "").replace(/\s+/g, " ").trim().slice(0, 140),
+        meta: String(meta || "").trim().slice(0, 240),
+        ref: document.referrer || ""
+      });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(TRACK_URL, new Blob([body], { type: "application/json" }));
+      } else {
+        fetch(TRACK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: body,
+          keepalive: true
+        }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+
+  window.__track699 = postEvent;
+  postEvent("pageview", document.title || location.pathname, location.href);
+
+  document.addEventListener("click", function (e) {
+    var el = e.target && e.target.closest ? e.target.closest("a, button, [role='button']") : null;
+    if (!el) return;
+
+    var label = (el.innerText || el.getAttribute("aria-label") || el.getAttribute("data-i18n") || el.id || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    var href = el.getAttribute("href") || "";
+    var id = el.id || "";
+    var evType = "click";
+
+    if (/\.(exe|apk|zip|msi|dmg|7z)($|\?)/i.test(href) || /download|apk/i.test(id)) {
+      evType = "download";
+    } else if (/^https?:\/\//i.test(href) && location.hostname && href.indexOf(location.hostname) === -1) {
+      evType = "outbound";
+    }
+
+    postEvent(evType, label || id || href || "control", href || id);
+  }, { capture: true });
+})();
+</script>
+<!-- TRACKER_699719_END -->
 </body>
 </html>
